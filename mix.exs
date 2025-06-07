@@ -11,7 +11,8 @@ defmodule CKEditor.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       package: package(),
-      aliases: aliases()
+      aliases: aliases(),
+      dialyzer: dialyzer(),
     ]
   end
 
@@ -25,6 +26,9 @@ defmodule CKEditor.MixProject do
   defp deps do
     [
       {:phoenix, "~> 1.7.0"},
+      {:phoenix_live_view, "~> 1.0"},
+      {:phoenix_live_reload, "~> 1.6", only: [:dev]},
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
     ]
   end
@@ -56,6 +60,14 @@ defmodule CKEditor.MixProject do
   defp aliases do
     [
       playground: "run --no-halt -e 'Playground.App.run()'"
+    ]
+  end
+
+  defp dialyzer do
+    [
+      plt_file: {:no_warn, "priv/plts/project.plt"},
+      plt_add_apps: [:mix],
+      ignore_warnings: ".dialyzer_ignore.exs"
     ]
   end
 end

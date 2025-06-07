@@ -16,7 +16,17 @@ CKEditor 5 integration library for Phoenix (Elixir) applications. Provides web c
 
 ## Installation 🚀
 
-Under construction. Stay tuned for the upcoming release!
+```bash
+# Under construction. Stay tuned for the upcoming release!
+```
+
+## Package development 🛠️
+
+In order to run the minimal Phoenix application with CKEditor 5 integration, you need to install the dependencies and run the server:
+
+```bash
+mix playground
+```
 
 ## Trademarks 📜
 

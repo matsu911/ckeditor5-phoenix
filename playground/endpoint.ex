@@ -1,4 +1,11 @@
 defmodule Playground.Endpoint do
+  @moduledoc """
+  Phoenix endpoint for the playground application.
+
+  This module configures the web server endpoint, including routing,
+  sessions, and static file serving for the playground.
+  """
+
   use Phoenix.Endpoint, otp_app: :ckeditor
 
   @session_options [
@@ -11,6 +18,12 @@ defmodule Playground.Endpoint do
   socket "/live", Phoenix.LiveView.Socket,
     websocket: [connect_info: [session: @session_options]],
     longpoll: [connect_info: [session: @session_options]]
+
+  plug Plug.Static,
+    at: "/",
+    from: Path.expand("./public", __DIR__),
+    only: ~w(favicon.ico robots.txt),
+    gzip: false
 
   plug Plug.Static,
     at: "/assets",

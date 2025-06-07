@@ -1,4 +1,11 @@
 defmodule Playground.App do
+  @moduledoc """
+  Main application module for the playground.
+
+  This module handles the startup and supervision of the playground application,
+  including Phoenix PubSub and the endpoint.
+  """
+
   def run_supervisor do
     children = [
       {Phoenix.PubSub, [name: Playground.PubSub, adapter: Phoenix.PubSub.PG2]},

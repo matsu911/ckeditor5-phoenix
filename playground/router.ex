@@ -1,4 +1,11 @@
 defmodule Playground.Router do
+  @moduledoc """
+  Main router for the playground application.
+
+  This module defines the routing structure and pipelines for handling
+  HTTP requests in the playground application.
+  """
+
   use Playground, :router
 
   pipeline :browser do

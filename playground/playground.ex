@@ -1,4 +1,11 @@
 defmodule Playground do
+  @moduledoc """
+  Main playground module providing common functionality and macros for Phoenix components.
+
+  This module defines the shared functionality used across the playground application,
+  including router, controller, and HTML helper macros.
+  """
+
   def static_paths, do: ~w(assets fonts images favicon.ico robots.txt)
 
   def router do

@@ -1,11 +1,11 @@
-# CKEditor 5 Phoenix (Elixir) Integration ✨
+# CKEditor 5 Phoenix Integration ✨
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-green.svg?style=flat-square)](http://makeapullrequest.com)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/mati365/ckeditor5-phoenix?style=flat-square)
 [![GitHub issues](https://img.shields.io/github/issues/mati365/ckeditor5-phoenix?style=flat-square)](https://github.com/Mati365/ckeditor5-phoenix/issues)
 
-CKEditor 5 Elixir (Phoenix) integration library. Provides seamless integration of CKEditor 5 with Phoenix applications through web components and helper functions. This package supports various editor types, including classic, inline, balloon, and decoupled editors. It also includes support for custom plugins, translations, and configuration options.
+CKEditor 5 integration library for Phoenix (Elixir) applications. Provides web components and helper functions for seamless editor integration with support for classic, inline, balloon, and decoupled editor types.
 
 > [!IMPORTANT]
 > This package is unofficial and not maintained by CKSource. For official CKEditor 5 documentation, visit [ckeditor.com](https://ckeditor.com/docs/ckeditor5/latest/). If you encounter any issues in the editor, please report them on the [GitHub repository](https://github.com/ckeditor/ckeditor5/issues).

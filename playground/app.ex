@@ -9,11 +9,10 @@ defmodule Playground.App do
   end
 
   def run do
-    Task
-      .async(fn ->
-        run_supervisor()
-        Process.sleep(:infinity)
-      end)
-      |> Task.await(:infinity)
+    Task.async(fn ->
+      run_supervisor()
+      Process.sleep(:infinity)
+    end)
+    |> Task.await(:infinity)
   end
 end

@@ -25,9 +25,14 @@ defmodule CKEditor.MixProject do
 
   defp deps do
     [
-      {:phoenix, "~> 1.7.0"},
+      {:phoenix, "~> 1.7.21"},
+      {:phoenix_html, "~> 4.1"},
       {:phoenix_live_view, "~> 1.0"},
+      {:telemetry_metrics, "~> 1.0", only: [:dev]},
+      {:telemetry_poller, "~> 1.0", only: [:dev]},
       {:phoenix_live_reload, "~> 1.6", only: [:dev]},
+      {:dns_cluster, "~> 0.1.1", only: [:dev]},
+      {:bandit, "~> 1.5", only: [:dev]},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
     ]

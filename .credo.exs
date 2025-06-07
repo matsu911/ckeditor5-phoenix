@@ -5,6 +5,7 @@
       files: %{
         included: [
           "lib/",
+          "playground/",
           "src/",
           "test/",
           "web/",

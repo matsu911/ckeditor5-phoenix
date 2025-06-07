@@ -1,18 +1,22 @@
 defmodule Playground.Router do
-  use Phoenix.Router
-
-  import Plug.Conn
-  import Phoenix.Controller
-  import Phoenix.LiveView.Router
-
-  @dialyzer {:nowarn_function, browser: 2}
+  use Playground, :router
 
   pipeline :browser do
-    plug(:put_root_layout, {Playground.View, :root})
-    plug(:accepts, ~w(html))
+    plug :accepts, ["html"]
+    plug :fetch_session
+    plug :fetch_live_flash
+    plug :put_root_layout, html: {Playground.Layouts, :root}
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
+  end
+
+  pipeline :api do
+    plug :accepts, ["json"]
   end
 
   scope "/", Playground do
-    pipe_through(:browser)
+    pipe_through :browser
+
+    get "/", PageController, :home
   end
 end

@@ -1,0 +1,17 @@
+{
+  "name": "ckeditor5-phoenix-playground",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "CKEditor 5 Phoenix playground assets",
+  "private": true,
+  "scripts": {
+    "build": "node esbuild.js",
+    "watch": "node esbuild.js --watch"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.5"
+  },
+  "dependencies": {
+    "esbuild-sass-plugin": "^3.3.1"
+  }
+}

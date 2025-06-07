@@ -13,10 +13,9 @@ defmodule Playground.Endpoint do
     longpoll: [connect_info: [session: @session_options]]
 
   plug Plug.Static,
-    at: "/",
-    from: :ckeditor,
-    gzip: false,
-    only: ~w(assets fonts images favicon.ico robots.txt)
+    at: "/assets",
+    from: Path.expand("./priv/static", __DIR__),
+    gzip: false
 
   if code_reloading? do
     socket "/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket

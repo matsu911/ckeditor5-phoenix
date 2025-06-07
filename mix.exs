@@ -12,7 +12,7 @@ defmodule CKEditor.MixProject do
       deps: deps(),
       package: package(),
       aliases: aliases(),
-      dialyzer: dialyzer(),
+      dialyzer: dialyzer()
     ]
   end
 

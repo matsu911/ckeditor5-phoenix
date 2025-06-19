@@ -73,7 +73,7 @@ defmodule CKEditor.MixProject do
         "tailwind ckeditor --minify",
         "esbuild ckeditor --minify",
         "phx.digest"
-      ],
+      ]
     ]
   end
 

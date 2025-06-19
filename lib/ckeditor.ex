@@ -1,5 +1,9 @@
 defmodule CKEditor5 do
-  def version do
-    "1.0.0"
-  end
+  @moduledoc """
+  The main module for CKEditor 5 integration in Phoenix Framework.
+  """
+
+  @version Mix.Project.config()[:version]
+
+  def version, do: @version
 end

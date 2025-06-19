@@ -20,7 +20,7 @@
     "npm_package"
   ],
   "lint-staged": {
-    "*.{ts,tsx}": [
+    "*.{ts,js,mjs,exs}": [
       "eslint --fix",
       "mix format --check-formatted"
     ]

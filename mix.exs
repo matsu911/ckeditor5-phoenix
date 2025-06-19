@@ -71,7 +71,11 @@ defmodule CKEditor.MixProject do
       playground: "run --no-halt -e 'Playground.App.run()'",
       "assets.typecheck": ["cmd npm run typecheck"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": ["tailwind ckeditor --minify", "esbuild ckeditor --minify"],
+      "assets.build": [
+        "cmd npm run npm_package:build",
+        "tailwind ckeditor --minify",
+        "esbuild ckeditor --minify"
+      ],
       "assets.deploy": ["assets.setup", "assets.build", "phx.digest playground/priv/static"],
       "assets.lint": ["cmd npx eslint"]
     ]

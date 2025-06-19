@@ -1,10 +1,19 @@
 {
+  "private": true,
   "scripts": {
-    "typecheck": "tsc --noEmit --pretty"
+    "typecheck": "npm run playground:typecheck && npm run npm_package:typecheck",
+    "playground:typecheck": "tsc --noEmit --pretty",
+
+    "npm_package:watch": "npm run watch --workspace=ckeditor5-phoenix",
+    "npm_package:build": "npm run build --workspace=ckeditor5-phoenix",
+    "npm_package:typecheck": "npm run typecheck --workspace=ckeditor5-phoenix "
   },
   "devDependencies": {
     "@antfu/eslint-config": "^4.15.0",
     "eslint": "^9.29.0",
     "typescript": "^5.8.3"
-  }
+  },
+  "workspaces": [
+    "npm_package"
+  ]
 }

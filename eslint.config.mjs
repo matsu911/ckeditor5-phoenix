@@ -13,7 +13,7 @@ export default antfu({
   ],
   languageOptions: {
     parserOptions: {
-      project: path.join(import.meta.dirname, 'tsconfig.json'),
+      project: path.join(import.meta.dirname, 'tsconfig.eslint.json'),
     },
   },
   typescript: {

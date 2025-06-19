@@ -1,11 +1,8 @@
-name: Code style
+name: Code checks
 
 on:
   push:
-    branches: [main]
-
   pull_request:
-    branches: [main]
 
 jobs:
   elixir_checks:

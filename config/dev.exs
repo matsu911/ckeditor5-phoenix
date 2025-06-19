@@ -14,6 +14,7 @@ config :ckeditor, Playground.Endpoint,
   render_errors: [view: Playground.View, accepts: ~w(html)],
   server: true,
   pubsub_server: Playground.PubSub,
+  serve_endpoints: true,
   watchers: [
     esbuild: {Esbuild, :install_and_run, [:ckeditor, ~w(--sourcemap=inline --watch)]},
     tailwind: {Tailwind, :install_and_run, [:ckeditor, ~w(--watch)]}

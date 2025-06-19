@@ -73,7 +73,7 @@ defmodule CKEditor.MixProject do
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
       "assets.build": ["tailwind ckeditor --minify", "esbuild ckeditor --minify"],
       "assets.deploy": ["assets.setup", "assets.build", "phx.digest playground/priv/static"],
-      "assets.lint": ["cmd npx eslint"],
+      "assets.lint": ["cmd npx eslint"]
     ]
   end
 

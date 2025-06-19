@@ -3,6 +3,8 @@
     "typecheck": "tsc --noEmit --pretty"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "^4.15.0",
+    "eslint": "^9.29.0",
     "typescript": "^5.8.3"
   }
 }

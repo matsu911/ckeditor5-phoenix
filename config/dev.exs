@@ -15,11 +15,27 @@ config :ckeditor, Playground.Endpoint,
   server: true,
   pubsub_server: Playground.PubSub,
   watchers: [
-    node: ["esbuild.js", "--watch"]
+    esbuild: {Esbuild, :install_and_run, [:ckeditor, ~w(--sourcemap=inline --watch)]},
+    tailwind: {Tailwind, :install_and_run, [:ckeditor, ~w(--watch)]}
   ],
   live_reload: [
     patterns: [
       ~r"playground/.*(ex|eex|js|css)$",
       ~r"lib/.*(ex|eex|js|css)$"
     ]
+  ]
+
+config :esbuild,
+  version: "0.25.0",
+  ckeditor: [
+    args: ~w(./js/app.js --bundle --target=es2020 --outdir=./priv/static),
+    cd: Path.expand("../playground/", __DIR__),
+    env: %{"NODE_PATH" => Path.expand("../playground/deps", __DIR__)}
+  ]
+
+config :tailwind,
+  version: "4.0.0",
+  ckeditor: [
+    args: ~w(--input=css/app.scss --output=priv/static/app.css),
+    cd: Path.expand("../playground", __DIR__)
   ]

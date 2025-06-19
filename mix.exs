@@ -24,6 +24,8 @@ defmodule CKEditor.MixProject do
   end
 
   defp deps do
+    is_dev = Mix.env() == :dev
+
     [
       {:phoenix, "~> 1.7.21"},
       {:phoenix_html, "~> 4.1"},
@@ -33,6 +35,8 @@ defmodule CKEditor.MixProject do
       {:phoenix_live_reload, "~> 1.6", only: [:dev]},
       {:dns_cluster, "~> 0.1.1", only: [:dev]},
       {:bandit, "~> 1.5", only: [:dev]},
+      {:tailwind, "~> 0.3", only: [:dev], runtime: is_dev},
+      {:esbuild, "~> 0.7", only: [:dev], runtime: is_dev},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
     ]
@@ -64,7 +68,12 @@ defmodule CKEditor.MixProject do
 
   defp aliases do
     [
-      playground: "run --no-halt -e 'Playground.App.run()'"
+      playground: "run --no-halt -e 'Playground.App.run()'",
+      "assets.deploy": [
+        "tailwind ckeditor --minify",
+        "esbuild ckeditor --minify",
+        "phx.digest"
+      ],
     ]
   end
 

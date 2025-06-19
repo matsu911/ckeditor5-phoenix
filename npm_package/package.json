@@ -22,8 +22,11 @@
     "watch": "tsc --watch --preserveWatchOutput",
     "typecheck": "tsc --noEmit --pretty"
   },
-  "dependencies": {},
+  "dependencies": {
+    "phoenix_live_view": "^1.0.17"
+  },
   "devDependencies": {
+    "@types/phoenix_live_view": "^1.0.0",
     "typescript": "^5.8.3"
   }
 }

@@ -6,4 +6,11 @@ defmodule CKEditor5 do
   @version Mix.Project.config()[:version]
 
   def version, do: @version
+
+  defmacro __using__(_opts) do
+    quote do
+      import CKEditor5.Editor.Config
+      import CKEditor5.Editor.LiveView
+    end
+  end
 end

@@ -7,7 +7,7 @@
     "strictBindCallApply": true,
     "strictFunctionTypes": true,
     "strictNullChecks": true,
-    "strictPropertyInitialization": true,
+    "strictPropertyInitialization": false,
     "allowUnreachableCode": true,
     "allowUnusedLabels": true,
     "alwaysStrict": true,

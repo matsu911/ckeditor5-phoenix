@@ -1,4 +1,13 @@
-import { version } from 'ckeditor5-phoenix';
+import * as CKE5 from 'ckeditor5-phoenix';
+import { Socket } from 'phoenix';
+import { LiveSocket } from 'phoenix_live_view';
 
-// eslint-disable-next-line no-console
-console.info(version);
+const csrfToken = document.querySelector('meta[name=\'csrf-token\']')!.getAttribute('content');
+const liveSocket = new LiveSocket('/live', Socket, {
+  params: { _csrf_token: csrfToken },
+  hooks: {
+    ...CKE5.Hooks,
+  },
+});
+
+liveSocket.connect();

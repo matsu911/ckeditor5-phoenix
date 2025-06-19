@@ -30,7 +30,7 @@ config :esbuild,
   ckeditor: [
     args: ~w(./js/app.js --bundle --target=es2020 --outdir=./priv/static),
     cd: Path.expand("../playground/", __DIR__),
-    env: %{"NODE_PATH" => Path.expand("../playground/deps", __DIR__)}
+    env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
   ]
 
 config :tailwind,

@@ -18,7 +18,11 @@ config :ckeditor, Playground.Endpoint,
   watchers: [
     esbuild: {Esbuild, :install_and_run, [:ckeditor, ~w(--sourcemap=inline --watch)]},
     tailwind: {Tailwind, :install_and_run, [:ckeditor, ~w(--watch)]},
-    npm: {System, :cmd, ["npm", ["run", "npm_package:watch"], [cd: File.cwd!(), into: IO.stream(:stdio, :line)]]}
+    npm: {
+      System,
+      :cmd,
+      ["npm", ["run", "npm_package:watch"], [cd: File.cwd!(), into: IO.stream(:stdio, :line)]]
+    }
   ],
   live_reload: [
     patterns: [

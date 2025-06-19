@@ -69,6 +69,9 @@ defmodule CKEditor.MixProject do
   defp aliases do
     [
       playground: "run --no-halt -e 'Playground.App.run()'",
+      "assets.typecheck": ["cmd npm run typecheck"],
+      "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
+      "assets.build": ["tailwind default", "esbuild default"],
       "assets.deploy": [
         "tailwind ckeditor --minify",
         "esbuild ckeditor --minify",

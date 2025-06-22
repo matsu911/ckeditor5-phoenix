@@ -1,9 +1,9 @@
-defmodule CKEditor.MixProject do
+defmodule CKEditor5.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :ckeditor,
+      app: :ckeditor5,
       description: "CKEditor 5 integration for Phoenix Framework",
       version: "0.1.0",
       elixir: "~> 1.14",
@@ -68,7 +68,7 @@ defmodule CKEditor.MixProject do
 
   defp aliases do
     [
-      playground: "run --no-halt -e 'Playground.App.run()'",
+      playground: "run -e 'Playground.App.run()'",
       "assets.typecheck": ["cmd npm run typecheck"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
       "assets.build": [

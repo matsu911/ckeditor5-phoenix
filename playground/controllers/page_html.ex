@@ -7,7 +7,6 @@ defmodule Playground.PageHTML do
   """
 
   use Playground, :html
-
   use CKEditor5
 
   embed_templates "page_html/*"

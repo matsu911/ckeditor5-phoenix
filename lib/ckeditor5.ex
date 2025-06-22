@@ -9,8 +9,7 @@ defmodule CKEditor5 do
 
   defmacro __using__(_opts) do
     quote do
-      import CKEditor5.Editor.Config
-      import CKEditor5.Editor.LiveView
+      defdelegate ckeditor5(assigns), to: CKEditor5.Components.Editor, as: :render
     end
   end
 end

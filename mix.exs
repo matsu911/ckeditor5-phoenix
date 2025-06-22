@@ -6,6 +6,7 @@ defmodule CKEditor5.MixProject do
       app: :ckeditor5,
       description: "CKEditor 5 integration for Phoenix Framework",
       version: "0.1.0",
+      default_preset_editor_version: "45.2.0",
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,

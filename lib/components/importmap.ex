@@ -13,8 +13,8 @@ defmodule CKEditor5.Components.Importmap do
 
   use Phoenix.Component
 
-  alias CKEditor5.Presets
   alias CKEditor5.Preset.License
+  alias CKEditor5.Presets
 
   @doc """
   Renders the import map script tag.

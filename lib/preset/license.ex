@@ -7,6 +7,13 @@ defmodule CKEditor5.Preset.License do
   alias CKEditor5.Preset
 
   @doc """
+  Retrieves the license key from the environment variable
+  """
+  def get_from_env_or_fallback do
+    System.get_env("CKEDITOR5_API_KEY") || "GPL"
+  end
+
+  @doc """
   Checks if the preset can use Cloud based on its license key.
   Returns true if the license key is not GPL, false otherwise.
   """

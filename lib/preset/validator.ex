@@ -72,7 +72,7 @@ defmodule CKEditor5.Preset.Validator do
   defp build_struct(parsed_map) do
     %Preset{
       config: parsed_map[:config] || %{},
-      license_key: parsed_map[:license_key] || "GPL",
+      license_key: parsed_map[:license_key] || License.get_from_env_or_fallback(),
       cloud: parsed_map[:cloud]
     }
   end

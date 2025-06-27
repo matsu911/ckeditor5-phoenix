@@ -10,6 +10,7 @@ defmodule CKEditor5 do
   defmacro __using__(_opts) do
     quote do
       defdelegate ckeditor5(assigns), to: CKEditor5.Components.Editor, as: :render
+      defdelegate ckeditor5_importmap(assigns), to: CKEditor5.Components.Importmap, as: :render
     end
   end
 end

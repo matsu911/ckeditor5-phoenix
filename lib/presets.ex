@@ -4,10 +4,10 @@ defmodule CKEditor5.Presets do
   """
 
   alias CKEditor5.Preset.Validator
+  alias CKEditor5.PresetNotFoundError
 
   @default_presets %{
     "default" => %{
-      license_key: "4234234",
       config: %{
         toolbar: [
           :undo,
@@ -89,11 +89,39 @@ defmodule CKEditor5.Presets do
 
   @doc """
   Retrieves a preset configuration by name.
+
+  Returns `{:ok, preset}` on success, or `{:error, reason}` on failure.
+  """
+  def get(preset_name) do
+    all_presets = all()
+
+    with {:ok, preset_config} <- Map.fetch(all_presets, preset_name),
+         {:ok, preset} <- Validator.parse(preset_config) do
+      {:ok, preset}
+    else
+      {:error, reason} ->
+        {:error, reason}
+
+      :error ->
+        {:error,
+         %PresetNotFoundError{
+           preset_name: preset_name,
+           available_presets: Map.keys(all_presets)
+         }}
+    end
+  end
+
+  @doc """
+  Retrieves a preset configuration by name, raising an exception on failure.
   """
   def get!(preset_name) do
-    @default_presets
-    |> Map.merge(Application.get_env(:ckeditor5, :presets, %{}))
-    |> Map.fetch!(preset_name)
-    |> Validator.parse!()
+    case get(preset_name) do
+      {:ok, preset} -> preset
+      {:error, reason} -> raise reason
+    end
+  end
+
+  defp all do
+    Map.merge(@default_presets, Application.get_env(:ckeditor5, :presets, %{}))
   end
 end

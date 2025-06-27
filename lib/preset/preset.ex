@@ -3,12 +3,12 @@ defmodule CKEditor5.Preset do
   Represents a CKEditor 5 preset configuration.
   """
 
-  alias CKEditor5.Preset.CDN
+  alias CKEditor5.Cloud
 
   @derive Jason.Encoder
   defstruct [
     :config,
-    cdn: nil,
+    cloud: nil,
     license_key: "GPL"
   ]
 
@@ -23,15 +23,15 @@ defmodule CKEditor5.Preset do
     %__MODULE__{
       config: Map.merge(preset.config || %{}, overrides[:config] || %{}),
       license_key: overrides[:license_key] || preset.license_key,
-      cdn: merge_cdn(preset.cdn, overrides[:cdn])
+      cloud: merge_cloud(preset.cloud, overrides[:cloud])
     }
   end
 
-  defp merge_cdn(preset_cdn, nil), do: preset_cdn
+  defp merge_cloud(preset_cloud, nil), do: preset_cloud
 
-  defp merge_cdn(preset_cdn, overrides_cdn) when is_map(overrides_cdn) do
-    base_cdn = preset_cdn || %CDN{}
+  defp merge_cloud(preset_cloud, overrides_cloud) when is_map(overrides_cloud) do
+    base_cloud = preset_cloud || %Cloud{}
 
-    CDN.merge(base_cdn, overrides_cdn)
+    Cloud.merge(base_cloud, overrides_cloud)
   end
 end

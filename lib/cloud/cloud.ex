@@ -1,0 +1,85 @@
+defmodule CKEditor5.Cloud do
+  @moduledoc """
+  Represents the Cloud configuration for a CKEditor 5 preset.
+  """
+
+  import Norm
+  import CKEditor5.Helpers
+
+  @default_editor_version Mix.Project.config()[:cke][:default_cloud_editor_version]
+
+  @derive Jason.Encoder
+  defstruct version: @default_editor_version,
+            premium: false
+
+  @doc """
+  Defines the schema for a raw Cloud configuration map.
+  """
+  def s do
+    schema(%{
+      version: spec(is_binary() and (&is_semver_version?/1)),
+      premium: spec(is_boolean()),
+      ckbox: spec(is_binary() and (&is_semver_version?/1))
+    })
+  end
+
+  @doc """
+  Returns default values for Cloud configuration.
+  """
+  def defaults do
+    %{
+      version: @default_editor_version,
+      premium: false
+    }
+  end
+
+  @doc """
+  Parses a map into a Cloud struct.
+  Returns {:ok, %Cloud{}} if valid, {:error, reason} if invalid.
+  """
+  def parse(nil), do: {:ok, nil}
+
+  def parse(map) when map == %{}, do: {:ok, struct(__MODULE__, defaults())}
+
+  def parse(map) when is_map(map) do
+    case conform(map, s()) do
+      {:ok, _} -> {:ok, build_struct(map)}
+      {:error, errors} -> {:error, errors}
+    end
+  end
+
+  def parse(_), do: {:error, "Cloud configuration must be a map or nil"}
+
+  @doc """
+  Parses a map into a Cloud struct.
+  Returns %Cloud{} if valid, raises an error if invalid.
+  """
+  def parse!(cloud_data) do
+    case parse(cloud_data) do
+      {:ok, cloud} -> cloud
+      {:error, reason} -> raise CKEditor5.InvalidCloudConfigurationError, reason: reason
+    end
+  end
+
+  @doc """
+  Builds a Cloud struct with default values, allowing for overrides.
+  """
+  def build_struct(overrides \\ %{}) do
+    defaults = defaults()
+
+    %__MODULE__{
+      version: Map.get(overrides, :version, defaults.version),
+      premium: Map.get(overrides, :premium, defaults.premium)
+    }
+  end
+
+  @doc """
+  Merges the current Cloud configuration with the provided overrides.
+  """
+  def merge(%__MODULE__{} = cloud, overrides) when is_map(overrides) do
+    %__MODULE__{
+      version: Map.get(overrides, :version, cloud.version),
+      premium: Map.get(overrides, :premium, cloud.premium)
+    }
+  end
+end

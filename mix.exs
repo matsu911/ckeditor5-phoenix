@@ -7,7 +7,7 @@ defmodule CKEditor5.MixProject do
       description: "CKEditor 5 integration for Phoenix Framework",
       version: "0.1.0",
       cke: %{
-        default_cdn_editor_version: "45.2.1"
+        default_cloud_editor_version: "45.2.1"
       },
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),

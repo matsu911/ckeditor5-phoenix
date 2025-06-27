@@ -21,7 +21,7 @@ defmodule CKEditor5.Components.Editor do
   """
   attr :id, :string, required: false
   attr :config, :map, required: false
-  attr :preset, :string, required: false
+  attr :preset, :string, default: "default"
   attr :rest, :global
 
   def render(assigns) do
@@ -45,8 +45,7 @@ defmodule CKEditor5.Components.Editor do
   defp assign_config_if_missing(%{config: _} = assigns), do: assigns
 
   defp assign_config_if_missing(assigns) do
-    preset = Map.get(assigns, :preset, "default")
-    config = CKEditor5.Presets.get!(preset)
+    config = CKEditor5.Presets.get!(assigns.preset)
 
     Map.put(assigns, :config, config)
   end

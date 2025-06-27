@@ -1,4 +1,4 @@
-defmodule CKEditor5.Components.Importmap do
+defmodule CKEditor5.Components.Cloud.Importmap do
   @moduledoc """
   A component for rendering an import map in Phoenix.
   This component generates a script tag with type "importmap" containing an empty imports object.

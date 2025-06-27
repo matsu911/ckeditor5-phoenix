@@ -8,7 +8,7 @@ defmodule CKEditor5.Cloud.BundleBuilder do
 
   alias CKEditor5.Cloud
   alias CKEditor5.Cloud.Bundle
-  alias CKEditor5.Cloud.Bundle.{CKEditor5, CKEditor5PremiumFeatures, CKBox}
+  alias CKEditor5.Cloud.Bundle.{CKBox, CKEditor5, CKEditor5PremiumFeatures}
 
   @doc """
   Builds the complete bundles map for the given cloud configuration.

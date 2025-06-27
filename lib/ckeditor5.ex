@@ -10,7 +10,22 @@ defmodule CKEditor5 do
   defmacro __using__(_opts) do
     quote do
       defdelegate ckeditor5(assigns), to: CKEditor5.Components.Editor, as: :render
-      defdelegate ckeditor5_importmap(assigns), to: CKEditor5.Components.Importmap, as: :render
+
+      defdelegate ckeditor5_cloud_assets(assigns),
+        to: CKEditor5.Components.Cloud.Assets,
+        as: :render
+
+      defdelegate ckeditor5_stylesheets(assigns),
+        to: CKEditor5.Components.Cloud.Stylesheets,
+        as: :render
+
+      defdelegate ckeditor5_importmap(assigns),
+        to: CKEditor5.Components.Cloud.Importmap,
+        as: :render
+
+      defdelegate ckeditor5_umd_scripts(assigns),
+        to: CKEditor5.Components.Cloud.UmdScripts,
+        as: :render
     end
   end
 end

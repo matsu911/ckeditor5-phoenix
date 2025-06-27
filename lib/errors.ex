@@ -50,14 +50,14 @@ defmodule CKEditor5.InvalidCloudConfigurationError do
   end
 end
 
-defmodule CKEditor5.CloudNotAvailableInLicenseError do
+defmodule CKEditor5.CloudNotConfiguredError do
   @moduledoc """
-  Exception raised when Cloud is not available in the current license.
+  Exception raised when Cloud is not configured in the preset.
   """
-  defexception [:license_key]
+  defexception [:preset]
 
   @impl true
-  def message(exception) do
-    "Cloud is not available in the current license: #{exception.license_key}"
+  def message(_exception) do
+    "Cloud is not configured in the used preset."
   end
 end

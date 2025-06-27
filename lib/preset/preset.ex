@@ -5,7 +5,8 @@ defmodule CKEditor5.Preset do
 
   alias CKEditor5.Cloud
 
-  @derive Jason.Encoder
+  @derive {Jason.Encoder, only: [:config, :license_key]}
+
   defstruct [
     :config,
     cloud: nil,
@@ -34,4 +35,11 @@ defmodule CKEditor5.Preset do
 
     Cloud.merge(base_cloud, overrides_cloud)
   end
+
+  @doc """
+  Checks if the preset has a Cloud configuration.
+  Returns true if the cloud field is not nil, false otherwise.
+  """
+  def has_configured_cloud?(%__MODULE__{cloud: nil}), do: false
+  def has_configured_cloud?(%__MODULE__{cloud: _}), do: true
 end

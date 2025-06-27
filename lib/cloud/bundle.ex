@@ -1,7 +1,12 @@
 defmodule CKEditor5.Cloud.Bundle do
+  alias CKEditor5.Cloud.Bundle.JSAsset
+
   @moduledoc """
   Represents a bundle of JavaScript and CSS files for CKEditor 5 Cloud.
   """
+
+  @type js_asset :: JSAsset.t()
+  @type css_asset :: binary()
 
   defstruct js: [], css: []
 

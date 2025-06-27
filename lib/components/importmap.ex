@@ -12,7 +12,9 @@ defmodule CKEditor5.Components.Importmap do
   """
 
   use Phoenix.Component
+  import Phoenix.HTML
 
+  alias CKEditor5.Cloud.BundleBuilder
   alias CKEditor5.Preset.License
   alias CKEditor5.Presets
 
@@ -24,28 +26,27 @@ defmodule CKEditor5.Components.Importmap do
   attr :preset, :string, default: "default"
 
   def render(assigns) do
-    assigns = assigns |> load_preset!()
-
-    ensure_cloud_available!(assigns.preset)
+    assigns = assign_importmap(assigns)
 
     ~H"""
-    <script type="importmap">
-      {
-        "imports": {}
-      }
-    </script>
+    <script type="importmap"><%= raw(@imports) %></script>
     """
   end
 
-  defp load_preset!(assigns) do
-    preset = Presets.get!(assigns.preset)
+  defp assign_importmap(%{preset: preset} = assigns) do
+    preset = Presets.get!(preset)
 
-    Map.put(assigns, :preset, preset)
-  end
+    License.require_cloud!(preset)
 
-  defp ensure_cloud_available!(preset) do
-    if !License.can_use_cloud?(preset) do
-      raise CKEditor5.CloudNotAvailableInLicenseError, license_key: preset.license_key
-    end
+    imports =
+      BundleBuilder.build(preset.cloud)
+      |> Map.get(:js)
+      |> Enum.filter(&(&1.type == :esm))
+      |> Enum.map(&{&1.name, &1.url})
+      |> Enum.into(%{})
+      |> then(&%{imports: &1})
+      |> Jason.encode!()
+
+    Map.put(assigns, :imports, imports)
   end
 end

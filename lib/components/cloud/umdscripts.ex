@@ -14,7 +14,7 @@ defmodule CKEditor5.Components.Cloud.UmdScripts do
   use Phoenix.Component
 
   alias CKEditor5.Cloud.AssetPackageBuilder
-  alias CKEditor5.Preset.CompatibilityChecker
+  alias CKEditor5.Preset.CloudCompatibilityChecker
   alias CKEditor5.Presets
 
   @doc """
@@ -37,7 +37,7 @@ defmodule CKEditor5.Components.Cloud.UmdScripts do
   defp assign_scripts(%{preset: preset} = assigns) do
     preset = Presets.get!(preset)
 
-    CompatibilityChecker.ensure_cloud_configured!(preset)
+    CloudCompatibilityChecker.ensure_cloud_configured!(preset)
 
     scripts =
       AssetPackageBuilder.build(preset.cloud)

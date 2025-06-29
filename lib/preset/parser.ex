@@ -7,7 +7,7 @@ defmodule CKEditor5.Preset.Parser do
   import Norm
 
   alias CKEditor5.{Cloud, Errors, License, Preset}
-  alias CKEditor5.Preset.CompatibilityChecker
+  alias CKEditor5.Preset.CloudCompatibilityChecker
 
   @doc """
   Defines the schema for a preset configuration map.
@@ -82,7 +82,7 @@ defmodule CKEditor5.Preset.Parser do
   defp build_and_validate(parsed_map) do
     preset = build_struct(parsed_map)
 
-    case CompatibilityChecker.check_cloud_compatibility(preset) do
+    case CloudCompatibilityChecker.check_cloud_compatibility(preset) do
       {:ok, _} -> {:ok, preset}
       {:error, reason} -> {:error, reason}
     end

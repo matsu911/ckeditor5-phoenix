@@ -14,7 +14,7 @@ defmodule CKEditor5.Components.Cloud.Stylesheets do
   use Phoenix.Component
 
   alias CKEditor5.Cloud.AssetPackageBuilder
-  alias CKEditor5.Preset.CompatibilityChecker
+  alias CKEditor5.Preset.CloudCompatibilityChecker
   alias CKEditor5.Presets
 
   @doc """
@@ -37,7 +37,7 @@ defmodule CKEditor5.Components.Cloud.Stylesheets do
   defp assign_stylesheets(%{preset: preset} = assigns) do
     preset = Presets.get!(preset)
 
-    CompatibilityChecker.ensure_cloud_configured!(preset)
+    CloudCompatibilityChecker.ensure_cloud_configured!(preset)
 
     stylesheets =
       AssetPackageBuilder.build(preset.cloud)

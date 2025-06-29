@@ -1,4 +1,4 @@
-defmodule CKEditor5.Preset.CompatibilityChecker do
+defmodule CKEditor5.Preset.CloudCompatibilityChecker do
   @moduledoc """
   Enforces business rules and compatibility constraints for CKEditor5 presets.
   Specifically handles Cloud service licensing requirements and configuration validation.
@@ -37,5 +37,6 @@ defmodule CKEditor5.Preset.CompatibilityChecker do
 
   Returns `true` if Cloud usage is allowed, `false` otherwise.
   """
-  def cloud_allowed?(%Preset{license: license}), do: License.cloud_distribution?(license)
+  def cloud_allowed?(%Preset{license: license}),
+    do: License.Assertions.compatible_cloud_distribution?(license)
 end

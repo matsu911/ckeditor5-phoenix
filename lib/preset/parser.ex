@@ -6,7 +6,7 @@ defmodule CKEditor5.Preset.Parser do
 
   import Norm
 
-  alias CKEditor5.{Errors, Cloud, Preset, License}
+  alias CKEditor5.{Cloud, Errors, License, Preset}
   alias CKEditor5.Preset.CompatibilityChecker
 
   @doc """

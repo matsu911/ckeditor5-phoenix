@@ -4,7 +4,7 @@ defmodule CKEditor5.Cloud do
   """
 
   import Norm
-  alias CKEditor5.{Helpers, Errors}
+  alias CKEditor5.{Errors, Helpers}
 
   @default_editor_version Mix.Project.config()[:cke][:default_cloud_editor_version]
 

@@ -4,7 +4,7 @@ defmodule CKEditor5.Preset.CompatibilityChecker do
   Specifically handles Cloud service licensing requirements and configuration validation.
   """
 
-  alias CKEditor5.{Errors, Preset, License}
+  alias CKEditor5.{Errors, License, Preset}
 
   @doc """
   Checks if Cloud configuration is compatible with the preset's license key.

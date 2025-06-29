@@ -1,6 +1,6 @@
-defmodule CKEditor5.Cloud.Bundle.JSAsset do
+defmodule CKEditor5.Cloud.AssetPackage.JSAsset do
   @moduledoc """
-  Represents a JavaScript asset in a bundle.
+  Represents a JavaScript asset in an asset package.
   """
 
   @enforce_keys [:name, :url, :type]

@@ -14,7 +14,7 @@ defmodule CKEditor5.Components.Cloud.Importmap do
   use Phoenix.Component
   import Phoenix.HTML
 
-  alias CKEditor5.Cloud.BundleBuilder
+  alias CKEditor5.Cloud.AssetPackageBuilder
   alias CKEditor5.Preset.License
   alias CKEditor5.Presets
 
@@ -39,7 +39,7 @@ defmodule CKEditor5.Components.Cloud.Importmap do
     License.require_cloud!(preset)
 
     imports =
-      BundleBuilder.build(preset.cloud)
+      AssetPackageBuilder.build(preset.cloud)
       |> Map.get(:js)
       |> Enum.filter(&(&1.type == :esm))
       |> Enum.map(&{&1.name, &1.url})

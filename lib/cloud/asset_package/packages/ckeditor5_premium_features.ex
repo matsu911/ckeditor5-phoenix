@@ -1,17 +1,17 @@
-defmodule CKEditor5.Cloud.Bundle.CKEditor5PremiumFeatures do
+defmodule CKEditor5.Cloud.AssetPackage.CKEditor5PremiumFeatures do
   @moduledoc """
-  Generates bundle URLs for CKEditor5 Premium Features.
+  Generates asset package URLs for CKEditor5 Premium Features.
   """
 
-  alias CKEditor5.Cloud.Bundle
-  alias CKEditor5.Cloud.Bundle.JSAsset
+  alias CKEditor5.Cloud.AssetPackage
+  alias CKEditor5.Cloud.AssetPackage.JSAsset
 
   import CKEditor5.Cloud.UrlBuilder, only: [build_url: 1]
 
   @doc """
   Creates URLs for CKEditor5 Premium Features JavaScript and CSS files.
   """
-  def build_bundle(version, translations \\ []) do
+  def build_package(version, translations \\ []) do
     css_url = build_url(["ckeditor5-premium-features", version, "ckeditor5-premium-features.css"])
 
     js_asset = %JSAsset{
@@ -35,7 +35,7 @@ defmodule CKEditor5.Cloud.Bundle.CKEditor5PremiumFeatures do
         }
       end)
 
-    %Bundle{
+    %AssetPackage{
       js: [js_asset | translation_js_assets],
       css: [css_url]
     }

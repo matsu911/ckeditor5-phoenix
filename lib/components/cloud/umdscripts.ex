@@ -13,7 +13,7 @@ defmodule CKEditor5.Components.Cloud.UmdScripts do
 
   use Phoenix.Component
 
-  alias CKEditor5.Cloud.BundleBuilder
+  alias CKEditor5.Cloud.AssetPackageBuilder
   alias CKEditor5.Preset.License
   alias CKEditor5.Presets
 
@@ -40,7 +40,7 @@ defmodule CKEditor5.Components.Cloud.UmdScripts do
     License.require_cloud!(preset)
 
     scripts =
-      BundleBuilder.build(preset.cloud)
+      AssetPackageBuilder.build(preset.cloud)
       |> Map.get(:js)
       |> Enum.filter(&(&1.type == :umd))
       |> Enum.map(& &1.url)

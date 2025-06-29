@@ -1,17 +1,17 @@
-defmodule CKEditor5.Cloud.Bundle.CKBox do
+defmodule CKEditor5.Cloud.AssetPackage.CKBox do
   @moduledoc """
-  Generates bundle URLs for CKBox.
+  Generates asset package URLs for CKBox.
   """
 
-  alias CKEditor5.Cloud.Bundle
-  alias CKEditor5.Cloud.Bundle.JSAsset
+  alias CKEditor5.Cloud.AssetPackage
+  alias CKEditor5.Cloud.AssetPackage.JSAsset
 
   import CKEditor5.Cloud.UrlBuilder, only: [build_url: 1]
 
   @doc """
   Creates URLs for CKBox JavaScript and CSS files.
   """
-  def build_bundle(version, translations \\ []) do
+  def build_package(version, translations \\ []) do
     css_url = build_url(["ckbox", version, "styles", "themes", "theme.css"])
 
     js_asset = %JSAsset{
@@ -29,7 +29,7 @@ defmodule CKEditor5.Cloud.Bundle.CKBox do
         }
       end)
 
-    %Bundle{
+    %AssetPackage{
       js: [js_asset | translation_js_assets],
       css: [css_url]
     }

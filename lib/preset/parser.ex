@@ -1,14 +1,13 @@
-defmodule CKEditor5.Preset.Validator do
+defmodule CKEditor5.Preset.Parser do
   @moduledoc """
-  Validates CKEditor5 preset configurations.
+  Parses CKEditor5 preset configurations.
   Ensures that the configuration adheres to the expected schema and constraints.
   """
 
   import Norm
 
-  alias CKEditor5.Cloud
-  alias CKEditor5.Preset
-  alias CKEditor5.Preset.License
+  alias CKEditor5.{Errors, Cloud, Preset, License}
+  alias CKEditor5.Preset.CompatibilityChecker
 
   @doc """
   Defines the schema for a preset configuration map.
@@ -31,6 +30,7 @@ defmodule CKEditor5.Preset.Validator do
   def parse(preset_map) when is_map(preset_map) do
     with {:ok, _} <- conform(preset_map, s()),
          {:ok, parsed_map} <- parse_cloud(preset_map),
+         {:ok, parsed_map} <- parse_license_key(parsed_map),
          {:ok, preset} <- build_and_validate(parsed_map) do
       {:ok, preset}
     else
@@ -47,7 +47,27 @@ defmodule CKEditor5.Preset.Validator do
   def parse!(preset_map) do
     case parse(preset_map) do
       {:ok, preset} -> preset
-      {:error, reason} -> raise CKEditor5.InvalidPresetError, reason: reason
+      {:error, reason} -> raise Errors.InvalidPreset, reason: reason
+    end
+  end
+
+  # Parses the license key from a map into a License struct.
+  defp parse_license_key(preset_map) do
+    license_result =
+      case preset_map[:license_key] do
+        nil -> License.env_license_or_gpl()
+        key -> License.new(key)
+      end
+
+    case license_result do
+      {:ok, license} ->
+        preset_map
+        |> Map.put(:license, license)
+        |> Map.delete(:license_key)
+        |> then(&{:ok, &1})
+
+      {:error, error} ->
+        {:error, error}
     end
   end
 
@@ -62,17 +82,18 @@ defmodule CKEditor5.Preset.Validator do
   defp build_and_validate(parsed_map) do
     preset = build_struct(parsed_map)
 
-    case License.validate(preset) do
+    case CompatibilityChecker.check_cloud_compatibility(preset) do
       {:ok, _} -> {:ok, preset}
       {:error, reason} -> {:error, reason}
     end
   end
 
   # Builds a Preset struct from a parsed map, setting default values.
+  # It's map passed from configuration file or environment variables.
   defp build_struct(parsed_map) do
     %Preset{
       config: parsed_map[:config] || %{},
-      license_key: parsed_map[:license_key] || License.get_from_env_or_fallback(),
+      license: parsed_map[:license],
       cloud: parsed_map[:cloud]
     }
   end

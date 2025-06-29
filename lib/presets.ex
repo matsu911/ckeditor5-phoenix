@@ -3,8 +3,8 @@ defmodule CKEditor5.Presets do
   Provides predefined configurations (presets) for CKEditor 5.
   """
 
-  alias CKEditor5.Preset.Validator
-  alias CKEditor5.PresetNotFoundError
+  alias CKEditor5.Errors
+  alias CKEditor5.Preset.Parser
 
   @default_presets %{
     "default" => %{
@@ -96,7 +96,7 @@ defmodule CKEditor5.Presets do
     all_presets = all()
 
     with {:ok, preset_config} <- Map.fetch(all_presets, preset_name),
-         {:ok, preset} <- Validator.parse(preset_config) do
+         {:ok, preset} <- Parser.parse(preset_config) do
       {:ok, preset}
     else
       {:error, reason} ->
@@ -104,7 +104,7 @@ defmodule CKEditor5.Presets do
 
       :error ->
         {:error,
-         %PresetNotFoundError{
+         %Errors.PresetNotFound{
            preset_name: preset_name,
            available_presets: Map.keys(all_presets)
          }}

@@ -8,7 +8,7 @@ defmodule CKEditor5.Components.Editor do
 
   use Phoenix.LiveComponent
 
-  import CKEditor5.Helpers
+  alias CKEditor5.Helpers
 
   @doc """
   Renders the CKEditor 5 component in a LiveView.
@@ -27,7 +27,7 @@ defmodule CKEditor5.Components.Editor do
   def render(assigns) do
     assigns =
       assigns
-      |> assign_id_if_missing("cke")
+      |> Helpers.assign_id_if_missing("cke")
       |> assign_config_if_missing()
 
     ~H"""

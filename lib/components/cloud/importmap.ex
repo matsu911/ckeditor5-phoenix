@@ -15,7 +15,7 @@ defmodule CKEditor5.Components.Cloud.Importmap do
   import Phoenix.HTML
 
   alias CKEditor5.Cloud.AssetPackageBuilder
-  alias CKEditor5.Preset.License
+  alias CKEditor5.Preset.CompatibilityChecker
   alias CKEditor5.Presets
 
   @doc """
@@ -36,7 +36,7 @@ defmodule CKEditor5.Components.Cloud.Importmap do
   defp assign_importmap(%{preset: preset} = assigns) do
     preset = Presets.get!(preset)
 
-    License.require_cloud!(preset)
+    CompatibilityChecker.ensure_cloud_configured!(preset)
 
     imports =
       AssetPackageBuilder.build(preset.cloud)

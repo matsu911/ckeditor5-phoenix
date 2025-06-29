@@ -34,6 +34,7 @@ defmodule CKEditor5.MixProject do
       {:phoenix_html, "~> 4.1"},
       {:phoenix_live_view, "~> 1.0"},
       {:norm, "~> 0.13"},
+      {:memoize, "~> 1.4"},
       {:telemetry_metrics, "~> 1.0", only: [:dev]},
       {:telemetry_poller, "~> 1.0", only: [:dev]},
       {:phoenix_live_reload, "~> 1.6", only: [:dev]},

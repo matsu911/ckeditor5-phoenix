@@ -36,7 +36,6 @@ defmodule CKEditor5.Cloud.AssetPackageBuilder do
     AssetPackage.merge(asset_package, premium_package)
   end
 
-  # No-op when premium features are disabled
   defp add_premium_features_package(asset_package, %{premium: false}), do: asset_package
 
   # Adds CKBox package when CKBox version is specified
@@ -48,6 +47,5 @@ defmodule CKEditor5.Cloud.AssetPackageBuilder do
     AssetPackage.merge(asset_package, ckbox_package)
   end
 
-  # No-op when CKBox is not configured (ckbox: nil)
   defp add_ckbox_package(asset_package, %{ckbox: nil}), do: asset_package
 end

@@ -4,7 +4,7 @@ defmodule CKEditor5.Cloud do
   """
 
   import Norm
-  import CKEditor5.Helpers
+  alias CKEditor5.{Helpers, Errors}
 
   @default_editor_version Mix.Project.config()[:cke][:default_cloud_editor_version]
 
@@ -20,9 +20,9 @@ defmodule CKEditor5.Cloud do
   """
   def s do
     schema(%{
-      version: spec(is_binary() and (&is_semver_version?/1)),
+      version: spec(is_binary() and (&Helpers.is_semver_version?/1)),
       premium: spec(is_boolean()),
-      ckbox: spec(is_binary() and (&is_semver_version?/1)),
+      ckbox: spec(is_binary() and (&Helpers.is_semver_version?/1)),
       translations: coll_of(spec(is_binary))
     })
   end
@@ -61,7 +61,7 @@ defmodule CKEditor5.Cloud do
   def parse!(cloud_data) do
     case parse(cloud_data) do
       {:ok, cloud} -> cloud
-      {:error, reason} -> raise CKEditor5.InvalidCloudConfigurationError, reason: reason
+      {:error, reason} -> raise Errors.InvalidCloudConfiguration, reason: reason
     end
   end
 

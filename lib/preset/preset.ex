@@ -41,5 +41,5 @@ defmodule CKEditor5.Preset do
   Checks if the preset has a Cloud configuration.
   Returns true if the cloud field is not nil, false otherwise.
   """
-  def has_configured_cloud?(%__MODULE__{cloud: cloud}), do: cloud != nil
+  def configured_cloud?(%__MODULE__{cloud: cloud}), do: cloud != nil
 end

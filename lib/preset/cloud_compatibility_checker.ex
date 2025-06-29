@@ -4,21 +4,22 @@ defmodule CKEditor5.Preset.CloudCompatibilityChecker do
   Specifically handles Cloud service licensing requirements and configuration validation.
   """
 
-  alias CKEditor5.{Errors, License, Preset}
+  alias CKEditor5.License.Assertions
+  alias CKEditor5.{Errors, Preset}
 
   @doc """
-  Checks if Cloud configuration is compatible with the preset's license key.
-  Cloud services require a commercial license and cannot be used with GPL.
-
-  Returns `{:ok, :valid}` if configuration is valid, `{:error, reason}` otherwise.
+  Checks if the preset's Cloud configuration is valid based on the license type.
   """
-  def check_cloud_compatibility(%Preset{cloud: nil}), do: {:ok, :valid}
+  def check_proper_cloud_config(%Preset{cloud: _cloud, license: license} = preset) do
+    cond do
+      Assertions.cloud_distribution?(license) and !Preset.configured_cloud?(preset) ->
+        {:error, %Errors.CloudNotConfigured{preset: preset}}
 
-  def check_cloud_compatibility(%Preset{cloud: _cloud} = preset) do
-    if cloud_allowed?(preset) do
-      {:ok, :valid}
-    else
-      {:error, %Errors.CloudRequiresCommercialLicense{preset: preset}}
+      !Assertions.compatible_cloud_distribution?(license) and Preset.configured_cloud?(preset) ->
+        {:error, %Errors.CloudCannotBeUsedWithLicenseKey{preset: preset, license: license}}
+
+      true ->
+        {:ok, :valid}
     end
   end
 
@@ -30,13 +31,4 @@ defmodule CKEditor5.Preset.CloudCompatibilityChecker do
   end
 
   def ensure_cloud_configured!(%Preset{}), do: :ok
-
-  @doc """
-  Determines if the preset is allowed to use Cloud services based on its license.
-  Cloud services are only available with commercial licenses (non-GPL).
-
-  Returns `true` if Cloud usage is allowed, `false` otherwise.
-  """
-  def cloud_allowed?(%Preset{license: license}),
-    do: License.Assertions.compatible_cloud_distribution?(license)
 end

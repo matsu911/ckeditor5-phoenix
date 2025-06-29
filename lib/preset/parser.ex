@@ -82,7 +82,7 @@ defmodule CKEditor5.Preset.Parser do
   defp build_and_validate(parsed_map) do
     preset = build_struct(parsed_map)
 
-    case CloudCompatibilityChecker.check_cloud_compatibility(preset) do
+    case CloudCompatibilityChecker.check_proper_cloud_config(preset) do
       {:ok, _} -> {:ok, preset}
       {:error, reason} -> {:error, reason}
     end

@@ -7,6 +7,8 @@ defmodule CKEditor5.License do
 
   alias CKEditor5.Errors
 
+  @env_license_key_name "CKEDITOR5_LICENSE_KEY"
+
   @derive {Jason.Encoder, only: [:key]}
 
   @enforce_keys [:key, :distribution_channel]
@@ -39,8 +41,8 @@ defmodule CKEditor5.License do
   Returns the default license key from environment variable or "GPL".
   """
   def env_license_or_gpl do
-    case System.get_env("CKEDITOR5_LICENSE_KEY") do
-      nil -> gpl()
+    case System.get_env(@env_license_key_name) do
+      nil -> {:ok, gpl()}
       key -> new(key)
     end
   end
@@ -58,7 +60,12 @@ defmodule CKEditor5.License do
   @doc """
   Checks if the license key is a GPL license.
   """
+  def gpl?(%__MODULE__{key: "GPL"}), do: true
+
+  def gpl?(%__MODULE__{}), do: false
+
   def gpl?("GPL"), do: true
+
   def gpl?(_), do: false
 
   @doc """

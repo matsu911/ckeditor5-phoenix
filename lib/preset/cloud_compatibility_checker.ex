@@ -5,21 +5,21 @@ defmodule CKEditor5.Preset.CloudCompatibilityChecker do
   """
 
   alias CKEditor5.License.Assertions
-  alias CKEditor5.{Errors, Preset}
+  alias CKEditor5.{Cloud, Errors, Preset}
 
   @doc """
   Checks if the preset's Cloud configuration is valid based on the license type.
   """
-  def check_proper_cloud_config(%Preset{cloud: _cloud, license: license} = preset) do
+  def handle_cloud_config(%Preset{cloud: _cloud, license: license} = preset) do
     cond do
-      Assertions.cloud_distribution?(license) and !Preset.configured_cloud?(preset) ->
-        {:error, %Errors.CloudNotConfigured{preset: preset}}
+      Assertions.compatible_cloud_distribution?(license) and !Preset.configured_cloud?(preset) ->
+        {:ok, %{preset | cloud: %Cloud{}}}
 
       !Assertions.compatible_cloud_distribution?(license) and Preset.configured_cloud?(preset) ->
         {:error, %Errors.CloudCannotBeUsedWithLicenseKey{preset: preset, license: license}}
 
       true ->
-        {:ok, :valid}
+        {:ok, preset}
     end
   end
 

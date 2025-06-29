@@ -80,12 +80,9 @@ defmodule CKEditor5.Preset.Parser do
 
   # Builds a Preset struct from a parsed map and validates it with license constraints.
   defp build_and_validate(parsed_map) do
-    preset = build_struct(parsed_map)
-
-    case CloudCompatibilityChecker.check_proper_cloud_config(preset) do
-      {:ok, _} -> {:ok, preset}
-      {:error, reason} -> {:error, reason}
-    end
+    parsed_map
+    |> build_struct()
+    |> CloudCompatibilityChecker.handle_cloud_config()
   end
 
   # Builds a Preset struct from a parsed map, setting default values.

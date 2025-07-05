@@ -4,7 +4,9 @@ defmodule CKEditor5.Preset.CloudCompatibilityChecker do
   Specifically handles Cloud Distribution Channel licensing requirements and configuration validation.
   """
 
-  alias CKEditor5.License.Assertions
+  import CKEditor5.License.Assertions, only: [compatible_cloud_distribution?: 1]
+  import CKEditor5.Preset, only: [configured_cloud?: 1]
+
   alias CKEditor5.{Cloud, Errors, Preset}
 
   @doc """
@@ -12,10 +14,10 @@ defmodule CKEditor5.Preset.CloudCompatibilityChecker do
   """
   def assign_default_cloud_config(%Preset{cloud: _cloud, license: license} = preset) do
     cond do
-      Assertions.compatible_cloud_distribution?(license) and !Preset.configured_cloud?(preset) ->
+      compatible_cloud_distribution?(license) and !configured_cloud?(preset) ->
         {:ok, %{preset | cloud: %Cloud{}}}
 
-      !Assertions.compatible_cloud_distribution?(license) and Preset.configured_cloud?(preset) ->
+      !compatible_cloud_distribution?(license) and configured_cloud?(preset) ->
         {:error, %Errors.CloudCannotBeUsedWithLicenseKey{preset: preset, license: license}}
 
       true ->
@@ -28,10 +30,10 @@ defmodule CKEditor5.Preset.CloudCompatibilityChecker do
   """
   def ensure_cloud_configured!(%Preset{} = preset) do
     cond do
-      !Assertions.compatible_cloud_distribution?(preset.license) ->
+      !compatible_cloud_distribution?(preset.license) ->
         raise Errors.CloudCannotBeUsedWithLicenseKey, preset: preset, license: preset.license
 
-      !Preset.configured_cloud?(preset) ->
+      !configured_cloud?(preset) ->
         raise Errors.CloudNotConfigured, preset: preset
 
       true ->

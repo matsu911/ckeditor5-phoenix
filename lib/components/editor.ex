@@ -8,8 +8,8 @@ defmodule CKEditor5.Components.Editor do
 
   use Phoenix.LiveComponent
 
-  alias Phoenix.HTML
   alias CKEditor5.Helpers
+  alias Phoenix.HTML
 
   @doc """
   Renders the CKEditor 5 component in a LiveView.

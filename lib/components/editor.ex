@@ -9,6 +9,7 @@ defmodule CKEditor5.Components.Editor do
   use Phoenix.LiveComponent
 
   alias CKEditor5.Helpers
+  alias CKEditor5.Components.HiddenInput
   alias Phoenix.HTML
 
   @doc """
@@ -28,15 +29,14 @@ defmodule CKEditor5.Components.Editor do
   attr :id, :string, required: false
   attr :preset, :string, default: "default"
   attr :editable_height, :string, required: false
-  attr :field, HTML.FormField, required: false
-  attr :value, :string, required: false
+  attr :field, HTML.FormField, required: false, default: nil
+  attr :value, :string, required: false, default: ""
   attr :required, :boolean, default: false
   attr :rest, :global
 
   def render(assigns) do
     assigns =
-      %{field: nil, value: nil}
-      |> Map.merge(assigns)
+      assigns
       |> Helpers.assign_id_if_missing("cke")
       |> assign_loaded_preset()
       |> normalize_editable_height()
@@ -53,7 +53,7 @@ defmodule CKEditor5.Components.Editor do
     >
       <div id={"#{@id}_editor"}></div>
       <%= if @field do %>
-        <.hidden_input
+        <HiddenInput.render
           id={"#{@id}_input"}
           name={HTML.Form.input_name(@field.form, @field.field)}
           value={@value}
@@ -61,35 +61,6 @@ defmodule CKEditor5.Components.Editor do
         />
       <% end %>
     </div>
-    """
-  end
-
-  attr :id, :string, required: true
-  attr :name, :string, required: true
-  attr :value, :string
-  attr :required, :boolean, default: false
-
-  defp hidden_input(assigns) do
-    ~H"""
-    <input
-      id={@id}
-      name={@name}
-      value={@value}
-      required={@required}
-      type="hidden"
-      style={
-        Helpers.serialize_styles_map(%{
-          display: "flex",
-          width: "100%",
-          height: "1px",
-          opacity: "0",
-          "pointer-events": "none",
-          margin: "0",
-          padding: "0",
-          border: "none"
-        })
-      }
-    />
     """
   end
 

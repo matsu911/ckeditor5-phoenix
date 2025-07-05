@@ -2,6 +2,7 @@ import { debounce, parseIntIfNotNull } from 'shared';
 
 import { ClassHook } from '../../shared/hook';
 import {
+  isSingleEditingLikeEditor,
   loadEditorConstructor,
   loadEditorPlugins,
   readPresetOrThrow,
@@ -15,21 +16,15 @@ import {
  * the CKEditor 5 WYSIWYG editor.
  */
 export class EditorHook extends ClassHook {
-  get id() {
-    return this.el.getAttribute('id');
-  }
-
   override async mounted() {
     const { type, license, config: { plugins, ...config } } = readPresetOrThrow(this.el);
 
-    const elements = {
-      editor: document.getElementById(`${this.id}_editor`),
-      input: document.getElementById(`${this.id}_input`) as HTMLInputElement | null,
-    };
+    const id = this.el.getAttribute('id');
+    const editorElement = document.getElementById(`${id}_editor`);
 
     const Editor = await loadEditorConstructor(type);
     const editor = await Editor.create(
-      elements.editor as any,
+      editorElement as any,
       {
         ...config,
         initialData: this.el.getAttribute('cke-initial-value') || '',
@@ -38,20 +33,25 @@ export class EditorHook extends ClassHook {
       },
     );
 
-    // Apply editor height if specified.
-    const editableHeight = parseIntIfNotNull(this.el.getAttribute('cke-editable-height'));
+    // Apply some attributes related to the editor types with single editing text area.
+    if (isSingleEditingLikeEditor(type)) {
+      // Apply editor height if specified.
+      const editableHeight = parseIntIfNotNull(this.el.getAttribute('cke-editable-height'));
 
-    if (editableHeight) {
-      setEditorEditableHeight(editor, editableHeight);
-    }
+      if (editableHeight) {
+        setEditorEditableHeight(editor, editableHeight);
+      }
 
-    // Sync input value if present
-    if (elements.input) {
-      const debouncedSync = debounce(100, () => {
-        elements.input!.value = editor.getData();
-      });
+      // Sync input value if present
+      const inputElement = document.getElementById(`${id}_input`) as HTMLInputElement | null;
 
-      editor.model.document.on('change:data', debouncedSync);
+      if (inputElement) {
+        const debouncedSync = debounce(100, () => {
+          inputElement.value = editor.getData();
+        });
+
+        editor.model.document.on('change:data', debouncedSync);
+      }
     }
   }
 }

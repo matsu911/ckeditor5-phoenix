@@ -7,7 +7,7 @@ defmodule CKEditor5.Preset.Parser do
   import Norm
 
   alias CKEditor5.{Cloud, Errors, License, Preset}
-  alias CKEditor5.Preset.CloudCompatibilityChecker
+  alias CKEditor5.Preset.{EditorType, CloudCompatibilityChecker}
 
   @doc """
   Defines the schema for a preset configuration map.
@@ -15,7 +15,7 @@ defmodule CKEditor5.Preset.Parser do
   def s do
     schema =
       schema(%{
-        type: one_of([:inline, :classic, :balloon, :decoupled, :multiroot]),
+        type: EditorType.s(),
         cloud: Cloud.s(),
         license_key: spec(is_binary()),
         config: spec(is_map())

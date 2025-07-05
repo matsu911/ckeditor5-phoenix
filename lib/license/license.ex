@@ -10,6 +10,10 @@ defmodule CKEditor5.License do
   @env_license_key_name "CKEDITOR5_LICENSE_KEY"
   @derive {Jason.Encoder, only: [:key]}
   @enforce_keys [:key, :distribution_channel]
+  @type t :: %__MODULE__{
+          key: String.t(),
+          distribution_channel: String.t()
+        }
 
   defstruct [:key, :distribution_channel]
 

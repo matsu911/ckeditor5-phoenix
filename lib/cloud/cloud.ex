@@ -7,9 +7,13 @@ defmodule CKEditor5.Cloud do
   alias CKEditor5.{Errors, Helpers}
 
   @default_editor_version Mix.Project.config()[:cke][:default_cloud_editor_version]
-
   @derive Jason.Encoder
-
+  @type t :: %__MODULE__{
+          version: String.t(),
+          premium: boolean(),
+          translations: [String.t()],
+          ckbox: String.t() | nil
+        }
   defstruct version: @default_editor_version,
             premium: false,
             translations: [],

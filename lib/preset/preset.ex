@@ -8,6 +8,12 @@ defmodule CKEditor5.Preset do
 
   @derive {Jason.Encoder, only: [:type, :config, :license]}
   @enforce_keys [:config]
+  @type t :: %__MODULE__{
+          type: atom(),
+          config: map(),
+          cloud: Cloud.t() | nil,
+          license: License.t()
+        }
 
   defstruct [
     :config,

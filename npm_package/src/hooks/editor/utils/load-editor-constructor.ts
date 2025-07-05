@@ -2,6 +2,9 @@ import type { EditorType } from '../typings';
 
 /**
  * Returns the constructor for the specified CKEditor5 editor type.
+ *
+ * @param type - The type of the editor to load.
+ * @returns A promise that resolves to the editor constructor.
  */
 export async function loadEditorConstructor(type: EditorType) {
   const PKG = await import('ckeditor5');

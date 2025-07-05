@@ -10,6 +10,8 @@ defmodule CKEditor5.Components.Editor do
 
   alias CKEditor5.Components.HiddenInput
   alias CKEditor5.Helpers
+  alias CKEditor5.Preset
+  alias CKEditor5.Preset.EditorType
   alias Phoenix.HTML
 
   @doc """
@@ -43,6 +45,7 @@ defmodule CKEditor5.Components.Editor do
       assigns
       |> Helpers.assign_id_if_missing("cke")
       |> assign_loaded_preset()
+      |> validate_name_for_editor_type()
       |> normalize_editable_height()
 
     ~H"""
@@ -68,12 +71,30 @@ defmodule CKEditor5.Components.Editor do
     """
   end
 
+  # Loads the preset configuration from the preset name
   defp assign_loaded_preset(assigns) do
     preset = CKEditor5.Presets.get!(assigns.preset)
 
     Map.put(assigns, :preset, preset)
   end
 
+  # Validates that form integration is not used with single editing-like editors
+  defp validate_name_for_editor_type(
+         %{preset: %Preset{type: preset_type}, field: field, name: name} = assigns
+       )
+       when not is_nil(field) or not is_nil(name) do
+    if not EditorType.single_editing_like?(preset_type) do
+      raise ArgumentError,
+            "Editor type '#{preset_type}' does not support form integration. " <>
+              "Remove the `field` and `name` attributes for non-single editing-like editors."
+    end
+
+    assigns
+  end
+
+  defp validate_name_for_editor_type(assigns), do: assigns
+
+  # Normalizes the editable height value by removing 'px' suffix if present
   defp normalize_editable_height(%{editable_height: nil} = assigns), do: assigns
 
   defp normalize_editable_height(%{editable_height: editable_height} = assigns) do

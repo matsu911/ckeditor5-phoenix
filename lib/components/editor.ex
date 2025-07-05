@@ -8,8 +8,8 @@ defmodule CKEditor5.Components.Editor do
 
   use Phoenix.LiveComponent
 
-  alias CKEditor5.Helpers
   alias CKEditor5.Components.HiddenInput
+  alias CKEditor5.Helpers
   alias Phoenix.HTML
 
   @doc """
@@ -20,6 +20,9 @@ defmodule CKEditor5.Components.Editor do
     * `:preset` - Optional string preset name (defaults to "default")
     * `:editable_height` - Optional string to set the height of the editable area
       (e.g., "300px"). If not provided, the height will be determined by the editor's content.
+    * `:name` - Optional string name for the editor, used for form integration
+      (if `:field` is provided). If not provided, the name will be derived
+      from the `:field` attribute.
     * `:field` - Optional Phoenix.HTML.FormField for form integration
     * `:value` - Optional string value for the editor content
     * `:required` - Optional boolean to indicate if the editor is required
@@ -29,6 +32,7 @@ defmodule CKEditor5.Components.Editor do
   attr :id, :string, required: false
   attr :preset, :string, default: "default"
   attr :editable_height, :string, required: false
+  attr :name, :string, required: false, default: nil
   attr :field, HTML.FormField, required: false, default: nil
   attr :value, :string, required: false, default: ""
   attr :required, :boolean, default: false
@@ -55,7 +59,7 @@ defmodule CKEditor5.Components.Editor do
       <%= if @field do %>
         <HiddenInput.render
           id={"#{@id}_input"}
-          name={HTML.Form.input_name(@field.form, @field.field)}
+          name={@name || HTML.Form.input_name(@field.form, @field.field)}
           value={@value}
           required={@required}
         />

@@ -24,7 +24,7 @@ defmodule CKEditor5.Components.Cloud.Importmap do
   This component does not take any specific assigns, but it can be customized with a `:preset` assign
   to specify which preset's import map to use.
   """
-  attr :preset, :string, default: "default"
+  attr :preset, :string, default: "default", doc: "The name of the preset to use."
 
   def render(assigns) do
     assigns = assign_importmap(assigns)

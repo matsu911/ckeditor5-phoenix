@@ -7,10 +7,10 @@ defmodule CKEditor5.Components.HiddenInput do
 
   alias CKEditor5.Helpers
 
-  attr :id, :string, required: true
-  attr :name, :string, required: true
-  attr :value, :string, required: false, default: ""
-  attr :required, :boolean, default: false
+  attr :id, :string, required: true, doc: "The ID of the hidden input."
+  attr :name, :string, required: true, doc: "The name of the hidden input."
+  attr :value, :string, required: false, default: "", doc: "The value of the hidden input."
+  attr :required, :boolean, default: false, doc: "Whether the input is required."
 
   @doc """
   Renders a hidden input field with the specified attributes.

@@ -21,7 +21,7 @@ defmodule CKEditor5.Components.Cloud.Assets do
   Renders all the assets by composing individual cloud components.
   Accepts a `:preset` assign to specify which preset's assets to use.
   """
-  attr :preset, :string, default: "default"
+  attr :preset, :string, default: "default", doc: "The name of the preset to use."
 
   def render(assigns) do
     ~H"""

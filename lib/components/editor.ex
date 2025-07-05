@@ -16,28 +16,37 @@ defmodule CKEditor5.Components.Editor do
 
   @doc """
   Renders the CKEditor 5 component in a LiveView.
-
-  ## Attributes
-    * `:id` - Optional string ID for the editor instance
-    * `:preset` - Optional string preset name (defaults to "default")
-    * `:editable_height` - Optional string to set the height of the editable area
-      (e.g., "300px"). If not provided, the height will be determined by the editor's content.
-    * `:name` - Optional string name for the editor, used for form integration
-      (if `:field` is provided). If not provided, the name will be derived
-      from the `:field` attribute.
-    * `:field` - Optional Phoenix.HTML.FormField for form integration
-    * `:value` - Optional string value for the editor content
-    * `:required` - Optional boolean to indicate if the editor is required
-      (defaults to false). This is used for form validation.
-    * `:rest` - Global attributes passed to the container div
   """
-  attr :id, :string, required: false
-  attr :preset, :string, default: "default"
-  attr :editable_height, :string, required: false
-  attr :name, :string, required: false, default: nil
-  attr :field, HTML.FormField, required: false, default: nil
-  attr :value, :string, required: false, default: ""
-  attr :required, :boolean, default: false
+  attr :id, :string, required: false, doc: "The ID for the editor instance."
+  attr :preset, :string, default: "default", doc: "The name of the preset to use."
+
+  attr :editable_height, :string,
+    required: false,
+    doc:
+      "The height of the editable area (e.g., \"300px\"). If not provided, the height will be determined by the editor's content."
+
+  attr :type, :string, required: false, default: nil
+
+  attr :name, :string,
+    required: false,
+    default: nil,
+    doc:
+      "The name for the editor, used for form integration. If not provided, it will be derived from the `:field` attribute."
+
+  attr :field, HTML.FormField,
+    required: false,
+    default: nil,
+    doc: "The `Phoenix.HTML.FormField` for form integration."
+
+  attr :value, :string,
+    required: false,
+    default: "",
+    doc: "The initial value for the editor content."
+
+  attr :required, :boolean,
+    default: false,
+    doc: "Indicates if the editor is required, used for form validation."
+
   attr :rest, :global
 
   def render(assigns) do

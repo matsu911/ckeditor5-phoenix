@@ -22,7 +22,7 @@ defmodule CKEditor5.Components.Cloud.Stylesheets do
   This component can be customized with a `:preset` assign
   to specify which preset's stylesheets to use.
   """
-  attr :preset, :string, default: "default"
+  attr :preset, :string, default: "default", doc: "The name of the preset to use."
 
   def render(assigns) do
     assigns = assign_stylesheets(assigns)

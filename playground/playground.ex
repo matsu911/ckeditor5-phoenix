@@ -20,9 +20,7 @@ defmodule Playground do
 
   def controller do
     quote do
-      use Phoenix.Controller,
-        formats: [:html, :json],
-        layouts: [html: Playground.Layouts]
+      use Phoenix.Controller, formats: [:html, :json]
 
       import Plug.Conn
 
@@ -44,7 +42,7 @@ defmodule Playground do
   defp html_helpers do
     quote do
       import Phoenix.HTML
-      import Playground.Components
+      import Playground.Components.Layout
 
       alias Phoenix.LiveView.JS
 

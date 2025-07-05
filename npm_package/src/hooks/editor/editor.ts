@@ -1,9 +1,12 @@
-import type { EditorHookConfig } from './config';
+import { parseIntIfNotNull } from 'shared';
 
 import { ClassHook } from '../../shared/hook';
-import { readHookConfigOrThrow } from './config';
-import { loadEditorPlugins } from './utils';
-import { loadEditorConstructor } from './utils/load-editor-constructor';
+import {
+  loadEditorConstructor,
+  loadEditorPlugins,
+  readPresetOrThrow,
+  setEditorEditableHeight,
+} from './utils';
 
 /**
  * Editor hook for Phoenix LiveView.
@@ -11,19 +14,22 @@ import { loadEditorConstructor } from './utils/load-editor-constructor';
  * This class is a hook that can be used with Phoenix LiveView to integrate
  * the CKEditor 5 WYSIWYG editor.
  */
-export class Editor extends ClassHook {
-  private hookConfig: EditorHookConfig | null = null;
-
+export class EditorHook extends ClassHook {
   override async mounted() {
-    this.hookConfig = readHookConfigOrThrow(this.el);
+    const { type, license, config: { plugins, ...config } } = readPresetOrThrow(this.el);
 
-    const Editor = await loadEditorConstructor(this.hookConfig.type);
-    const { license, config: { plugins, ...config } } = this.hookConfig;
+    const Editor = await loadEditorConstructor(type);
 
-    Editor.create(this.el as any, {
+    const editor = await Editor.create(this.el as any, {
       ...config,
       licenseKey: license.key,
       plugins: await loadEditorPlugins(plugins),
     });
+
+    const editableHeight = parseIntIfNotNull(this.el.getAttribute('cke-editable-height'));
+
+    if (editableHeight) {
+      setEditorEditableHeight(editor, editableHeight);
+    }
   }
 }

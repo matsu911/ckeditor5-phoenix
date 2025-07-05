@@ -1,7 +1,7 @@
 import { makeHook } from 'shared';
 
-import { Editor } from './editor';
+import { EditorHook } from './editor';
 
 export const Hooks = {
-  CKEditor5: makeHook(Editor),
+  CKEditor5: makeHook(EditorHook),
 };

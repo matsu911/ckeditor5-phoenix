@@ -1,37 +1,7 @@
 /**
  * List of supported CKEditor5 editor types.
  */
-const EDITOR_TYPES = ['inline', 'classic', 'balloon', 'decoupled', 'multiroot'] as const;
-
-/**
- * Reads the hook configuration from the element's attribute and parses it as JSON.
- *
- * @param element - The HTML element that contains the hook configuration.
- * @returns The parsed hook configuration.
- */
-export function readHookConfigOrThrow(element: HTMLElement): EditorHookConfig {
-  const attributeValue = element.getAttribute('cke-hook-config');
-
-  if (!attributeValue) {
-    throw new Error('CKEditor5 hook requires a "cke-hook-config" attribute on the element.');
-  }
-
-  const { type, config, license } = JSON.parse(attributeValue);
-
-  if (!type || !config || !license) {
-    throw new Error('CKEditor5 hook configuration must include "editor", "config", and "license" properties.');
-  }
-
-  if (!EDITOR_TYPES.includes(type)) {
-    throw new Error(`Invalid editor type: ${type}. Must be one of: ${EDITOR_TYPES.join(', ')}.`);
-  }
-
-  return {
-    type,
-    config,
-    license,
-  };
-}
+export const EDITOR_TYPES = ['inline', 'classic', 'balloon', 'decoupled', 'multiroot'] as const;
 
 /**
  * Defines editor type supported by CKEditor5. It must match list of available
@@ -69,7 +39,7 @@ export type EditorLicense = {
 /**
  * Configuration object for the CKEditor5 hook.
  */
-export type EditorHookConfig = {
+export type EditorPreset = {
   /**
    * The type of CKEditor5 editor to use.
    * Must be one of the predefined types: 'inline', 'classic', 'balloon', 'decoupled', or 'multiroot'.
@@ -87,4 +57,10 @@ export type EditorHookConfig = {
    * This is required for using CKEditor5 with a valid license.
    */
   license: EditorLicense;
+
+  /**
+   * Optional height for the editor, if applicable.
+   * This can be used to set a specific height for the editor instance.
+   */
+  editableHeight?: number;
 };

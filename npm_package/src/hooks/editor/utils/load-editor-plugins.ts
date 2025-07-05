@@ -1,6 +1,6 @@
 import type { PluginConstructor } from 'ckeditor5';
 
-import type { EditorPlugin } from '../config';
+import type { EditorPlugin } from '../typings';
 
 /**
  * Loads CKEditor plugins from base and premium packages.

@@ -15,38 +15,52 @@ defmodule CKEditor5.Components.Editor do
 
   ## Attributes
     * `:id` - Optional string ID for the editor instance
-    * `:config` - Optional map with CKEditor 5 configuration
     * `:preset` - Optional string preset name (defaults to "default")
+    * `:editable_height` - Optional string to set the height of the editable area
+      (e.g., "300px"). If not provided, the height will be determined by the editor's content.
     * `:rest` - Global attributes passed to the container div
   """
   attr :id, :string, required: false
-  attr :config, :map, required: false
   attr :preset, :string, default: "default"
+  attr :editable_height, :string, required: false
   attr :rest, :global
 
   def render(assigns) do
     assigns =
       assigns
       |> Helpers.assign_id_if_missing("cke")
-      |> assign_config_if_missing()
+      |> assign_loaded_preset()
+      |> normalize_editable_height()
 
     ~H"""
     <div
       id={@id}
       phx-update="ignore"
       phx-hook="CKEditor5"
-      cke-hook-config={Jason.encode!(@config)}
+      cke-preset={Jason.encode!(@preset)}
+      cke-editable-height={@editable_height}
       {@rest}
     >
     </div>
     """
   end
 
-  defp assign_config_if_missing(%{config: _} = assigns), do: assigns
+  defp assign_loaded_preset(assigns) do
+    preset = CKEditor5.Presets.get!(assigns.preset)
 
-  defp assign_config_if_missing(assigns) do
-    config = CKEditor5.Presets.get!(assigns.preset)
+    Map.put(assigns, :preset, preset)
+  end
 
-    Map.put(assigns, :config, config)
+  def normalize_editable_height(%{editable_height: nil} = assigns), do: assigns
+
+  def normalize_editable_height(%{editable_height: editable_height} = assigns) do
+    normalized_height =
+      if is_binary(editable_height) && String.ends_with?(editable_height, "px") do
+        editable_height |> String.slice(0..-3//1)
+      else
+        editable_height
+      end
+
+    Map.put(assigns, :editable_height, normalized_height)
   end
 end

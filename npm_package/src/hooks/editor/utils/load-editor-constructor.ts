@@ -1,4 +1,4 @@
-import type { EditorType } from '../config';
+import type { EditorType } from '../typings';
 
 /**
  * Returns the constructor for the specified CKEditor5 editor type.

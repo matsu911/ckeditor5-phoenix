@@ -16,17 +16,20 @@
     "dist"
   ],
   "scripts": {
-    "build": "npm run build:esm && npm run build:cjs",
-    "build:esm": "tsc",
-    "build:cjs": "tsc --project tsconfig.cjs.json",
-    "watch": "tsc --watch --preserveWatchOutput",
+    "build": "node build.mjs",
+    "watch": "node build.mjs --watch",
+    "dev": "node build.mjs --watch",
     "typecheck": "tsc --noEmit --pretty"
   },
   "dependencies": {
+    "ckeditor5": "^45.2.1",
+    "ckeditor5-premium-features": "^45.2.1",
     "phoenix_live_view": "^1.0.17"
   },
   "devDependencies": {
     "@types/phoenix_live_view": "^1.0.0",
+    "esbuild": "^0.24.0",
+    "esbuild-node-externals": "^1.18.0",
     "typescript": "^5.8.3"
   }
 }

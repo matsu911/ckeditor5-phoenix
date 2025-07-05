@@ -55,4 +55,14 @@ defmodule CKEditor5.License do
       key -> new(key)
     end
   end
+
+  @doc """
+  Formats the license key for safe display by truncating long keys.
+  """
+  def format_key(license) do
+    case String.length(license.key) do
+      len when len > 8 -> String.slice(license.key, 0, 8) <> "..."
+      _ -> license.key
+    end
+  end
 end

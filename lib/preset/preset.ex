@@ -6,10 +6,12 @@ defmodule CKEditor5.Preset do
   alias CKEditor5.Cloud
   alias CKEditor5.License
 
-  @derive {Jason.Encoder, only: [:config, :license]}
+  @derive {Jason.Encoder, only: [:type, :config, :license]}
+  @enforce_keys [:config]
 
   defstruct [
     :config,
+    type: :classic,
     cloud: nil,
     license: License.gpl()
   ]
@@ -23,6 +25,7 @@ defmodule CKEditor5.Preset do
 
   def merge(%__MODULE__{} = preset, overrides) when is_map(overrides) do
     %__MODULE__{
+      type: overrides[:type] || preset.type,
       config: Map.merge(preset.config || %{}, overrides[:config] || %{}),
       license: overrides[:license] || preset.license,
       cloud: merge_cloud(preset.cloud, overrides[:cloud])

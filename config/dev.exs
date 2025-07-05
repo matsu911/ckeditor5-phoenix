@@ -34,7 +34,16 @@ config :ckeditor5, Playground.Endpoint,
 config :esbuild,
   version: "0.25.0",
   ckeditor: [
-    args: ~w(./js/app.ts --bundle --target=es2022 --outdir=./priv/static),
+    args: ~w(
+      ./js/app.ts
+      --bundle
+      --target=es2022
+      --format=esm
+      --splitting
+      --external:ckeditor5
+      --external:ckeditor5-premium-features
+      --outdir=./priv/static
+    ),
     cd: Path.expand("../playground/", __DIR__),
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
   ]

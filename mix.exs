@@ -21,10 +21,13 @@ defmodule CKEditor5.MixProject do
 
   def application do
     [
-      extra_applications: [:logger],
+      extra_applications: extra_apps(Mix.env()),
       preferred_cli_env: [format: :dev]
     ]
   end
+
+  defp extra_apps(:dev), do: [:logger, :dotenv]
+  defp extra_apps(_), do: []
 
   defp deps do
     is_dev = Mix.env() == :dev
@@ -35,6 +38,7 @@ defmodule CKEditor5.MixProject do
       {:phoenix_live_view, "~> 1.0"},
       {:norm, "~> 0.13"},
       {:memoize, "~> 1.4"},
+      {:dotenv, "~> 3.0.0", only: [:dev]},
       {:telemetry_metrics, "~> 1.0", only: [:dev]},
       {:telemetry_poller, "~> 1.0", only: [:dev]},
       {:phoenix_live_reload, "~> 1.6", only: [:dev]},

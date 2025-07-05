@@ -15,6 +15,7 @@ defmodule CKEditor5.Preset.Parser do
   def s do
     schema =
       schema(%{
+        type: one_of([:inline, :classic, :balloon, :decoupled, :multiroot]),
         cloud: Cloud.s(),
         license_key: spec(is_binary()),
         config: spec(is_map())
@@ -82,13 +83,14 @@ defmodule CKEditor5.Preset.Parser do
   defp build_and_validate(parsed_map) do
     parsed_map
     |> build_struct()
-    |> CloudCompatibilityChecker.handle_cloud_config()
+    |> CloudCompatibilityChecker.assign_default_cloud_config()
   end
 
   # Builds a Preset struct from a parsed map, setting default values.
   # It's map passed from configuration file or environment variables.
   defp build_struct(parsed_map) do
     %Preset{
+      type: parsed_map[:type] || :classic,
       config: parsed_map[:config] || %{},
       license: parsed_map[:license],
       cloud: parsed_map[:cloud]

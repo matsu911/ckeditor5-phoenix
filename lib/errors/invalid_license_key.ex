@@ -4,8 +4,10 @@ defmodule CKEditor5.Errors.InvalidLicenseKey do
   """
   defexception [:key]
 
+  alias CKEditor5.License
+
   @impl true
   def message(exception) do
-    "Invalid license key: '#{exception.key}'. Please provide a valid CKEditor 5 license key."
+    "Invalid license key: '#{License.format_key(exception.key)}'. Please provide a valid CKEditor 5 license key."
   end
 end

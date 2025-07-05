@@ -35,7 +35,7 @@ defmodule CKEditor5.Components.Editor do
       id={@id}
       phx-update="ignore"
       phx-hook="CKEditor5"
-      cke-config={Jason.encode!(@config)}
+      cke-hook-config={Jason.encode!(@config)}
       {@rest}
     >
     </div>

@@ -15,21 +15,41 @@ import {
  * the CKEditor 5 WYSIWYG editor.
  */
 export class EditorHook extends ClassHook {
+  get id() {
+    return this.el.getAttribute('id');
+  }
+
   override async mounted() {
     const { type, license, config: { plugins, ...config } } = readPresetOrThrow(this.el);
 
+    const elements = {
+      editor: document.getElementById(`${this.id}_editor`),
+      input: document.getElementById(`${this.id}_input`) as HTMLInputElement | null,
+    };
+
     const Editor = await loadEditorConstructor(type);
+    const editor = await Editor.create(
+      elements.editor as any,
+      {
+        ...config,
+        initialData: this.el.getAttribute('cke-initial-value') || '',
+        licenseKey: license.key,
+        plugins: await loadEditorPlugins(plugins),
+      },
+    );
 
-    const editor = await Editor.create(this.el as any, {
-      ...config,
-      licenseKey: license.key,
-      plugins: await loadEditorPlugins(plugins),
-    });
-
+    // Apply editor height if specified.
     const editableHeight = parseIntIfNotNull(this.el.getAttribute('cke-editable-height'));
 
     if (editableHeight) {
       setEditorEditableHeight(editor, editableHeight);
+    }
+
+    // Sync input value if present
+    if (elements.input) {
+      editor.model.document.on('change:data', () => {
+        elements.input!.value = editor.getData();
+      });
     }
   }
 }

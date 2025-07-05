@@ -20,4 +20,14 @@ defmodule CKEditor5.Helpers do
   def is_semver_version?(version) when is_binary(version) do
     String.match?(version, ~r/^\d+\.\d+\.\d+$/)
   end
+
+  @doc """
+  Serializes a map of styles into a CSS string.
+  Converts a map of styles into a string suitable for inline CSS.
+  Example: %{color: "red", "font-size": "16px"} becomes "color: red; font-size: 16px".
+  """
+  def serialize_styles_map(styles_map) when is_map(styles_map) do
+    styles_map
+    |> Enum.map_join("; ", fn {key, value} -> "#{key}: #{value}" end)
+  end
 end

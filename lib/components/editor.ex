@@ -8,6 +8,7 @@ defmodule CKEditor5.Components.Editor do
 
   use Phoenix.LiveComponent
 
+  alias Phoenix.HTML
   alias CKEditor5.Helpers
 
   @doc """
@@ -18,16 +19,24 @@ defmodule CKEditor5.Components.Editor do
     * `:preset` - Optional string preset name (defaults to "default")
     * `:editable_height` - Optional string to set the height of the editable area
       (e.g., "300px"). If not provided, the height will be determined by the editor's content.
+    * `:field` - Optional Phoenix.HTML.FormField for form integration
+    * `:value` - Optional string value for the editor content
+    * `:required` - Optional boolean to indicate if the editor is required
+      (defaults to false). This is used for form validation.
     * `:rest` - Global attributes passed to the container div
   """
   attr :id, :string, required: false
   attr :preset, :string, default: "default"
   attr :editable_height, :string, required: false
+  attr :field, HTML.FormField, required: false
+  attr :value, :string, required: false
+  attr :required, :boolean, default: false
   attr :rest, :global
 
   def render(assigns) do
     assigns =
-      assigns
+      %{field: nil, value: nil}
+      |> Map.merge(assigns)
       |> Helpers.assign_id_if_missing("cke")
       |> assign_loaded_preset()
       |> normalize_editable_height()
@@ -39,9 +48,48 @@ defmodule CKEditor5.Components.Editor do
       phx-hook="CKEditor5"
       cke-preset={Jason.encode!(@preset)}
       cke-editable-height={@editable_height}
+      cke-initial-value={@value || ""}
       {@rest}
     >
+      <div id={"#{@id}_editor"}></div>
+      <%= if @field do %>
+        <.hidden_input
+          id={"#{@id}_input"}
+          name={HTML.Form.input_name(@field.form, @field.field)}
+          value={@value}
+          required={@required}
+        />
+      <% end %>
     </div>
+    """
+  end
+
+  attr :id, :string, required: true
+  attr :name, :string, required: true
+  attr :value, :string
+  attr :required, :boolean, default: false
+
+  defp hidden_input(assigns) do
+    ~H"""
+    <input
+      id={@id}
+      name={@name}
+      value={@value}
+      required={@required}
+      type="hidden"
+      style={
+        Helpers.serialize_styles_map(%{
+          display: "flex",
+          width: "100%",
+          height: "1px",
+          opacity: "0",
+          "pointer-events": "none",
+          margin: "0",
+          padding: "0",
+          border: "none"
+        })
+      }
+    />
     """
   end
 
@@ -51,9 +99,9 @@ defmodule CKEditor5.Components.Editor do
     Map.put(assigns, :preset, preset)
   end
 
-  def normalize_editable_height(%{editable_height: nil} = assigns), do: assigns
+  defp normalize_editable_height(%{editable_height: nil} = assigns), do: assigns
 
-  def normalize_editable_height(%{editable_height: editable_height} = assigns) do
+  defp normalize_editable_height(%{editable_height: editable_height} = assigns) do
     normalized_height =
       if is_binary(editable_height) && String.ends_with?(editable_height, "px") do
         editable_height |> String.slice(0..-3//1)

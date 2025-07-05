@@ -56,7 +56,7 @@ defmodule CKEditor5.Components.Editor do
       {@rest}
     >
       <div id={"#{@id}_editor"}></div>
-      <%= if @field do %>
+      <%= if @field || @name do %>
         <HiddenInput.render
           id={"#{@id}_input"}
           name={@name || HTML.Form.input_name(@field.form, @field.field)}

@@ -1,4 +1,4 @@
-import { parseIntIfNotNull } from 'shared';
+import { debounce, parseIntIfNotNull } from 'shared';
 
 import { ClassHook } from '../../shared/hook';
 import {
@@ -47,9 +47,11 @@ export class EditorHook extends ClassHook {
 
     // Sync input value if present
     if (elements.input) {
-      editor.model.document.on('change:data', () => {
+      const debouncedSync = debounce(100, () => {
         elements.input!.value = editor.getData();
       });
+
+      editor.model.document.on('change:data', debouncedSync);
     }
   }
 }

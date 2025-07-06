@@ -3,7 +3,7 @@ defmodule CKEditor5.Preset do
   Represents a CKEditor 5 preset configuration.
   """
 
-  alias CKEditor5.{Cloud, Preset, License}
+  alias CKEditor5.{Cloud, License}
 
   @derive {Jason.Encoder, only: [:type, :config, :license]}
   @enforce_keys [:config]

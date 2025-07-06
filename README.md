@@ -20,6 +20,83 @@ CKEditor 5 integration library for Phoenix (Elixir) applications. Provides web c
 # Under construction. Stay tuned for the upcoming release!
 ```
 
+## Editor placement 🏗️
+
+### Classic editor 📝
+
+The classic editor is the most common type of editor. It provides a toolbar with various formatting options like bold, italic, underline, and link.
+
+It looks like this:
+
+![CKEditor 5 Classic Editor in Elixir Phoenix application with Menubar](docs/classic-editor-with-toolbar.png)
+
+```heex
+<%!-- In <head> --%>
+<.cke_cloud_assets />
+
+<%!-- In <body> --%>'
+<.ckeditor
+  type="classic"
+  value="<p>Initial content here</p>"
+  editable_height="300px"
+/>
+```
+
+### Multiroot editor 🌳
+
+The multiroot editor allows you to create an editor with multiple editable areas. It's useful when you want to create a CMS with multiple editable areas on a single page.
+
+- `ckeditor` component is used to create the editor container. It'll initialize the editor without any editable nor toolbar. The full list of attributes can be found in the [source](lib/components/editor/editor.ex).
+- `cke_editable` component is used to create editable areas within the editor. Each editable area can have its own name and initial value. The full list of attributes can be found in the [source](lib/components/editable.ex).
+
+![CKEditor 5 Multiroot Editor in Elixir Phoenix application](docs/multiroot-editor.png)
+
+```heex
+<%!-- In <head> --%>
+<.cke_cloud_assets />
+
+<%!-- In <body> --%>
+<.ckeditor type="multiroot" />
+
+<div class="flex flex-col gap-4">
+  <.cke_editable
+    name="header"
+    value="<h1>Main Header</h1>"
+    class="border border-gray-300 p-4"
+  />
+  <.cke_editable
+    name="content"
+    value="<p>Main content area</p>"
+    class="border border-gray-300 p-4"
+  />
+  <.cke_editable
+    name="sidebar"
+    value="<p>Sidebar content</p>"
+    class="border border-gray-300 p-4"
+  />
+</div>
+```
+
+### Inline editor 📝
+
+Inline editor allows you to create an editor that can be placed inside any element. Keep in mind that inline editor does not work with `textarea` elements so it might be not suitable for all use cases.
+
+![CKEditor 5 Inline Editor in Elixir Phoenix application](docs/inline-editor.png)
+
+If you want to use an inline editor, you can pass the `type` keyword argument with the value `:inline`:
+
+```heex
+<%!-- In <head> --%>
+<.cke_cloud_assets />
+
+<%!-- In <body> --%>
+<.ckeditor
+  type="inline"
+  value="<p>Initial content here</p>"
+  editable_height="300px"
+/>
+```
+
 ## Package development 🛠️
 
 In order to run the minimal Phoenix application with CKEditor 5 integration, you need to install the dependencies and run the server:

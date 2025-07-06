@@ -33,8 +33,9 @@ defmodule CKEditor5.Components.Editable do
     ~H"""
     <div
       id={@name}
+      data-cke-editor-id={@editor_id}
       data-cke-editable-name={@name}
-      data-cke-editable-value={@value}
+      data-cke-editable-initial-value={@value}
       {@rest}
     />
     """

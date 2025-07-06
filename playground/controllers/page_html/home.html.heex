@@ -4,10 +4,12 @@
   </:head>
 
   <:inner_content>
-    <.cke_editor editable_height="400px" name="mia" value="Mia mia mia" />
+    <.ckeditor type="multiroot" />
 
-    <.cke_editable name="first_editable" value="First editable content" />
-    <.cke_editable name="second_editable" value="Second editable content" />
-    <.cke_editable name="third_editable" value="Third editable content" />
+    <div class="flex flex-col gap-4">
+      <.cke_editable name="first_editable" value="First editable content" class="border border-gray-300" />
+      <.cke_editable name="second_editable" value="Second editable content" class="border border-gray-300" />
+      <.cke_editable name="third_editable" value="Third editable content" class="border border-gray-300" />
+    </div>
   </:inner_content>
 </.layout>

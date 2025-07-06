@@ -17,4 +17,12 @@ defmodule CKEditor5.Preset.EditorType do
   def single_editing_like?(type) do
     type in [:inline, :classic, :balloon]
   end
+
+  @doc """
+  Validates the given editor type against the defined schema.
+  Returns `:ok` if the type is valid, or an error tuple if it is not.
+  """
+  def valid?(type) do
+    Norm.valid?(type, s())
+  end
 end

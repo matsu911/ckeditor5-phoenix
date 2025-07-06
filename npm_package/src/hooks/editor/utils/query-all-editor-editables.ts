@@ -18,15 +18,16 @@ export function queryAllEditorEditables(editorId: string) {
       .reduce<Record<string, EditableItem>>((acc, element) => {
         const name = element.getAttribute('data-cke-editable-name');
         const initialValue = element.getAttribute('data-cke-editable-initial-value') || '';
+        const content = element.querySelector('[data-cke-editable-content]') as HTMLElement;
 
-        if (!name) {
+        if (!name || !content) {
           return acc;
         }
 
         return {
           ...acc,
           [name]: {
-            element,
+            content,
             initialValue,
           },
         };
@@ -38,6 +39,6 @@ export function queryAllEditorEditables(editorId: string) {
  * Type representing an editable item within an editor.
  */
 export type EditableItem = {
-  element: HTMLElement;
+  content: HTMLElement;
   initialValue: string;
 };

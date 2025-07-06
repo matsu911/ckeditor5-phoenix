@@ -58,7 +58,7 @@ export class EditorHook extends ClassHook {
     const { type, license, config: { plugins, ...config } } = preset;
 
     const Constructor = await loadEditorConstructor(type);
-    const rootEditables = getInitialRootsElements(editorId, type);
+    const rootEditables = getInitialRootsContentElements(editorId, type);
 
     if (!rootEditables) {
       throw new Error(
@@ -125,14 +125,14 @@ function syncEditorToInput(editorId: string, editor: Editor) {
  * @param type The type of the editor.
  * @returns The root element(s) for the editor.
  */
-function getInitialRootsElements(editorId: string, type: EditorType) {
+function getInitialRootsContentElements(editorId: string, type: EditorType) {
   if (isSingleEditingLikeEditor(type)) {
     return document.getElementById(`${editorId}_editor`);
   }
 
   const editables = queryAllEditorEditables(editorId);
 
-  return mapObjectValues(editables, ({ element }) => element);
+  return mapObjectValues(editables, ({ content }) => content);
 }
 
 /**

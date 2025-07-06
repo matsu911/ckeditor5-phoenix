@@ -3,8 +3,7 @@ defmodule CKEditor5.Preset do
   Represents a CKEditor 5 preset configuration.
   """
 
-  alias CKEditor5.Cloud
-  alias CKEditor5.License
+  alias CKEditor5.{Cloud, Preset, License}
 
   @derive {Jason.Encoder, only: [:type, :config, :license]}
   @enforce_keys [:config]
@@ -21,6 +20,13 @@ defmodule CKEditor5.Preset do
     cloud: nil,
     license: License.gpl()
   ]
+
+  @doc """
+  Sets the type of the preset.
+  """
+  def of_type(%__MODULE__{} = preset, type) when is_atom(type) do
+    %__MODULE__{preset | type: type}
+  end
 
   @doc """
   Merges the current preset configuration with the provided overrides.

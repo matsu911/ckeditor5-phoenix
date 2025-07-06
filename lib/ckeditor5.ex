@@ -9,7 +9,7 @@ defmodule CKEditor5 do
 
   defmacro __using__(_opts) do
     quote do
-      defdelegate cke_editor(assigns), to: CKEditor5.Components.Editor, as: :render
+      defdelegate ckeditor(assigns), to: CKEditor5.Components.Editor, as: :render
       defdelegate cke_editable(assigns), to: CKEditor5.Components.Editable, as: :render
       defdelegate cke_cloud_assets(assigns), to: CKEditor5.Components.Cloud.Assets, as: :render
     end

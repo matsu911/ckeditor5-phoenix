@@ -7,9 +7,21 @@
     <.ckeditor type="multiroot" />
 
     <div class="flex flex-col gap-4">
-      <.cke_editable name="first_editable" value="First editable content" class="border border-gray-300" />
-      <.cke_editable name="second_editable" value="Second editable content" class="border border-gray-300" />
-      <.cke_editable name="third_editable" value="Third editable content" class="border border-gray-300" />
+      <.cke_editable
+        name="header"
+        value="<h1>Main Header</h1>"
+        class="border border-gray-300"
+      />
+      <.cke_editable
+        name="content"
+        value="<p>Main content area</p>"
+        class="border border-gray-300"
+      />
+      <.cke_editable
+        name="sidebar"
+        value="<p>Sidebar content</p>"
+        class="border border-gray-300"
+      />
     </div>
   </:inner_content>
 </.layout>

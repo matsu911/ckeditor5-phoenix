@@ -1,10 +1,12 @@
+import type { EditorId } from '../typings';
+
 /**
  * Queries all editable elements within a specific editor instance.
  *
  * @param editorId The ID of the editor to query.
  * @returns An object mapping editable names to their corresponding elements and initial values.
  */
-export function queryAllEditorEditables(editorId: string) {
+export function queryAllEditorEditables(editorId: EditorId) {
   const iterator = document.querySelectorAll<HTMLElement>(
     [
       `[data-cke-editor-id="${editorId}"][data-cke-editable-name]`,

@@ -65,8 +65,8 @@ defmodule CKEditor5.Components.Editor do
     ~H"""
     <div
       id={@id}
-      phx-update="ignore"
       phx-hook="CKEditor5"
+      phx-update="ignore"
       cke-preset={Jason.encode!(@preset)}
       cke-editable-height={@editable_height}
       cke-initial-value={@value || ""}

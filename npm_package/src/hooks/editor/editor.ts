@@ -1,17 +1,15 @@
 import type { Editor } from 'ckeditor5';
 
 import {
-  createQueuedTask,
-  createQueueRef,
   debounce,
   mapObjectValues,
-  once,
   parseIntIfNotNull,
 } from 'shared';
 
-import type { EditorType } from './typings';
+import type { EditorId, EditorType } from './typings';
 
 import { ClassHook } from '../../shared/hook';
+import { EditorsRegistry } from './editors-registry';
 import {
   isSingleEditingLikeEditor,
   loadEditorConstructor,
@@ -28,33 +26,56 @@ import {
  * the CKEditor 5 WYSIWYG editor.
  */
 export class EditorHook extends ClassHook {
-  private lockQueueRef = createQueueRef<Editor>();
+  /**
+   * The name of the hook.
+   */
+  private editorPromise: Promise<Editor> | null = null;
 
-  private getPreset = once(() => readPresetOrThrow(this.el));
+  /**
+   * Attributes for the editor instance.
+   */
+  private get attrs() {
+    const value = {
+      editorId: this.el.getAttribute('id')!,
+      preset: readPresetOrThrow(this.el),
+      editableHeight: parseIntIfNotNull(this.el.getAttribute('cke-editable-height')),
+    };
 
-  private getEditorId = once(() => {
-    const id = this.el.getAttribute('id');
+    Object.defineProperty(this, 'attrs', {
+      value,
+      writable: false,
+      configurable: false,
+      enumerable: true,
+    });
 
-    if (!id) {
-      throw new Error('Editor hook requires an element with an "id" attribute.');
-    }
-
-    return id;
-  });
-
-  override async mounted() {
-    await this.createEditor();
+    return value;
   }
 
   /**
-   * Creates the CKEditor instance. The queue is used to ensure that only one editor instance
-   * is created at a time, even if the `mounted` method is called multiple times. The editor might
-   * be unstable if multiple instances of the editor are created simultaneously using the same element.
+   * Mounts the editor component.
    */
-  private createEditor = createQueuedTask(async () => {
-    const preset = this.getPreset();
-    const editorId = this.getEditorId();
+  override async mounted() {
+    this.editorPromise = this.createEditor();
 
+    EditorsRegistry.the.register(this.attrs.editorId, await this.editorPromise);
+  }
+
+  /**
+   * Destroys the editor instance when the component is destroyed.
+   * This is important to prevent memory leaks and ensure that the editor is properly cleaned up.
+   */
+  override async destroyed() {
+    (await this.editorPromise)?.destroy();
+    this.editorPromise = null;
+
+    EditorsRegistry.the.unregister(this.attrs.editorId);
+  }
+
+  /**
+   * Creates the CKEditor instance.
+   */
+  private createEditor = async () => {
+    const { preset, editorId, editableHeight } = this.attrs;
     const { type, license, config: { plugins, ...config } } = preset;
 
     const Constructor = await loadEditorConstructor(type);
@@ -78,26 +99,15 @@ export class EditorHook extends ClassHook {
     );
 
     if (isSingleEditingLikeEditor(type)) {
-      applyEditorHeight(this.el, editor);
       syncEditorToInput(editorId, editor);
+
+      if (editableHeight) {
+        setEditorEditableHeight(editor, editableHeight);
+      }
     }
 
     return editor;
-  }, this.lockQueueRef);
-}
-
-/**
- * Applies the editor height from the element's attribute to the editor's editable area.
- *
- * @param element The hook's HTML element.
- * @param editor The CKEditor instance.
- */
-function applyEditorHeight(element: HTMLElement, editor: Editor) {
-  const editableHeight = parseIntIfNotNull(element.getAttribute('cke-editable-height'));
-
-  if (editableHeight) {
-    setEditorEditableHeight(editor, editableHeight);
-  }
+  };
 }
 
 /**
@@ -106,7 +116,7 @@ function applyEditorHeight(element: HTMLElement, editor: Editor) {
  * @param editorId The editor's ID.
  * @param editor The CKEditor instance.
  */
-function syncEditorToInput(editorId: string, editor: Editor) {
+function syncEditorToInput(editorId: EditorId, editor: Editor) {
   const inputElement = document.getElementById(`${editorId}_input`) as HTMLInputElement | null;
 
   if (inputElement) {
@@ -125,7 +135,7 @@ function syncEditorToInput(editorId: string, editor: Editor) {
  * @param type The type of the editor.
  * @returns The root element(s) for the editor.
  */
-function getInitialRootsContentElements(editorId: string, type: EditorType) {
+function getInitialRootsContentElements(editorId: EditorId, type: EditorType) {
   if (isSingleEditingLikeEditor(type)) {
     return document.getElementById(`${editorId}_editor`);
   }
@@ -144,7 +154,7 @@ function getInitialRootsContentElements(editorId: string, type: EditorType) {
  * @param type The type of the editor.
  * @returns The initial values for the editor's roots.
  */
-function getInitialRootsValues(editorId: string, type: EditorType) {
+function getInitialRootsValues(editorId: EditorId, type: EditorType) {
   if (isSingleEditingLikeEditor(type)) {
     return document.getElementById(editorId)!.getAttribute('cke-initial-value') || '';
   }

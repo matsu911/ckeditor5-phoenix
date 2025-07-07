@@ -62,17 +62,17 @@ The multiroot editor allows you to create an editor with multiple editable areas
   <.cke_editable
     name="header"
     value="<h1>Main Header</h1>"
-    class="border border-gray-300 p-4"
+    class="border border-gray-300"
   />
   <.cke_editable
     name="content"
     value="<p>Main content area</p>"
-    class="border border-gray-300 p-4"
+    class="border border-gray-300"
   />
   <.cke_editable
     name="sidebar"
     value="<p>Sidebar content</p>"
-    class="border border-gray-300 p-4"
+    class="border border-gray-300"
   />
 </div>
 ```

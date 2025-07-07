@@ -33,6 +33,8 @@ defmodule CKEditor5.Components.Editable do
     ~H"""
     <div
       id={@name}
+      phx-hook="CKEditable"
+      phx-update="ignore"
       data-cke-editor-id={@editor_id}
       data-cke-editable-name={@name}
       data-cke-editable-initial-value={@value}

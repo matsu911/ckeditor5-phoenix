@@ -4,6 +4,12 @@
 export const EDITOR_TYPES = ['inline', 'classic', 'balloon', 'decoupled', 'multiroot'] as const;
 
 /**
+ * Represents a unique identifier for a CKEditor5 editor instance.
+ * This is typically the ID of the HTML element that the editor is attached to.
+ */
+export type EditorId = string;
+
+/**
  * Defines editor type supported by CKEditor5. It must match list of available
  * editor types specified in `preset/parser.ex` file.
  */

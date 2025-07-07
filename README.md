@@ -58,6 +58,8 @@ The multiroot editor allows you to create an editor with multiple editable areas
 <%!-- In <body> --%>
 <.ckeditor type="multiroot" />
 
+<.cke_ui_part name="toolbar" />
+
 <div class="flex flex-col gap-4">
   <.cke_editable
     name="header"

@@ -4,22 +4,27 @@
   "description": "CKEditor 5 integration for Phoenix Framework",
   "exports": {
     ".": {
-      "types": "./dist/esm/index.d.ts",
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
     }
   },
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
-  "types": "dist/esm/index.d.ts",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "node build.mjs",
-    "watch": "node build.mjs --watch",
-    "dev": "node build.mjs --watch",
-    "typecheck": "tsc --noEmit --pretty"
+    "clean": "rm -rf dist",
+    "prepare": "npm run build",
+    "build": "npm run clean && vite build",
+    "watch": "vite build --watch",
+    "dev": "vite build --watch",
+    "typecheck": "tsc --noEmit --pretty",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "coverage": "vitest run --coverage"
   },
   "dependencies": {
     "ckeditor5": "^45.2.1",
@@ -28,8 +33,12 @@
   },
   "devDependencies": {
     "@types/phoenix_live_view": "^1.0.0",
-    "esbuild": "^0.24.0",
-    "esbuild-node-externals": "^1.18.0",
-    "typescript": "^5.8.3"
+    "@vitest/coverage-v8": "^3.2.4",
+    "jsdom": "^26.1.0",
+    "typescript": "^5.5.4",
+    "vite": "^7.0.2",
+    "vite-plugin-dts": "^4.5.4",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.2.3"
   }
 }

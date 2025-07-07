@@ -108,3 +108,6 @@ jobs:
 
       - name: Build assets
         run: mix assets.build
+
+      - name: Run tests
+        run: mix assets.test

@@ -16,6 +16,9 @@ export async function loadEditorPlugins(plugins: EditorPlugin[]): Promise<Plugin
 
   const loaders = plugins.map(async (plugin) => {
     // Let's first try to load the plugin from the base package.
+    // Coverage is disabled due to Vitest issues with mocking dynamic imports.
+
+    /* v8 ignore start */
     const { [plugin]: basePkgImport } = basePackage;
 
     if (basePkgImport) {
@@ -40,6 +43,7 @@ export async function loadEditorPlugins(plugins: EditorPlugin[]): Promise<Plugin
 
     // Plugin not found in either package, throw an error.
     throw new Error(`Plugin "${plugin}" not found in base or premium packages.`);
+    /* v8 ignore end */
   });
 
   return Promise.all(loaders);

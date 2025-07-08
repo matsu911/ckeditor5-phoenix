@@ -4,6 +4,7 @@ import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import { configDefaults } from 'vitest/config';
 
 export default defineConfig({
   plugins: [
@@ -43,6 +44,12 @@ export default defineConfig({
         branches: 100,
         statements: 100,
       },
+      exclude: [
+        ...configDefaults.exclude,
+        '**/node_modules/**',
+        '**/dist/**',
+        './src/**/index.ts',
+      ],
     },
   },
 });

@@ -12,6 +12,7 @@
     "outDir": "./dist/esm"
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "src/**/*.test.ts"
   ]
 }

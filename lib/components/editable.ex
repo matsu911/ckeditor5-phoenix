@@ -8,8 +8,8 @@ defmodule CKEditor5.Components.Editable do
 
   import CKEditor5.Form
 
-  alias CKEditor5.Helpers
   alias CKEditor5.Components.HiddenInput
+  alias CKEditor5.Helpers
 
   attr :id, :string,
     doc: """

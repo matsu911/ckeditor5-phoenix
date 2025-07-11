@@ -14,6 +14,7 @@ defmodule Playground.Router do
     plug :fetch_live_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :put_root_layout, {Playground.LayoutHtml, :app}
   end
 
   pipeline :api do
@@ -23,6 +24,8 @@ defmodule Playground.Router do
   scope "/", Playground do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", Live.Home
+    live "/classic", Live.Classic
+    live "/multiroot", Live.Multiroot
   end
 end

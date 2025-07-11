@@ -65,6 +65,10 @@ export class EditorHook extends ClassHook {
    * This is important to prevent memory leaks and ensure that the editor is properly cleaned up.
    */
   override async destroyed() {
+    // Let's hide the element during destruction to prevent flickering.
+    this.el.style.display = 'none';
+
+    // Let's wait for the mounted promise to resolve before proceeding with destruction.
     (await this.editorPromise)?.destroy();
     this.editorPromise = null;
 

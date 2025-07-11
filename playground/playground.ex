@@ -32,19 +32,34 @@ defmodule Playground do
     quote do
       use Phoenix.Component
 
+      import Phoenix.HTML
+
       import Phoenix.Controller,
         only: [get_csrf_token: 0, view_module: 1, view_template: 1]
 
-      unquote(html_helpers())
+      alias Phoenix.LiveView.JS
+
+      unquote(verified_routes())
     end
   end
 
-  defp html_helpers do
+  def live_view do
     quote do
-      import Phoenix.HTML
-      import Playground.Components.Layout
+      use Phoenix.LiveView
 
-      alias Phoenix.LiveView.JS
+      unquote(verified_routes())
+    end
+  end
+
+  def view do
+    quote do
+      use Phoenix.Component
+
+      use Phoenix.View,
+        root: "playground/templates",
+        namespace: Playground
+
+      import Phoenix.HTML
 
       unquote(verified_routes())
     end

@@ -89,6 +89,10 @@ export class EditorsRegistry {
       throw new Error(`Editor with ID "${editorId}" is not registered.`);
     }
 
+    if (editorId && this.editors.get(null) === editors.get(editorId)) {
+      this.unregister(null);
+    }
+
     editors.delete(editorId);
     callbacks.delete(editorId);
   }

@@ -77,6 +77,9 @@ export class EditableHook extends ClassHook {
   override async destroyed() {
     const { editorId, rootName } = this.attrs;
 
+    // Let's hide the element during destruction to prevent flickering.
+    this.el.style.display = 'none';
+
     // Let's wait for the mounted promise to resolve before proceeding with destruction.
     await this.mountedPromise;
     this.mountedPromise = null;

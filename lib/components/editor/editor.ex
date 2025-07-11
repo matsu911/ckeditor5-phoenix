@@ -8,6 +8,8 @@ defmodule CKEditor5.Components.Editor do
 
   use Phoenix.LiveComponent
 
+  import CKEditor5.Form
+
   alias CKEditor5.Components.Editor.Assigns
   alias CKEditor5.Components.HiddenInput
   alias CKEditor5.Helpers
@@ -29,30 +31,7 @@ defmodule CKEditor5.Components.Editor do
     default: nil,
     doc: "The type of the editor. Overrides the type from the preset."
 
-  attr :name, :string,
-    required: false,
-    default: nil,
-    doc:
-      "The name for the editor, used for form integration. If not provided, it will be derived from the `:field` attribute."
-
-  attr :field, Phoenix.HTML.FormField,
-    required: false,
-    default: nil,
-    doc: "The `Phoenix.HTML.FormField` for form integration."
-
-  attr :form, :any,
-    required: false,
-    default: nil,
-    doc: "The `Phoenix.HTML.Form` for form integration."
-
-  attr :value, :string,
-    required: false,
-    default: "",
-    doc: "The initial value for the editor content."
-
-  attr :required, :boolean,
-    default: false,
-    doc: "Indicates if the editor is required, used for form validation."
+  form_attrs()
 
   attr :rest, :global
 

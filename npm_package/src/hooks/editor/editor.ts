@@ -99,7 +99,11 @@ export class EditorHook extends ClassHook {
     );
 
     if (isSingleEditingLikeEditor(type)) {
-      syncEditorToInput(editorId, editor);
+      const input = document.getElementById(`${editorId}_input`) as HTMLInputElement | null;
+
+      if (input) {
+        syncEditorToInput(input, editor);
+      }
 
       if (editableHeight) {
         setEditorEditableHeight(editor, editableHeight);
@@ -113,19 +117,15 @@ export class EditorHook extends ClassHook {
 /**
  * Synchronizes the editor's content with a hidden input field.
  *
- * @param editorId The editor's ID.
+ * @param input The input element to synchronize with the editor.
  * @param editor The CKEditor instance.
  */
-function syncEditorToInput(editorId: EditorId, editor: Editor) {
-  const inputElement = document.getElementById(`${editorId}_input`) as HTMLInputElement | null;
+function syncEditorToInput(input: HTMLInputElement, editor: Editor) {
+  const debouncedSync = debounce(100, () => {
+    input.value = editor.getData();
+  });
 
-  if (inputElement) {
-    const debouncedSync = debounce(100, () => {
-      inputElement.value = editor.getData();
-    });
-
-    editor.model.document.on('change:data', debouncedSync);
-  }
+  editor.model.document.on('change:data', debouncedSync);
 }
 
 /**

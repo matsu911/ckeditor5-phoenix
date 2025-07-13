@@ -1,12 +1,12 @@
 import type { MultiRootEditor } from 'ckeditor5';
 
-import { EditorsRegistry } from 'hooks/editor/editors-registry';
-import { ClassHook, debounce } from 'shared';
+import { ClassHook, debounce, makeHook } from '../shared';
+import { EditorsRegistry } from './editor/editors-registry';
 
 /**
  * Editable hook for Phoenix LiveView. It allows you to create editables for multi-root editors.
  */
-export class EditableHook extends ClassHook {
+class EditableHookImpl extends ClassHook {
   /**
    * The name of the hook.
    */
@@ -95,6 +95,11 @@ export class EditableHook extends ClassHook {
     });
   }
 }
+
+/**
+ * Phoenix LiveView hook for CKEditor 5 editable elements.
+ */
+export const EditableHook = makeHook(EditableHookImpl);
 
 /**
  * Synchronizes the editor's root data to the corresponding input element.

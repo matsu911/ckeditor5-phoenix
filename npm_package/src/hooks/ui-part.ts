@@ -1,10 +1,10 @@
-import { EditorsRegistry } from 'hooks/editor/editors-registry';
-import { ClassHook } from 'shared';
+import { ClassHook, makeHook } from '../shared';
+import { EditorsRegistry } from './editor/editors-registry';
 
 /**
  * UI Part hook for Phoenix LiveView. It allows you to create UI parts for multi-root editors.
  */
-export class UIPartHook extends ClassHook {
+class UIPartHookImpl extends ClassHook {
   /**
    * The name of the hook.
    */
@@ -63,3 +63,8 @@ export class UIPartHook extends ClassHook {
     this.el.innerHTML = '';
   }
 }
+
+/**
+ * Phoenix LiveView hook for CKEditor 5 UI parts.
+ */
+export const UIPartHook = makeHook(UIPartHookImpl);

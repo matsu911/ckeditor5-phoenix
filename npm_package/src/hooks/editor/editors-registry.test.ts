@@ -11,8 +11,8 @@ describe('editors registry', () => {
     registry = EditorsRegistry.the;
   });
 
-  afterEach(() => {
-    registry.clear();
+  afterEach(async () => {
+    await registry.destroyAllEditors();
   });
 
   describe('register', () => {
@@ -167,17 +167,45 @@ describe('editors registry', () => {
     });
   });
 
-  describe('clear', () => {
-    it('should clear all registered editors and callbacks', () => {
+  describe('waitForEditor', () => {
+    it('should return a promise that resolves with the editor instance', async () => {
+      const editor1 = createMockEditor('editor1');
+      registry.register('editor1', editor1);
+
+      const result = await registry.waitForEditor('editor1');
+
+      expect(result).toBe(editor1);
+    });
+
+    it('should wait for the editor to be registered before resolving', async () => {
+      const promise = registry.waitForEditor('editor1');
+      const editor1 = createMockEditor('editor1');
+
+      registry.register('editor1', editor1);
+
+      expect(await promise).toBe(editor1);
+    });
+  });
+
+  describe('destroyAllEditors', () => {
+    it('should destroy all registered editors', async () => {
       const editor1 = createMockEditor('editor1');
       const editor2 = createMockEditor('editor2');
 
       registry.register('editor1', editor1);
       registry.register('editor2', editor2);
 
-      expect(registry.getEditors()).toHaveLength(3); // editor1, editor2, and default
+      await registry.destroyAllEditors();
 
-      registry.clear();
+      expect(registry.getEditors()).toHaveLength(0);
+    });
+
+    it('should clear the registry after destroying all editors', async () => {
+      const editor1 = createMockEditor('editor1');
+
+      registry.register('editor1', editor1);
+
+      await registry.destroyAllEditors();
 
       expect(registry.getEditors()).toHaveLength(0);
     });
@@ -191,5 +219,6 @@ type MockEditor = Editor & {
 function createMockEditor(name: string): MockEditor {
   return {
     name,
+    destroy: () => {},
   } as unknown as MockEditor;
 }

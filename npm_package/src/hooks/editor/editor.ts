@@ -1,14 +1,13 @@
 import type { Editor } from 'ckeditor5';
 
+import type { EditorId, EditorType } from './typings';
+
 import {
   debounce,
   mapObjectValues,
   parseIntIfNotNull,
-} from 'shared';
-
-import type { EditorId, EditorType } from './typings';
-
-import { ClassHook } from '../../shared/hook';
+} from '../../shared';
+import { ClassHook, makeHook } from '../../shared/hook';
 import { EditorsRegistry } from './editors-registry';
 import {
   isSingleEditingLikeEditor,
@@ -25,7 +24,7 @@ import {
  * This class is a hook that can be used with Phoenix LiveView to integrate
  * the CKEditor 5 WYSIWYG editor.
  */
-export class EditorHook extends ClassHook {
+class EditorHookImpl extends ClassHook {
   /**
    * The name of the hook.
    */
@@ -167,3 +166,8 @@ function getInitialRootsValues(editorId: EditorId, type: EditorType) {
 
   return mapObjectValues(editables, ({ initialValue }) => initialValue);
 }
+
+/**
+ * Phoenix LiveView hook for CKEditor 5.
+ */
+export const EditorHook = makeHook(EditorHookImpl);

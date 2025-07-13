@@ -1,5 +1,7 @@
 import type { Hook, LiveSocket } from 'phoenix_live_view';
 
+import type { RequiredBy } from '../types';
+
 /**
  * An abstract class that provides a class-based API for creating Phoenix LiveView hooks.
  *
@@ -58,7 +60,7 @@ export abstract class ClassHook {
    * Called when the hook has been mounted to the DOM.
    * This is the ideal place for initialization code.
    */
-  mounted?(): void;
+  abstract mounted(): void;
 
   /**
    * Called before the element is updated by a LiveView patch.
@@ -87,7 +89,7 @@ export abstract class ClassHook {
  *
  * @param constructor The constructor of the class that extends the `Hook` abstract class.
  */
-export function makeHook(constructor: new () => ClassHook): Hook<any> {
+export function makeHook(constructor: new () => ClassHook): RequiredBy<Hook<any>, 'mounted' | 'beforeUpdate' | 'destroyed' | 'disconnected' | 'reconnected'> {
   return {
     /**
      * The mounted lifecycle callback for the LiveView hook object.

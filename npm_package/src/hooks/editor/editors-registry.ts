@@ -110,11 +110,27 @@ export class EditorsRegistry {
   }
 
   /**
-   * Clears all registered editors and callbacks.
+   * Gets a promise that resolves with the editor instance for the given ID.
    */
-  clear() {
+  waitForEditor(editorId: EditorId | null): Promise<Editor> {
+    return this.execute(editorId, editor => editor);
+  }
+
+  /**
+   * Destroys all registered editors and clears the registry.
+   * This will call the `destroy` method on each editor.
+   */
+  async destroyAllEditors() {
+    const promises = (
+      Array
+        .from(this.editors.values())
+        .map(editor => editor.destroy())
+    );
+
     this.editors.clear();
     this.callbacks.clear();
+
+    await Promise.all(promises);
   }
 }
 

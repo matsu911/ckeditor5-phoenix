@@ -89,6 +89,19 @@ describe('editable hook', () => {
       expect(contentElement.classList.contains('ck-content')).toBe(true);
       expect(contentElement.innerHTML).toBe('<p><br data-cke-filler="true"></p>');
     });
+
+    it('should be possible to add editable before the editor is mounted', async () => {
+      const editable = createEditableHtmlElement({
+        name: 'foo',
+        initialValue: '<p>Foo</p>',
+      });
+
+      document.body.appendChild(editable);
+
+      const editor = await appendMultirootEditor();
+
+      expect(editor.getData({ rootName: 'foo' })).toBe('<p>Foo</p>');
+    });
   });
 
   describe('value synchronization', () => {

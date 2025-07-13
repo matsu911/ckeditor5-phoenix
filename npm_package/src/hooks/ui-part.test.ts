@@ -15,8 +15,6 @@ import { UIPartHook } from './ui-part';
 describe('ui part hook', () => {
   beforeEach(async () => {
     document.body.innerHTML = '';
-
-    await appendDecoupledEditor();
   });
 
   afterEach(async () => {
@@ -26,6 +24,8 @@ describe('ui part hook', () => {
 
   describe('mount', () => {
     it.for(['toolbar', 'menubar'])('should create a %s UI part', async (partName) => {
+      await appendDecoupledEditor();
+
       const uiElement = createUIPartHtmlElement({ name: partName });
 
       document.body.appendChild(uiElement);
@@ -37,6 +37,8 @@ describe('ui part hook', () => {
     });
 
     it('should log error when the UI part name is unknown', async () => {
+      await appendDecoupledEditor();
+
       const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
       const uiElement = createUIPartHtmlElement({ name: 'unknown' });
 
@@ -49,9 +51,26 @@ describe('ui part hook', () => {
         );
       });
     });
+
+    it('should be possible to add UI part before the editor is mounted', async () => {
+      const uiElement = createUIPartHtmlElement({ name: 'toolbar' });
+
+      document.body.appendChild(uiElement);
+      UIPartHook.mounted.call({ el: uiElement });
+
+      const editor = await appendDecoupledEditor();
+
+      await vi.waitFor(() => {
+        expect(editor.ui.view.toolbar.element).toBe(uiElement.querySelector('.ck'));
+      });
+    });
   });
 
   describe('destroyed', () => {
+    beforeEach(async () => {
+      await appendDecoupledEditor();
+    });
+
     it('should remove the UI part element from the DOM', async () => {
       const uiElement = createUIPartHtmlElement({ name: 'toolbar' });
 

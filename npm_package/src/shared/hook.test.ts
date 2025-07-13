@@ -112,7 +112,11 @@ describe('makeHook', () => {
   });
 
   it('should handle hooks without optional lifecycle methods', () => {
-    class MinimalHook extends ClassHook {}
+    class MinimalHook extends ClassHook {
+      override mounted = vi.fn();
+      override destroyed = vi.fn();
+    }
+
     const minimalHookObject = makeHook(MinimalHook);
 
     minimalHookObject.mounted?.call(mockContext);

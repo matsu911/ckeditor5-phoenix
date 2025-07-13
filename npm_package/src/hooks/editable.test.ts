@@ -5,7 +5,6 @@ import {
   createEditableHtmlElement,
   createEditorHtmlElement,
   createEditorPreset,
-  timeout,
   waitForTestEditor,
 } from '~/test-utils';
 
@@ -188,9 +187,27 @@ describe('editable hook', () => {
 
       EditableHook.destroyed.call({ el: editable });
 
-      await timeout(100);
+      await vi.waitFor(() => {
+        expect(editor.model.document.getRoot('foo')?.isAttached()).toBe(false);
+      });
+    });
 
-      expect(editor.model.document.getRoot('foo')?.isAttached()).toBe(false);
+    it('should hide the element during destruction to prevent flickering', async () => {
+      await appendMultirootEditor();
+
+      const editable = createEditableHtmlElement({
+        name: 'foo',
+        initialValue: '<p>Foo</p>',
+      });
+
+      document.body.appendChild(editable);
+      EditableHook.mounted.call({ el: editable });
+
+      expect(editable.style.display).toBe('');
+
+      EditableHook.destroyed.call({ el: editable });
+
+      expect(editable.style.display).toBe('none');
     });
   });
 });

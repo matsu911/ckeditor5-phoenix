@@ -38,10 +38,13 @@ class UIPartHookImpl extends ClassHook {
     // If the editor is not registered yet, we will wait for it to be registered.
     this.mountedPromise = EditorsRegistry.the.execute(editorId, (editor) => {
       const { ui } = editor;
-      const uiPart = (ui.view as any)[name];
 
-      if (!uiPart || !(uiPart.element instanceof HTMLElement)) {
-        throw new Error(`UI part "${name}" is not registered in the editor "${editorId}" or is not an HTMLElement.`);
+      const uiViewName = mapUIPartView(name);
+      const uiPart = (ui.view as any)[uiViewName!];
+
+      if (!uiPart) {
+        console.error(`Unknown UI part name: "${name}". Supported names are "toolbar" and "menubar".`);
+        return;
       }
 
       this.el.appendChild(uiPart.element);
@@ -61,6 +64,22 @@ class UIPartHookImpl extends ClassHook {
 
     // Unmount all UI parts from the editor.
     this.el.innerHTML = '';
+  }
+}
+
+/**
+ * Maps the UI part name to the corresponding view in the editor.
+ */
+function mapUIPartView(name: string): string | null {
+  switch (name) {
+    case 'toolbar':
+      return 'toolbar';
+
+    case 'menubar':
+      return 'menuBarView';
+
+    default:
+      return null;
   }
 }
 

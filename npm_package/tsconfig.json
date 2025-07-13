@@ -10,9 +10,6 @@
       "~/test-utils": ["./test-utils"],
       "~/test-utils/*": ["./test-utils/*"]
     },
-    "types": [
-      "@testing-library/jest-dom"
-    ],
     "declaration": true,
     "declarationMap": true,
     "noEmit": true,

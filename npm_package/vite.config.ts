@@ -36,7 +36,6 @@ export default defineConfig({
     globals: true,
     watch: false,
     environment: 'happy-dom',
-    setupFiles: ['./vitest-setup.ts'],
     coverage: {
       reporter: ['text', 'html'],
       thresholds: {

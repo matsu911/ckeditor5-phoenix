@@ -35,7 +35,6 @@ describe('editor hook', () => {
     it('should assign default value to the editor using "cke-initial-value" attribute', async () => {
       const initialValue = `<p>Hello World! Today is ${new Date().toLocaleDateString()}</p>`;
       const hookElement = createClassicEditorHtmlElement({
-        preset: createPreset(),
         initialValue,
       });
 
@@ -49,7 +48,6 @@ describe('editor hook', () => {
 
     it('should create an editor even if `cke-initial-value` is not set', async () => {
       const hookElement = createClassicEditorHtmlElement({
-        preset: createPreset(),
         initialValue: null,
       });
 
@@ -114,7 +112,6 @@ describe('editor hook', () => {
     it('should not crash if input is not present', async () => {
       const initialValue = `<p>Test content</p>`;
       const hookElement = createClassicEditorHtmlElement({
-        preset: createPreset(),
         initialValue,
         withInput: false,
       });
@@ -128,7 +125,6 @@ describe('editor hook', () => {
     it('should initialize the input with the initial value', async () => {
       const initialValue = `<p>Test content</p>`;
       const hookElement = createClassicEditorHtmlElement({
-        preset: createPreset(),
         initialValue,
         withInput: true,
       });
@@ -146,7 +142,6 @@ describe('editor hook', () => {
     it('should sync editor data with a hidden input', async () => {
       const initialValue = `<p>Initial content</p>`;
       const hookElement = createClassicEditorHtmlElement({
-        preset: createPreset(),
         initialValue,
         withInput: true,
       });
@@ -172,7 +167,6 @@ describe('editor hook', () => {
     it('should set the height of the editable area', async () => {
       const editableHeight = 255;
       const hookElement = createClassicEditorHtmlElement({
-        preset: createPreset(),
         editableHeight,
       });
 

@@ -103,6 +103,7 @@ describe('editors registry', () => {
 
       void promise.then(onResolve);
       await new Promise(resolve => setTimeout(resolve, 0)); // wait for promise to potentially resolve
+
       expect(onResolve).not.toHaveBeenCalled();
 
       const editor = createMockEditor('editor1');

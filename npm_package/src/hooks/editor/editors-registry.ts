@@ -36,22 +36,22 @@ export class EditorsRegistry {
     const { callbacks, editors } = this;
     const editor = editors.get(editorId);
 
-    if (!editor) {
-      return new Promise((resolve) => {
-        const callback = async (editor: E) => resolve(await fn(editor));
-
-        if (!this.callbacks.has(editorId)) {
-          callbacks.set(editorId, []);
-        }
-
-        callbacks.set(editorId, [
-          ...callbacks.get(editorId)!,
-          callback,
-        ]);
-      });
+    if (editor) {
+      return Promise.resolve(fn(editor as E));
     }
 
-    return Promise.resolve(fn(editor as E));
+    return new Promise((resolve) => {
+      const callback = async (editor: E) => resolve(await fn(editor));
+
+      if (!this.callbacks.has(editorId)) {
+        callbacks.set(editorId, []);
+      }
+
+      callbacks.set(editorId, [
+        ...callbacks.get(editorId)!,
+        callback,
+      ]);
+    });
   }
 
   /**

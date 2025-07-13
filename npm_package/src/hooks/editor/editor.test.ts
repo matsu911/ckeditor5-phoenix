@@ -1,11 +1,14 @@
-import type { Editor } from 'ckeditor5';
-
 import { ClassicEditor, DecoupledEditor, InlineEditor, MultiRootEditor } from 'ckeditor5';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { html } from '~/test-utils';
-
-import type { EditorConfig, EditorType } from './typings';
+import {
+  createEditableElement,
+  createEditorHtmlElement,
+  createEditorPreset,
+  getTestEditorInput,
+  isEditorShown,
+  waitForTestEditor,
+} from '~/test-utils';
 
 import { EditorHook } from './editor';
 import { EditorsRegistry } from './editors-registry';
@@ -22,7 +25,7 @@ describe('editor hook', () => {
   describe('mount', () => {
     describe('classic', () => {
       it('should create an classic editor with default preset', async () => {
-        const hookElement = createClassicEditorHtmlElement();
+        const hookElement = createEditorHtmlElement();
 
         document.body.appendChild(hookElement);
         EditorHook.mounted.call({ el: hookElement });
@@ -35,7 +38,7 @@ describe('editor hook', () => {
 
       it('should assign default value to the editor using "cke-initial-value" attribute', async () => {
         const initialValue = `<p>Hello World! Today is ${new Date().toLocaleDateString()}</p>`;
-        const hookElement = createClassicEditorHtmlElement({
+        const hookElement = createEditorHtmlElement({
           initialValue,
         });
 
@@ -48,7 +51,7 @@ describe('editor hook', () => {
       });
 
       it('should create an editor even if `cke-initial-value` is not set', async () => {
-        const hookElement = createClassicEditorHtmlElement({
+        const hookElement = createEditorHtmlElement({
           initialValue: null,
         });
 
@@ -66,8 +69,8 @@ describe('editor hook', () => {
 
     describe('decoupled', () => {
       it('should be possible to create decoupled editor without any editable', async () => {
-        const hookElement = createClassicEditorHtmlElement({
-          preset: createPreset('decoupled'),
+        const hookElement = createEditorHtmlElement({
+          preset: createEditorPreset('decoupled'),
         });
 
         document.body.appendChild(hookElement);
@@ -86,8 +89,8 @@ describe('editor hook', () => {
 
     describe('inline', () => {
       it('should create an inline editor with default preset', async () => {
-        const hookElement = createClassicEditorHtmlElement({
-          preset: createPreset('inline'),
+        const hookElement = createEditorHtmlElement({
+          preset: createEditorPreset('inline'),
         });
 
         document.body.appendChild(hookElement);
@@ -102,8 +105,8 @@ describe('editor hook', () => {
 
     describe('multiroot', () => {
       it('should create a multiroot editor without editables', async () => {
-        const hookElement = createClassicEditorHtmlElement({
-          preset: createPreset('multiroot'),
+        const hookElement = createEditorHtmlElement({
+          preset: createEditorPreset('multiroot'),
         });
 
         document.body.appendChild(hookElement);
@@ -115,8 +118,8 @@ describe('editor hook', () => {
       });
 
       it('should create a multiroot editor with editables', async () => {
-        const hookElement = createClassicEditorHtmlElement({
-          preset: createPreset('multiroot'),
+        const hookElement = createEditorHtmlElement({
+          preset: createEditorPreset('multiroot'),
         });
 
         document.body.appendChild(hookElement);
@@ -136,7 +139,7 @@ describe('editor hook', () => {
 
   describe('destroy', () => {
     it('should destroy editor on hook destruction', async () => {
-      const hookElement = createClassicEditorHtmlElement();
+      const hookElement = createEditorHtmlElement();
 
       document.body.appendChild(hookElement);
       EditorHook.mounted.call({ el: hookElement });
@@ -156,7 +159,7 @@ describe('editor hook', () => {
     });
 
     it('should mark the element as hidden during destruction', async () => {
-      const hookElement = createClassicEditorHtmlElement();
+      const hookElement = createEditorHtmlElement();
 
       document.body.appendChild(hookElement);
       EditorHook.mounted.call({ el: hookElement });
@@ -182,7 +185,7 @@ describe('editor hook', () => {
 
     it('should not crash if input is not present', async () => {
       const initialValue = `<p>Test content</p>`;
-      const hookElement = createClassicEditorHtmlElement({
+      const hookElement = createEditorHtmlElement({
         initialValue,
         withInput: false,
       });
@@ -195,7 +198,7 @@ describe('editor hook', () => {
 
     it('should initialize the input with the initial value', async () => {
       const initialValue = `<p>Test content</p>`;
-      const hookElement = createClassicEditorHtmlElement({
+      const hookElement = createEditorHtmlElement({
         initialValue,
         withInput: true,
       });
@@ -212,7 +215,7 @@ describe('editor hook', () => {
 
     it('should sync editor data with a hidden input', async () => {
       const initialValue = `<p>Initial content</p>`;
-      const hookElement = createClassicEditorHtmlElement({
+      const hookElement = createEditorHtmlElement({
         initialValue,
         withInput: true,
       });
@@ -237,7 +240,7 @@ describe('editor hook', () => {
   describe('`cke-editable-height` attribute', () => {
     it('should set the height of the editable area', async () => {
       const editableHeight = 255;
-      const hookElement = createClassicEditorHtmlElement({
+      const hookElement = createEditorHtmlElement({
         editableHeight,
       });
 
@@ -251,101 +254,3 @@ describe('editor hook', () => {
     });
   });
 });
-
-/**
- * Creates a classic editor HTML element for testing.
- */
-function getTestEditorInput() {
-  return document.getElementById('test-editor_input') as HTMLInputElement;
-}
-
-/**
- * Ensures that the editor is shown in the DOM.
- */
-function isEditorShown() {
-  return document.querySelector('.ck-editor__editable')?.classList.contains('ck-hidden') === false;
-}
-
-/**
- * Waits for the test editor to be registered in the EditorsRegistry.
- */
-function waitForTestEditor(): Promise<Editor> {
-  return EditorsRegistry.the.waitForEditor('test-editor');
-}
-
-/**
- * Creates a editable element with the given name and initial value.
- */
-function createEditableElement(name: string = 'main', initialValue?: string) {
-  return html.div(
-    {
-      'data-cke-editable-root-name': name,
-      ...initialValue && {
-        'data-cke-editable-initial-value': initialValue,
-      },
-    },
-    html.div({
-      'class': 'editable-content',
-      'data-cke-editable-content': '',
-    }),
-  );
-}
-
-/**
- * Creates a classic CKEditor HTML structure for testing.
- */
-function createClassicEditorHtmlElement(
-  {
-    id = 'test-editor',
-    preset = createPreset(),
-    initialValue = '<p>Test content</p>',
-    editableHeight = null,
-    withInput = false,
-    hookAttrs,
-  }: {
-    id?: string;
-    preset?: ReturnType<typeof createPreset>;
-    initialValue?: string | null;
-    editableHeight?: number | null;
-    withInput?: boolean;
-    hookAttrs?: Record<string, string>;
-  } = {},
-) {
-  return html.div(
-    {
-      id,
-      'phx-hook': 'CKEditor5',
-      'phx-update': 'ignore',
-      'cke-preset': JSON.stringify(preset),
-      ...initialValue && {
-        'cke-initial-value': initialValue,
-      },
-      ...editableHeight && {
-        'cke-editable-height': editableHeight,
-      },
-      ...hookAttrs,
-    },
-    html.div({ id: `${id}_editor` }),
-    withInput && html.input({
-      type: 'hidden',
-      id: `${id}_input`,
-      name: 'content',
-    }),
-  );
-}
-
-/**
- * Creates a preset configuration for testing purposes.
- */
-function createPreset(type: EditorType = 'classic', config: Partial<EditorConfig> = {}) {
-  const defaultConfig: EditorConfig = {
-    plugins: ['Essentials', 'Paragraph', 'Bold', 'Italic', 'Undo'],
-    toolbar: ['undo', 'redo', '|', 'bold', 'italic'],
-  };
-
-  return {
-    type,
-    config: { ...defaultConfig, ...config },
-    license: { key: 'GPL' },
-  };
-}

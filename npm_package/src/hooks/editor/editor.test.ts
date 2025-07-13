@@ -1,7 +1,7 @@
 import type { Editor } from 'ckeditor5';
 
 import { ClassicEditor } from 'ckeditor5';
-import { describe, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { html } from '~/test-utils';
 
@@ -19,7 +19,7 @@ describe('editor hook', () => {
     await EditorsRegistry.the.destroyAllEditors();
   });
 
-  it('should create a classic editor with default preset', async () => {
+  it('should create an classic editor with default preset', async () => {
     const hookElement = createClassicEditorHtmlElement();
 
     document.body.appendChild(hookElement);
@@ -45,6 +45,107 @@ describe('editor hook', () => {
 
     expect(editor.getData()).toBe(initialValue);
   });
+
+  it('should create an editor even if `cke-initial-value` is not set', async () => {
+    const hookElement = createClassicEditorHtmlElement({
+      preset: createPreset(),
+      initialValue: null,
+    });
+
+    document.body.appendChild(hookElement);
+    EditorHook.mounted.call({ el: hookElement });
+
+    const editor = await waitForTestEditor();
+
+    expect(editor).toBeInstanceOf(ClassicEditor);
+    expect(editor.getData()).toBe('');
+
+    expect(isEditorShown()).toBe(true);
+  });
+
+  describe('`cke-initial-value` attribute', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('should not crash if input is not present', async () => {
+      const initialValue = `<p>Test content</p>`;
+      const hookElement = createClassicEditorHtmlElement({
+        preset: createPreset(),
+        initialValue,
+        withInput: false,
+      });
+
+      document.body.appendChild(hookElement);
+      EditorHook.mounted.call({ el: hookElement });
+
+      await waitForTestEditor();
+    });
+
+    it('should initialize the input with the initial value', async () => {
+      const initialValue = `<p>Test content</p>`;
+      const hookElement = createClassicEditorHtmlElement({
+        preset: createPreset(),
+        initialValue,
+        withInput: true,
+      });
+
+      document.body.appendChild(hookElement);
+      EditorHook.mounted.call({ el: hookElement });
+
+      await waitForTestEditor();
+
+      const input = getTestEditorInput();
+
+      expect(input.value).toBe(initialValue);
+    });
+
+    it('should sync editor data with a hidden input', async () => {
+      const initialValue = `<p>Initial content</p>`;
+      const hookElement = createClassicEditorHtmlElement({
+        preset: createPreset(),
+        initialValue,
+        withInput: true,
+      });
+
+      document.body.appendChild(hookElement);
+      EditorHook.mounted.call({ el: hookElement });
+
+      const editor = await waitForTestEditor();
+      const input = getTestEditorInput();
+
+      editor.setData('<p>Updated content</p>');
+
+      // Test if sync is debounced
+      expect(input.value).toBe(initialValue);
+
+      await vi.advanceTimersByTimeAsync(500);
+
+      expect(input.value).toBe('<p>Updated content</p>');
+    });
+  });
+
+  describe('`cke-editable-height` attribute', () => {
+    it('should set the height of the editable area', async () => {
+      const editableHeight = 255;
+      const hookElement = createClassicEditorHtmlElement({
+        preset: createPreset(),
+        editableHeight,
+      });
+
+      document.body.appendChild(hookElement);
+      EditorHook.mounted.call({ el: hookElement });
+
+      const editor = await waitForTestEditor();
+      const editable = editor.editing.view.document.getRoot('main');
+
+      expect(editable?.getStyle('height')).toBe(`${editableHeight}px`);
+    });
+  });
 });
 
 /**
@@ -61,6 +162,13 @@ function createPreset(type: EditorType = 'classic', config: Partial<EditorConfig
     config: { ...defaultConfig, ...config },
     license: { key: 'GPL' },
   };
+}
+
+/**
+ * Creates a classic editor HTML element for testing.
+ */
+function getTestEditorInput() {
+  return document.getElementById('test-editor_input') as HTMLInputElement;
 }
 
 /**
@@ -85,7 +193,16 @@ function createClassicEditorHtmlElement(
     id = 'test-editor',
     preset = createPreset(),
     initialValue = '<p>Test content</p>',
-    ...hookAttrs
+    editableHeight = null,
+    withInput = false,
+    hookAttrs,
+  }: {
+    id?: string;
+    preset?: ReturnType<typeof createPreset>;
+    initialValue?: string | null;
+    editableHeight?: number | null;
+    withInput?: boolean;
+    hookAttrs?: Record<string, string>;
   } = {},
 ) {
   return html.div(
@@ -94,15 +211,19 @@ function createClassicEditorHtmlElement(
       'phx-hook': 'CKEditor5',
       'phx-update': 'ignore',
       'cke-preset': JSON.stringify(preset),
-      'cke-initial-value': initialValue,
+      ...initialValue && {
+        'cke-initial-value': initialValue,
+      },
+      ...editableHeight && {
+        'cke-editable-height': editableHeight,
+      },
       ...hookAttrs,
     },
     html.div({ id: `${id}_editor` }),
-    html.input({
+    withInput && html.input({
       type: 'hidden',
       id: `${id}_input`,
       name: 'content',
-      value: '<p>Test content</p>',
     }),
   );
 }

@@ -73,7 +73,7 @@ type HtmlAttributes = Record<string, string | number | boolean | null | undefine
 /**
  * Content that can be passed as children to HTML elements
  */
-type HtmlContent = string | Node | null | undefined;
+type HtmlContent = string | Node | null | undefined | false;
 
 /**
  * Type mapping for HTML elements

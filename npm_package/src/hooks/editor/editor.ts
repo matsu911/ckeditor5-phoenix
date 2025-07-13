@@ -84,13 +84,6 @@ class EditorHookImpl extends ClassHook {
     const Constructor = await loadEditorConstructor(type);
     const rootEditables = getInitialRootsContentElements(editorId, type);
 
-    if (!rootEditables) {
-      throw new Error(
-        `No root elements found for editor type: ${type}.`
-        + ' Ensure the element has the correct ID and editable attributes.',
-      );
-    }
-
     const editor = await Constructor.create(
       rootEditables as any,
       {
@@ -124,11 +117,12 @@ class EditorHookImpl extends ClassHook {
  * @param editor The CKEditor instance.
  */
 function syncEditorToInput(input: HTMLInputElement, editor: Editor) {
-  const debouncedSync = debounce(100, () => {
+  const sync = () => {
     input.value = editor.getData();
-  });
+  };
 
-  editor.model.document.on('change:data', debouncedSync);
+  editor.model.document.on('change:data', debounce(250, sync));
+  sync();
 }
 
 /**
@@ -140,7 +134,7 @@ function syncEditorToInput(input: HTMLInputElement, editor: Editor) {
  */
 function getInitialRootsContentElements(editorId: EditorId, type: EditorType) {
   if (isSingleEditingLikeEditor(type)) {
-    return document.getElementById(`${editorId}_editor`);
+    return document.getElementById(`${editorId}_editor`)!;
   }
 
   const editables = queryAllEditorEditables(editorId);

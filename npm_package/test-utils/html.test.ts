@@ -107,4 +107,11 @@ describe('html utility', () => {
     expect(el.hasAttribute('c')).toBe(false);
     expect(el.hasAttribute('d')).toBe(false);
   });
+
+  it('should not crash when creating an element with falsy children', () => {
+    const element = html.div({}, null, undefined, false);
+
+    expect(element.tagName).toBe('DIV');
+    expect(element.childNodes.length).toBe(0);
+  });
 });

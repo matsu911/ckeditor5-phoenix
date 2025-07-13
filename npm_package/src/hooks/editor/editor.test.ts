@@ -188,22 +188,6 @@ describe('editor hook', () => {
 });
 
 /**
- * Creates a preset configuration for testing purposes.
- */
-function createPreset(type: EditorType = 'classic', config: Partial<EditorConfig> = {}) {
-  const defaultConfig: EditorConfig = {
-    plugins: ['Essentials', 'Paragraph', 'Bold', 'Italic', 'Undo'],
-    toolbar: ['undo', 'redo', '|', 'bold', 'italic'],
-  };
-
-  return {
-    type,
-    config: { ...defaultConfig, ...config },
-    license: { key: 'GPL' },
-  };
-}
-
-/**
  * Creates a classic editor HTML element for testing.
  */
 function getTestEditorInput() {
@@ -230,14 +214,14 @@ function waitForTestEditor(): Promise<Editor> {
 function createClassicEditorHtmlElement(
   {
     id = 'test-editor',
-    preset = createPreset(),
+    preset = createClassicPreset(),
     initialValue = '<p>Test content</p>',
     editableHeight = null,
     withInput = false,
     hookAttrs,
   }: {
     id?: string;
-    preset?: ReturnType<typeof createPreset>;
+    preset?: ReturnType<typeof createClassicPreset>;
     initialValue?: string | null;
     editableHeight?: number | null;
     withInput?: boolean;
@@ -265,4 +249,20 @@ function createClassicEditorHtmlElement(
       name: 'content',
     }),
   );
+}
+
+/**
+ * Creates a preset configuration for testing purposes.
+ */
+function createClassicPreset(type: EditorType = 'classic', config: Partial<EditorConfig> = {}) {
+  const defaultConfig: EditorConfig = {
+    plugins: ['Essentials', 'Paragraph', 'Bold', 'Italic', 'Undo'],
+    toolbar: ['undo', 'redo', '|', 'bold', 'italic'],
+  };
+
+  return {
+    type,
+    config: { ...defaultConfig, ...config },
+    license: { key: 'GPL' },
+  };
 }

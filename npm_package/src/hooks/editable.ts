@@ -53,12 +53,6 @@ class EditableHookImpl extends ClassHook {
         data: initialValue,
       });
 
-      const root = model.document.getRoot(rootName);
-
-      if (root && ui.getEditableElement(rootName)) {
-        editor.detachEditable(root);
-      }
-
       const contentElement = this.el.querySelector('[data-cke-editable-content]') as HTMLElement | null;
       const editable = ui.view.createEditable(rootName, contentElement!);
 
@@ -90,7 +84,7 @@ class EditableHookImpl extends ClassHook {
 
       if (root) {
         editor.detachEditable(root);
-        editor.detachRoot(rootName, true);
+        editor.detachRoot(rootName, false);
       }
     });
   }
@@ -110,9 +104,10 @@ export const EditableHook = makeHook(EditableHookImpl);
  * @param rootName - The name of the root to synchronize.
  */
 function syncEditorRootToInput(input: HTMLInputElement, editor: MultiRootEditor, rootName: string) {
-  const debouncedSync = debounce(100, () => {
+  const sync = () => {
     input.value = editor.getData({ rootName });
-  });
+  };
 
-  editor.model.document.on('change:data', debouncedSync);
+  editor.model.document.on('change:data', debounce(100, sync));
+  sync();
 }

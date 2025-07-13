@@ -2,7 +2,7 @@ import { ClassicEditor, DecoupledEditor, InlineEditor, MultiRootEditor } from 'c
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
-  createEditableElement,
+  createEditableHtmlElement,
   createEditorHtmlElement,
   createEditorPreset,
   getTestEditorInput,
@@ -74,7 +74,7 @@ describe('editor hook', () => {
         });
 
         document.body.appendChild(hookElement);
-        document.body.appendChild(createEditableElement());
+        document.body.appendChild(createEditableHtmlElement());
 
         EditorHook.mounted.call({ el: hookElement });
 
@@ -123,8 +123,15 @@ describe('editor hook', () => {
         });
 
         document.body.appendChild(hookElement);
-        document.body.appendChild(createEditableElement('main', '<p>Main root</p>'));
-        document.body.appendChild(createEditableElement('second', '<p>Second root</p>'));
+        document.body.appendChild(createEditableHtmlElement({
+          name: 'main',
+          initialValue: '<p>Main root</p>',
+        }));
+
+        document.body.appendChild(createEditableHtmlElement({
+          name: 'second',
+          initialValue: '<p>Second root</p>',
+        }));
 
         EditorHook.mounted.call({ el: hookElement });
 
@@ -174,7 +181,7 @@ describe('editor hook', () => {
     });
   });
 
-  describe('`cke-initial-value` attribute', () => {
+  describe('value synchronization', () => {
     beforeEach(() => {
       vi.useFakeTimers();
     });

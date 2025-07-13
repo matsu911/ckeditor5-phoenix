@@ -18,7 +18,7 @@ describe('isSingleEditingLikeEditor', () => {
   });
 
   it('should return false for decoupled editor', () => {
-    expect(isSingleEditingLikeEditor('decoupled')).toBe(false);
+    expect(isSingleEditingLikeEditor('decoupled')).toBe(true);
   });
 
   it('should return false for multiroot editor', () => {
@@ -26,8 +26,8 @@ describe('isSingleEditingLikeEditor', () => {
   });
 
   it('should handle all valid editor types', () => {
-    const singleEditingTypes: EditorType[] = ['inline', 'classic', 'balloon'];
-    const multiEditingTypes: EditorType[] = ['decoupled', 'multiroot'];
+    const singleEditingTypes: EditorType[] = ['inline', 'classic', 'balloon', 'decoupled'];
+    const multiEditingTypes: EditorType[] = ['multiroot'];
 
     singleEditingTypes.forEach((type) => {
       expect(isSingleEditingLikeEditor(type)).toBe(true);

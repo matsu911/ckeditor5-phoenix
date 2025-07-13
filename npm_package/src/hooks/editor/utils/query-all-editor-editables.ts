@@ -6,19 +6,20 @@ import type { EditorId } from '../typings';
  * @param editorId The ID of the editor to query.
  * @returns An object mapping editable names to their corresponding elements and initial values.
  */
-export function queryAllEditorEditables(editorId: EditorId) {
+export function queryAllEditorEditables(editorId: EditorId): Record<string, EditableItem> {
   const iterator = document.querySelectorAll<HTMLElement>(
     [
-      `[data-cke-editor-id="${editorId}"][data-cke-editable-name]`,
-      '[data-cke-editable-name]:not([data-cke-editor-id])',
-    ].join(', '),
+      `[data-cke-editor-id="${editorId}"][data-cke-editable-root-name]`,
+      '[data-cke-editable-root-name]:not([data-cke-editor-id])',
+    ]
+      .join(', '),
   );
 
   return (
     Array
       .from(iterator)
       .reduce<Record<string, EditableItem>>((acc, element) => {
-        const name = element.getAttribute('data-cke-editable-name');
+        const name = element.getAttribute('data-cke-editable-root-name');
         const initialValue = element.getAttribute('data-cke-editable-initial-value') || '';
         const content = element.querySelector('[data-cke-editable-content]') as HTMLElement;
 

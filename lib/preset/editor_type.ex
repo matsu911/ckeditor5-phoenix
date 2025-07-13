@@ -15,7 +15,7 @@ defmodule CKEditor5.Preset.EditorType do
   Single editing-like editors are those that allow inline or classic editing modes.
   """
   def single_editing_like?(type) do
-    type in [:inline, :classic, :balloon]
+    type in [:inline, :classic, :balloon, :decoupled]
   end
 
   @doc """

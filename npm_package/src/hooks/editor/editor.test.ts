@@ -1,6 +1,6 @@
 import type { Editor } from 'ckeditor5';
 
-import { ClassicEditor } from 'ckeditor5';
+import { ClassicEditor, DecoupledEditor, InlineEditor, MultiRootEditor } from 'ckeditor5';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { html } from '~/test-utils';
@@ -20,46 +20,117 @@ describe('editor hook', () => {
   });
 
   describe('mount', () => {
-    it('should create an classic editor with default preset', async () => {
-      const hookElement = createClassicEditorHtmlElement();
+    describe('classic', () => {
+      it('should create an classic editor with default preset', async () => {
+        const hookElement = createClassicEditorHtmlElement();
 
-      document.body.appendChild(hookElement);
-      EditorHook.mounted.call({ el: hookElement });
+        document.body.appendChild(hookElement);
+        EditorHook.mounted.call({ el: hookElement });
 
-      const editor = await waitForTestEditor();
+        const editor = await waitForTestEditor();
 
-      expect(editor).to.toBeInstanceOf(ClassicEditor);
-      expect(isEditorShown()).toBe(true);
-    });
-
-    it('should assign default value to the editor using "cke-initial-value" attribute', async () => {
-      const initialValue = `<p>Hello World! Today is ${new Date().toLocaleDateString()}</p>`;
-      const hookElement = createClassicEditorHtmlElement({
-        initialValue,
+        expect(editor).to.toBeInstanceOf(ClassicEditor);
+        expect(isEditorShown()).toBe(true);
       });
 
-      document.body.appendChild(hookElement);
-      EditorHook.mounted.call({ el: hookElement });
+      it('should assign default value to the editor using "cke-initial-value" attribute', async () => {
+        const initialValue = `<p>Hello World! Today is ${new Date().toLocaleDateString()}</p>`;
+        const hookElement = createClassicEditorHtmlElement({
+          initialValue,
+        });
 
-      const editor = await waitForTestEditor();
+        document.body.appendChild(hookElement);
+        EditorHook.mounted.call({ el: hookElement });
 
-      expect(editor.getData()).toBe(initialValue);
-    });
+        const editor = await waitForTestEditor();
 
-    it('should create an editor even if `cke-initial-value` is not set', async () => {
-      const hookElement = createClassicEditorHtmlElement({
-        initialValue: null,
+        expect(editor.getData()).toBe(initialValue);
       });
 
-      document.body.appendChild(hookElement);
-      EditorHook.mounted.call({ el: hookElement });
+      it('should create an editor even if `cke-initial-value` is not set', async () => {
+        const hookElement = createClassicEditorHtmlElement({
+          initialValue: null,
+        });
 
-      const editor = await waitForTestEditor();
+        document.body.appendChild(hookElement);
+        EditorHook.mounted.call({ el: hookElement });
 
-      expect(editor).toBeInstanceOf(ClassicEditor);
-      expect(editor.getData()).toBe('');
+        const editor = await waitForTestEditor();
 
-      expect(isEditorShown()).toBe(true);
+        expect(editor).toBeInstanceOf(ClassicEditor);
+        expect(editor.getData()).toBe('');
+
+        expect(isEditorShown()).toBe(true);
+      });
+    });
+
+    describe('decoupled', () => {
+      it('should be possible to create decoupled editor without any editable', async () => {
+        const hookElement = createClassicEditorHtmlElement({
+          preset: createPreset('decoupled'),
+        });
+
+        document.body.appendChild(hookElement);
+        document.body.appendChild(createEditableElement());
+
+        EditorHook.mounted.call({ el: hookElement });
+
+        const editor = await waitForTestEditor();
+
+        expect(editor).toBeInstanceOf(DecoupledEditor);
+        expect(editor.getData()).toBe('<p>Test content</p>');
+
+        expect(isEditorShown()).toBe(true);
+      });
+    });
+
+    describe('inline', () => {
+      it('should create an inline editor with default preset', async () => {
+        const hookElement = createClassicEditorHtmlElement({
+          preset: createPreset('inline'),
+        });
+
+        document.body.appendChild(hookElement);
+        EditorHook.mounted.call({ el: hookElement });
+
+        const editor = await waitForTestEditor();
+
+        expect(editor).toBeInstanceOf(InlineEditor);
+        expect(isEditorShown()).toBe(true);
+      });
+    });
+
+    describe('multiroot', () => {
+      it('should create a multiroot editor without editables', async () => {
+        const hookElement = createClassicEditorHtmlElement({
+          preset: createPreset('multiroot'),
+        });
+
+        document.body.appendChild(hookElement);
+        EditorHook.mounted.call({ el: hookElement });
+
+        const editor = await waitForTestEditor();
+
+        expect(editor).toBeInstanceOf(MultiRootEditor);
+      });
+
+      it('should create a multiroot editor with editables', async () => {
+        const hookElement = createClassicEditorHtmlElement({
+          preset: createPreset('multiroot'),
+        });
+
+        document.body.appendChild(hookElement);
+        document.body.appendChild(createEditableElement('main', '<p>Main root</p>'));
+        document.body.appendChild(createEditableElement('second', '<p>Second root</p>'));
+
+        EditorHook.mounted.call({ el: hookElement });
+
+        const editor = await waitForTestEditor();
+
+        expect(editor).toBeInstanceOf(MultiRootEditor);
+        expect(editor.getData({ rootName: 'main' })).toBe('<p>Main root</p>');
+        expect(editor.getData({ rootName: 'second' })).toBe('<p>Second root</p>');
+      });
     });
   });
 
@@ -203,19 +274,37 @@ function waitForTestEditor(): Promise<Editor> {
 }
 
 /**
+ * Creates a editable element with the given name and initial value.
+ */
+function createEditableElement(name: string = 'main', initialValue?: string) {
+  return html.div(
+    {
+      'data-cke-editable-root-name': name,
+      ...initialValue && {
+        'data-cke-editable-initial-value': initialValue,
+      },
+    },
+    html.div({
+      'class': 'editable-content',
+      'data-cke-editable-content': '',
+    }),
+  );
+}
+
+/**
  * Creates a classic CKEditor HTML structure for testing.
  */
 function createClassicEditorHtmlElement(
   {
     id = 'test-editor',
-    preset = createClassicPreset(),
+    preset = createPreset(),
     initialValue = '<p>Test content</p>',
     editableHeight = null,
     withInput = false,
     hookAttrs,
   }: {
     id?: string;
-    preset?: ReturnType<typeof createClassicPreset>;
+    preset?: ReturnType<typeof createPreset>;
     initialValue?: string | null;
     editableHeight?: number | null;
     withInput?: boolean;
@@ -248,7 +337,7 @@ function createClassicEditorHtmlElement(
 /**
  * Creates a preset configuration for testing purposes.
  */
-function createClassicPreset(type: EditorType = 'classic', config: Partial<EditorConfig> = {}) {
+function createPreset(type: EditorType = 'classic', config: Partial<EditorConfig> = {}) {
   const defaultConfig: EditorConfig = {
     plugins: ['Essentials', 'Paragraph', 'Bold', 'Italic', 'Undo'],
     toolbar: ['undo', 'redo', '|', 'bold', 'italic'],

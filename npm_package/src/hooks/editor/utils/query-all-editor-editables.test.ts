@@ -15,7 +15,7 @@ describe('queryAllEditorEditables', () => {
 
   it('should find editables with specific editor ID', () => {
     document.body.innerHTML = `
-      <div data-cke-editor-id="test-editor" data-cke-editable-name="main" data-cke-editable-initial-value="Initial content">
+      <div data-cke-editor-id="test-editor" data-cke-editable-root-name="main" data-cke-editable-initial-value="Initial content">
         <div data-cke-editable-content>Content area</div>
       </div>
     `;
@@ -29,7 +29,7 @@ describe('queryAllEditorEditables', () => {
 
   it('should find editables without editor ID (fallback)', () => {
     document.body.innerHTML = `
-      <div data-cke-editable-name="main" data-cke-editable-initial-value="Initial content">
+      <div data-cke-editable-root-name="main" data-cke-editable-initial-value="Initial content">
         <div data-cke-editable-content>Content area</div>
       </div>
     `;
@@ -43,10 +43,10 @@ describe('queryAllEditorEditables', () => {
 
   it('should handle multiple editables', () => {
     document.body.innerHTML = `
-      <div data-cke-editor-id="test-editor" data-cke-editable-name="main" data-cke-editable-initial-value="Main content">
+      <div data-cke-editor-id="test-editor" data-cke-editable-root-name="main" data-cke-editable-initial-value="Main content">
         <div data-cke-editable-content>Main area</div>
       </div>
-      <div data-cke-editor-id="test-editor" data-cke-editable-name="sidebar" data-cke-editable-initial-value="Sidebar content">
+      <div data-cke-editor-id="test-editor" data-cke-editable-root-name="sidebar" data-cke-editable-initial-value="Sidebar content">
         <div data-cke-editable-content>Sidebar area</div>
       </div>
     `;
@@ -62,7 +62,7 @@ describe('queryAllEditorEditables', () => {
 
   it('should ignore editables without content element', () => {
     document.body.innerHTML = `
-      <div data-cke-editor-id="test-editor" data-cke-editable-name="main" data-cke-editable-initial-value="Initial content">
+      <div data-cke-editor-id="test-editor" data-cke-editable-root-name="main" data-cke-editable-initial-value="Initial content">
         <!-- No content element -->
       </div>
     `;
@@ -86,7 +86,7 @@ describe('queryAllEditorEditables', () => {
 
   it('should use empty string as default initial value', () => {
     document.body.innerHTML = `
-      <div data-cke-editor-id="test-editor" data-cke-editable-name="main">
+      <div data-cke-editor-id="test-editor" data-cke-editable-root-name="main">
         <div data-cke-editable-content>Content area</div>
       </div>
     `;
@@ -99,10 +99,10 @@ describe('queryAllEditorEditables', () => {
 
   it('should filter by specific editor ID', () => {
     document.body.innerHTML = `
-      <div data-cke-editor-id="editor1" data-cke-editable-name="main" data-cke-editable-initial-value="Editor 1 content">
+      <div data-cke-editor-id="editor1" data-cke-editable-root-name="main" data-cke-editable-initial-value="Editor 1 content">
         <div data-cke-editable-content>Editor 1 area</div>
       </div>
-      <div data-cke-editor-id="editor2" data-cke-editable-name="main" data-cke-editable-initial-value="Editor 2 content">
+      <div data-cke-editor-id="editor2" data-cke-editable-root-name="main" data-cke-editable-initial-value="Editor 2 content">
         <div data-cke-editable-content>Editor 2 area</div>
       </div>
     `;
@@ -120,12 +120,12 @@ describe('queryAllEditorEditables', () => {
   it('should handle complex nested structures', () => {
     document.body.innerHTML = `
       <div class="editor-container">
-        <div data-cke-editor-id="test-editor" data-cke-editable-name="header" data-cke-editable-initial-value="Header content">
+        <div data-cke-editor-id="test-editor" data-cke-editable-root-name="header" data-cke-editable-initial-value="Header content">
           <div class="wrapper">
             <div data-cke-editable-content class="content-area">Header area</div>
           </div>
         </div>
-        <div data-cke-editor-id="test-editor" data-cke-editable-name="body" data-cke-editable-initial-value="Body content">
+        <div data-cke-editor-id="test-editor" data-cke-editable-root-name="body" data-cke-editable-initial-value="Body content">
           <div data-cke-editable-content>Body area</div>
         </div>
       </div>

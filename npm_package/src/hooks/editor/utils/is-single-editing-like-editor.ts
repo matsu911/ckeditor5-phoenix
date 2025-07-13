@@ -7,5 +7,5 @@ import type { EditorType } from '../typings';
  * @returns `true` if the editor type is 'inline', 'classic', or 'balloon', otherwise `false`.
  */
 export function isSingleEditingLikeEditor(editorType: EditorType): boolean {
-  return ['inline', 'classic', 'balloon'].includes(editorType);
+  return ['inline', 'classic', 'balloon', 'decoupled'].includes(editorType);
 }

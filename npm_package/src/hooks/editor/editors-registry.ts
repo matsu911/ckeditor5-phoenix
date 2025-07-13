@@ -20,6 +20,11 @@ export class EditorsRegistry {
   private readonly callbacks = new Map<EditorId | null, EditorCallback<any>[]>();
 
   /**
+   * Private constructor to enforce singleton pattern.
+   */
+  private constructor() {}
+
+  /**
    * Executes a function on an editor.
    * If the editor is not yet registered, it will wait for it to be registered.
    *
@@ -102,6 +107,14 @@ export class EditorsRegistry {
    */
   getEditors(): Editor[] {
     return Array.from(this.editors.values());
+  }
+
+  /**
+   * Clears all registered editors and callbacks.
+   */
+  clear() {
+    this.editors.clear();
+    this.callbacks.clear();
   }
 }
 

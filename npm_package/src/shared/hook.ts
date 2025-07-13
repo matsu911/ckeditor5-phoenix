@@ -63,15 +63,15 @@ export abstract class ClassHook {
   abstract mounted(): void;
 
   /**
-   * Called before the element is updated by a LiveView patch.
-   */
-  beforeUpdate?(): void;
-
-  /**
    * Called when the element has been removed from the DOM.
    * Perfect for cleanup tasks.
    */
-  destroyed?(): void;
+  abstract destroyed(): void;
+
+  /**
+   * Called before the element is updated by a LiveView patch.
+   */
+  beforeUpdate?(): void;
 
   /**
    * Called when the client has disconnected from the server.
@@ -89,7 +89,7 @@ export abstract class ClassHook {
  *
  * @param constructor The constructor of the class that extends the `Hook` abstract class.
  */
-export function makeHook(constructor: new () => ClassHook): RequiredBy<Hook<any>, 'mounted' | 'beforeUpdate' | 'destroyed' | 'disconnected' | 'reconnected'> {
+export function makeHook(constructor: new () => ClassHook): RequiredBy<Hook<any>, 'mounted' | 'destroyed'> {
   return {
     /**
      * The mounted lifecycle callback for the LiveView hook object.

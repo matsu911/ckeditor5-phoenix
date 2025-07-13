@@ -19,48 +19,87 @@ describe('editor hook', () => {
     await EditorsRegistry.the.destroyAllEditors();
   });
 
-  it('should create an classic editor with default preset', async () => {
-    const hookElement = createClassicEditorHtmlElement();
+  describe('mount', () => {
+    it('should create an classic editor with default preset', async () => {
+      const hookElement = createClassicEditorHtmlElement();
 
-    document.body.appendChild(hookElement);
-    EditorHook.mounted.call({ el: hookElement });
+      document.body.appendChild(hookElement);
+      EditorHook.mounted.call({ el: hookElement });
 
-    const editor = await waitForTestEditor();
+      const editor = await waitForTestEditor();
 
-    expect(editor).to.toBeInstanceOf(ClassicEditor);
-    expect(isEditorShown()).toBe(true);
-  });
-
-  it('should assign default value to the editor using "cke-initial-value" attribute', async () => {
-    const initialValue = `<p>Hello World! Today is ${new Date().toLocaleDateString()}</p>`;
-    const hookElement = createClassicEditorHtmlElement({
-      preset: createPreset(),
-      initialValue,
+      expect(editor).to.toBeInstanceOf(ClassicEditor);
+      expect(isEditorShown()).toBe(true);
     });
 
-    document.body.appendChild(hookElement);
-    EditorHook.mounted.call({ el: hookElement });
+    it('should assign default value to the editor using "cke-initial-value" attribute', async () => {
+      const initialValue = `<p>Hello World! Today is ${new Date().toLocaleDateString()}</p>`;
+      const hookElement = createClassicEditorHtmlElement({
+        preset: createPreset(),
+        initialValue,
+      });
 
-    const editor = await waitForTestEditor();
+      document.body.appendChild(hookElement);
+      EditorHook.mounted.call({ el: hookElement });
 
-    expect(editor.getData()).toBe(initialValue);
-  });
+      const editor = await waitForTestEditor();
 
-  it('should create an editor even if `cke-initial-value` is not set', async () => {
-    const hookElement = createClassicEditorHtmlElement({
-      preset: createPreset(),
-      initialValue: null,
+      expect(editor.getData()).toBe(initialValue);
     });
 
-    document.body.appendChild(hookElement);
-    EditorHook.mounted.call({ el: hookElement });
+    it('should create an editor even if `cke-initial-value` is not set', async () => {
+      const hookElement = createClassicEditorHtmlElement({
+        preset: createPreset(),
+        initialValue: null,
+      });
 
-    const editor = await waitForTestEditor();
+      document.body.appendChild(hookElement);
+      EditorHook.mounted.call({ el: hookElement });
 
-    expect(editor).toBeInstanceOf(ClassicEditor);
-    expect(editor.getData()).toBe('');
+      const editor = await waitForTestEditor();
 
-    expect(isEditorShown()).toBe(true);
+      expect(editor).toBeInstanceOf(ClassicEditor);
+      expect(editor.getData()).toBe('');
+
+      expect(isEditorShown()).toBe(true);
+    });
+  });
+
+  describe('destroy', () => {
+    it('should destroy editor on hook destruction', async () => {
+      const hookElement = createClassicEditorHtmlElement();
+
+      document.body.appendChild(hookElement);
+      EditorHook.mounted.call({ el: hookElement });
+
+      const editor = await waitForTestEditor();
+
+      EditorHook.destroyed.call({ el: hookElement });
+
+      expect(EditorsRegistry.the.getEditors()).toContain(editor);
+
+      await new Promise((resolve) => {
+        editor.once('destroy', resolve);
+        editor.destroy();
+      });
+
+      expect(EditorsRegistry.the.getEditors()).not.toContain(editor);
+    });
+
+    it('should mark the element as hidden during destruction', async () => {
+      const hookElement = createClassicEditorHtmlElement();
+
+      document.body.appendChild(hookElement);
+      EditorHook.mounted.call({ el: hookElement });
+
+      await waitForTestEditor();
+
+      expect(hookElement.style.display).toBe('');
+
+      EditorHook.destroyed.call({ el: hookElement });
+
+      expect(hookElement.style.display).toBe('none');
+    });
   });
 
   describe('`cke-initial-value` attribute', () => {

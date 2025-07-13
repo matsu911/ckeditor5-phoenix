@@ -110,7 +110,21 @@ export class EditorsRegistry {
   }
 
   /**
+   * Checks if an editor with the given ID is registered.
+   *
+   * @param editorId The ID of the editor.
+   * @returns `true` if the editor is registered, `false` otherwise.
+   */
+  hasEditor(editorId: EditorId | null): boolean {
+    return this.editors.has(editorId);
+  }
+
+  /**
    * Gets a promise that resolves with the editor instance for the given ID.
+   * If the editor is not registered yet, it will wait for it to be registered.
+   *
+   * @param editorId The ID of the editor.
+   * @returns A promise that resolves with the editor instance.
    */
   waitForEditor(editorId: EditorId | null): Promise<Editor> {
     return this.execute(editorId, editor => editor);

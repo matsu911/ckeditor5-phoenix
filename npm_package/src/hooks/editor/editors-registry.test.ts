@@ -167,6 +167,20 @@ describe('editors registry', () => {
     });
   });
 
+  describe('hasEditor', () => {
+    it('should return true if an editor with the given ID is registered', () => {
+      const editor = createMockEditor('editor1');
+
+      registry.register('editor1', editor);
+
+      expect(registry.hasEditor('editor1')).toBe(true);
+    });
+
+    it('should return false if an editor with the given ID is not registered', () => {
+      expect(registry.hasEditor('nonexistent')).toBe(false);
+    });
+  });
+
   describe('waitForEditor', () => {
     it('should return a promise that resolves with the editor instance', async () => {
       const editor1 = createMockEditor('editor1');

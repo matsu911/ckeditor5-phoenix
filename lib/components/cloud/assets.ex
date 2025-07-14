@@ -15,7 +15,7 @@ defmodule CKEditor5.Components.Cloud.Assets do
 
   use Phoenix.Component
 
-  alias CKEditor5.Components.Cloud.{Importmap, Stylesheets, UmdScripts, ModulePreload}
+  alias CKEditor5.Components.Cloud.{Importmap, ModulePreload, Stylesheets, UmdScripts}
 
   @doc """
   Renders all the assets by composing individual cloud components.

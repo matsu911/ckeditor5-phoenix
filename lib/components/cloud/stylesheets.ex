@@ -23,13 +23,14 @@ defmodule CKEditor5.Components.Cloud.Stylesheets do
   to specify which preset's stylesheets to use.
   """
   attr :preset, :string, default: "default", doc: "The name of the preset to use."
+  attr :nonce, :string, default: nil, doc: "The CSP nonce to use for the link tags."
 
   def render(assigns) do
     assigns = assign_stylesheets(assigns)
 
     ~H"""
     <%= for href <- @stylesheets do %>
-      <link rel="stylesheet" href={href} />
+      <link rel="stylesheet" href={href} nonce={@nonce} crossorigin="anonymous" />
     <% end %>
     """
   end

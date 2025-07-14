@@ -15,19 +15,21 @@ defmodule CKEditor5.Components.Cloud.Assets do
 
   use Phoenix.Component
 
-  alias CKEditor5.Components.Cloud.{Importmap, Stylesheets, UmdScripts}
+  alias CKEditor5.Components.Cloud.{Importmap, Stylesheets, UmdScripts, ModulePreload}
 
   @doc """
   Renders all the assets by composing individual cloud components.
   Accepts a `:preset` assign to specify which preset's assets to use.
   """
   attr :preset, :string, default: "default", doc: "The name of the preset to use."
+  attr :nonce, :string, default: nil, doc: "The CSP nonce to use for the script and link tags."
 
   def render(assigns) do
     ~H"""
-    <Importmap.render preset={@preset} />
-    <Stylesheets.render preset={@preset} />
-    <UmdScripts.render preset={@preset} />
+    <Importmap.render preset={@preset} nonce={@nonce} />
+    <Stylesheets.render preset={@preset} nonce={@nonce} />
+    <UmdScripts.render preset={@preset} nonce={@nonce} />
+    <ModulePreload.module_preload preset={@preset} nonce={@nonce} />
     """
   end
 end

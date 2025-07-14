@@ -23,13 +23,14 @@ defmodule CKEditor5.Components.Cloud.UmdScripts do
   to specify which preset's scripts to use.
   """
   attr :preset, :string, default: "default", doc: "The name of the preset to use."
+  attr :nonce, :string, default: nil, doc: "The CSP nonce to use for the script tags."
 
   def render(assigns) do
     assigns = assign_scripts(assigns)
 
     ~H"""
     <%= for src <- @scripts do %>
-      <script src={src}></script>
+      <script src={src} nonce={@nonce}></script>
     <% end %>
     """
   end

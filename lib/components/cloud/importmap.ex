@@ -25,12 +25,13 @@ defmodule CKEditor5.Components.Cloud.Importmap do
   to specify which preset's import map to use.
   """
   attr :preset, :string, default: "default", doc: "The name of the preset to use."
+  attr :nonce, :string, default: nil, doc: "The CSP nonce to use for the script tag."
 
   def render(assigns) do
     assigns = assign_importmap(assigns)
 
     ~H"""
-    <script type="importmap"><%= raw(@imports) %></script>
+    <script type="importmap" nonce={@nonce}><%= raw(@imports) %></script>
     """
   end
 

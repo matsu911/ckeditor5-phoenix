@@ -23,6 +23,17 @@ describe('editor hook', () => {
   });
 
   describe('mount', () => {
+    it('should save the editor instance in the registry with provided editorId', async () => {
+      const hookElement = createEditorHtmlElement({
+        id: 'magic-editor',
+      });
+
+      document.body.appendChild(hookElement);
+      EditorHook.mounted.call({ el: hookElement });
+
+      expect(await EditorsRegistry.the.waitForEditor('magic-editor')).toBeInstanceOf(ClassicEditor);
+    });
+
     describe('classic', () => {
       it('should create an classic editor with default preset', async () => {
         const hookElement = createEditorHtmlElement();
@@ -68,7 +79,7 @@ describe('editor hook', () => {
     });
 
     describe('decoupled', () => {
-      it('should be possible to create decoupled editor without any editable', async () => {
+      it('should be possible to create decoupled editor with editable', async () => {
         const hookElement = createEditorHtmlElement({
           preset: createEditorPreset('decoupled'),
         });
@@ -84,6 +95,65 @@ describe('editor hook', () => {
         expect(editor.getData()).toBe('<p>Test content</p>');
 
         expect(isEditorShown()).toBe(true);
+      });
+
+      it('if the initial value is specified on the editable, it should ignore initial value set on the editor', async () => {
+        const hookElement = createEditorHtmlElement({
+          preset: createEditorPreset('decoupled'),
+          initialValue: '<p>Ignored content</p>',
+        });
+
+        document.body.appendChild(hookElement);
+        document.body.appendChild(createEditableHtmlElement({
+          initialValue: '<p>Editable value</p>',
+        }));
+
+        EditorHook.mounted.call({ el: hookElement });
+
+        const editor = await waitForTestEditor();
+
+        expect(editor).toBeInstanceOf(DecoupledEditor);
+        expect(editor.getData()).toBe('<p>Editable value</p>');
+
+        expect(isEditorShown()).toBe(true);
+      });
+
+      it('should not match editables form the other editors', async () => {
+        const hookElement = createEditorHtmlElement({
+          preset: createEditorPreset('decoupled'),
+          initialValue: null,
+        });
+
+        const editables = {
+          current: createEditableHtmlElement({
+            id: 'test-editor',
+            initialValue: '<p>XD</p>',
+          }),
+          other: createEditableHtmlElement({
+            id: 'other-editor',
+            name: 'main',
+            initialValue: '<p>Other content</p>',
+            editorId: 'other-editor-1',
+          }),
+          other1: createEditableHtmlElement({
+            id: 'other-editor-1',
+            name: 'main',
+            initialValue: '<p>Other content 1</p>',
+            editorId: 'other-editor-1',
+          }),
+        };
+
+        document.body.appendChild(hookElement);
+        document.body.appendChild(editables.other1);
+        document.body.appendChild(editables.current);
+        document.body.appendChild(editables.other);
+
+        EditorHook.mounted.call({ el: hookElement });
+
+        const editor = await waitForTestEditor();
+
+        expect(editor).toBeInstanceOf(DecoupledEditor);
+        expect(editor.getData()).toBe('<p>XD</p>');
       });
     });
 

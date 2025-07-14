@@ -233,7 +233,7 @@ async function appendMultirootEditor() {
   document.body.appendChild(hookElement);
   EditorHook.mounted.call({ el: hookElement });
 
-  const editor = (await waitForTestEditor()) as MultiRootEditor;
+  const editor = await waitForTestEditor<MultiRootEditor>();
 
   expect(editor).toBeInstanceOf(MultiRootEditor);
 

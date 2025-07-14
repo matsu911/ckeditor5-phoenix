@@ -126,8 +126,8 @@ export class EditorsRegistry {
    * @param editorId The ID of the editor.
    * @returns A promise that resolves with the editor instance.
    */
-  waitForEditor(editorId: EditorId | null): Promise<Editor> {
-    return this.execute(editorId, editor => editor);
+  waitForEditor<E extends Editor>(editorId: EditorId | null): Promise<E> {
+    return this.execute(editorId, editor => editor as E);
   }
 
   /**

@@ -152,8 +152,20 @@ function getInitialRootsContentElements(editorId: EditorId, type: EditorType) {
  * @returns The initial values for the editor's roots.
  */
 function getInitialRootsValues(editorId: EditorId, type: EditorType) {
+  // If the editor is decoupled, the initial value might be specified in the `main` editable.
+  if (type === 'decoupled') {
+    const mainEditableValue = queryAllEditorEditables(editorId)['main']?.initialValue;
+
+    if (mainEditableValue) {
+      return mainEditableValue;
+    }
+  }
+
+  // Let's check initial value assigned to the editor element.
   if (isSingleEditingLikeEditor(type)) {
-    return document.getElementById(editorId)!.getAttribute('cke-initial-value') || '';
+    const initialValue = document.getElementById(editorId)?.getAttribute('cke-initial-value') || '';
+
+    return initialValue;
   }
 
   const editables = queryAllEditorEditables(editorId);

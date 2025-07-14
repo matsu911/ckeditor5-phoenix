@@ -8,6 +8,8 @@ import {
   waitForTestEditor,
 } from '~/test-utils';
 
+import type { EditorId } from './editor/typings';
+
 import { EditorHook } from './editor';
 import { EditorsRegistry } from './editor/editors-registry';
 import { UIPartHook } from './ui-part';
@@ -64,6 +66,27 @@ describe('ui part hook', () => {
         expect(editor.ui.view.toolbar.element).toBe(uiElement.querySelector('.ck'));
       });
     });
+
+    it('should not match the UI parts from the other editors', async () => {
+      const editor1 = await appendDecoupledEditor('editor-1');
+      const editor2 = await appendDecoupledEditor('editor-2');
+
+      const uiElement3 = createUIPartHtmlElement({ name: 'toolbar', editorId: 'editor-3' });
+      const uiElement1 = createUIPartHtmlElement({ name: 'toolbar', editorId: 'editor-1' });
+      const uiElement2 = createUIPartHtmlElement({ name: 'toolbar', editorId: 'editor-2' });
+
+      document.body.appendChild(uiElement3);
+      document.body.appendChild(uiElement1);
+      document.body.appendChild(uiElement2);
+
+      UIPartHook.mounted.call({ el: uiElement1 });
+      UIPartHook.mounted.call({ el: uiElement2 });
+
+      await vi.waitFor(() => {
+        expect(uiElement1.querySelector('.ck')).toBe(editor1.ui.view.toolbar?.element);
+        expect(uiElement2.querySelector('.ck')).toBe(editor2.ui.view.toolbar?.element);
+      });
+    });
   });
 
   describe('destroyed', () => {
@@ -107,8 +130,9 @@ describe('ui part hook', () => {
   });
 });
 
-async function appendDecoupledEditor() {
+async function appendDecoupledEditor(id: EditorId = 'test-editor') {
   const hookElement = createEditorHtmlElement({
+    id,
     preset: createEditorPreset('decoupled', {
       menuBar: {
         isVisible: true,
@@ -119,7 +143,7 @@ async function appendDecoupledEditor() {
   document.body.appendChild(hookElement);
   EditorHook.mounted.call({ el: hookElement });
 
-  const editor = (await waitForTestEditor()) as DecoupledEditor;
+  const editor = await waitForTestEditor<DecoupledEditor>(id);
 
   expect(editor).toBeInstanceOf(DecoupledEditor);
 

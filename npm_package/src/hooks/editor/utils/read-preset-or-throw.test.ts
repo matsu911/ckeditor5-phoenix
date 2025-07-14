@@ -133,11 +133,7 @@ describe('readPresetOrThrow', () => {
     const result = readPresetOrThrow(element);
 
     expect(result).toEqual(preset);
-
-    // eslint-disable-next-line dot-notation
     expect(result.config['toolbar']['items']).toEqual(['bold', 'italic', 'link']);
-
-    // eslint-disable-next-line dot-notation
     expect(result.config['customProperty']).toBe('custom-value');
   });
 

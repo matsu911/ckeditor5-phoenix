@@ -49,6 +49,7 @@ export default antfu({
     },
   })
   .overrideRules({
+    'dot-notation': 'off',
     'perfectionist/sort-imports': ['error', {
       groups: [
         'side-effect',

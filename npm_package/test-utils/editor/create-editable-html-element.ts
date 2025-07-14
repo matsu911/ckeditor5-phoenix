@@ -1,3 +1,5 @@
+import type { EditorId } from '../../src/hooks/editor/typings';
+
 import { html } from '../html';
 
 /**
@@ -7,10 +9,12 @@ export function createEditableHtmlElement(
   {
     name = 'main',
     id = `${name}-editable`,
+    editorId,
     initialValue,
     withInput = false,
   }: {
     id?: string;
+    editorId?: EditorId;
     name?: string;
     initialValue?: string;
     withInput?: boolean;
@@ -20,6 +24,9 @@ export function createEditableHtmlElement(
     {
       'id': id,
       'data-cke-editable-root-name': name,
+      ...editorId && {
+        'data-cke-editor-id': editorId,
+      },
       ...initialValue && {
         'data-cke-editable-initial-value': initialValue,
       },

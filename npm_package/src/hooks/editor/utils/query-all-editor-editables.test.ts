@@ -1,4 +1,3 @@
-/* eslint-disable dot-notation */
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { queryAllEditorEditables } from './query-all-editor-editables';

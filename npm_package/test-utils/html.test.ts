@@ -16,8 +16,6 @@ describe('html utility', () => {
     expect(element).toBeInstanceOf(HTMLAnchorElement);
     expect(element.getAttribute('href')).toBe('#');
     expect(element.id).toBe('link');
-
-    // eslint-disable-next-line dot-notation
     expect(element.dataset['test']).toBe('true');
   });
 

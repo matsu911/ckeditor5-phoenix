@@ -48,7 +48,8 @@ defmodule CKEditor5.MixProject do
       {:tailwind, "~> 0.3", only: [:dev], runtime: is_dev},
       {:esbuild, "~> 0.7", only: [:dev], runtime: is_dev},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
-      {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:ex_doc, ">= 0.38.2", only: :dev, runtime: false}
     ]
   end
 
@@ -58,7 +59,6 @@ defmodule CKEditor5.MixProject do
       licenses: ["MIT"],
       files: [
         "lib",
-        "dist",
         "mix.exs",
         ".formatter.exs",
         ".credo.exs",
@@ -66,9 +66,9 @@ defmodule CKEditor5.MixProject do
         "CHANGELOG.md",
         "LICENSE"
       ],
-      links: [
-        GitHub: "https://github.com/Mati365/ckeditor5-phoenix"
-      ]
+      links: %{
+        "GitHub" => "https://github.com/Mati365/ckeditor5-phoenix"
+      }
     ]
   end
 

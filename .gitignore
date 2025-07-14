@@ -12,3 +12,4 @@ priv
 node_modules/
 npm_package/dist
 .env
+*.tar

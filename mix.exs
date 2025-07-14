@@ -1,11 +1,14 @@
 defmodule CKEditor5.MixProject do
   use Mix.Project
 
+  @version "0.2.0"
+  @source_url "https://github.com/Mati365/ckeditor5-phoenix"
+
   def project do
     [
       app: :ckeditor5,
       description: "CKEditor 5 integration for Phoenix Framework",
-      version: "0.1.0",
+      version: @version,
       cke: %{
         default_cloud_editor_version: "45.2.1"
       },
@@ -13,6 +16,7 @@ defmodule CKEditor5.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
+      docs: docs(),
       package: package(),
       aliases: aliases(),
       dialyzer: dialyzer()
@@ -67,7 +71,7 @@ defmodule CKEditor5.MixProject do
         "LICENSE"
       ],
       links: %{
-        "GitHub" => "https://github.com/Mati365/ckeditor5-phoenix"
+        "GitHub" => @source_url
       }
     ]
   end
@@ -97,6 +101,17 @@ defmodule CKEditor5.MixProject do
       plt_file: {:no_warn, "priv/plts/project.plt"},
       plt_add_apps: [:mix],
       ignore_warnings: ".dialyzer_ignore.exs"
+    ]
+  end
+
+  defp docs() do
+    [
+      main: "readme",
+      name: "CKEditor 5",
+      source_ref: "v#{@version}",
+      canonical: "http://hexdocs.pm/ckeditor5",
+      source_url: @source_url,
+      extras: ["README.md", "LICENSE"]
     ]
   end
 end

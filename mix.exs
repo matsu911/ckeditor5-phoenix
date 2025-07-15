@@ -26,6 +26,7 @@ defmodule CKEditor5.MixProject do
         "coveralls.detail": :test,
         "coveralls.post": :test,
         "coveralls.html": :test,
+        "coveralls.github": :test,
         "coveralls.cobertura": :test
       ]
     ]

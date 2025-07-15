@@ -6,7 +6,7 @@ defmodule CKEditor5.License.Extractor do
   @doc """
   Extracts distribution channel from license key.
   """
-  def distribution_channel("GPL"), do: {:ok, "npm"}
+  def distribution_channel("GPL"), do: {:ok, "sh"}
 
   def distribution_channel(key) do
     with parts when length(parts) == 3 <- String.split(key, "."),

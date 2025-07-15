@@ -25,7 +25,7 @@ defmodule CKEditor5.License.Assertions do
   @doc """
   Checks if the license is for npm distribution.
   """
-  def npm_distribution?(%License{} = license), do: distribution?(license, "npm")
+  def npm_distribution?(%License{} = license), do: distribution?(license, "sh")
 
   @doc """
   Checks if the license is compatible with the given distribution channel.
@@ -45,5 +45,5 @@ defmodule CKEditor5.License.Assertions do
   Checks if the license is compatible with npm distribution.
   """
   def compatible_npm_distribution?(%License{} = license),
-    do: compatible_distribution?(license, "npm")
+    do: compatible_distribution?(license, "sh")
 end

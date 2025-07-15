@@ -47,7 +47,7 @@ defmodule CKEditor5.License do
   def gpl,
     do: %__MODULE__{
       key: "GPL",
-      distribution_channel: "npm"
+      distribution_channel: "sh"
     }
 
   @doc """

@@ -27,7 +27,8 @@ defmodule CKEditor5.MixProject do
         "coveralls.post": :test,
         "coveralls.html": :test,
         "coveralls.github": :test,
-        "coveralls.cobertura": :test
+        "coveralls.cobertura": :test,
+        "test.watch": :test
       ]
     ]
   end
@@ -63,7 +64,8 @@ defmodule CKEditor5.MixProject do
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:ex_doc, ">= 0.38.2", only: :dev, runtime: false},
-      {:excoveralls, "~> 0.18", only: :test}
+      {:excoveralls, "~> 0.18", only: :test},
+      {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false}
     ]
   end
 
@@ -95,13 +97,20 @@ defmodule CKEditor5.MixProject do
       playground: "run -e 'Playground.App.run()'",
       "assets.test": ["cmd npm run npm_package:test"],
       "assets.typecheck": ["cmd npm run typecheck"],
-      "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
+      "assets.setup": [
+        "tailwind.install --if-missing",
+        "esbuild.install --if-missing"
+      ],
       "assets.build": [
         "cmd npm run npm_package:build",
         "tailwind ckeditor --minify",
         "esbuild ckeditor --minify"
       ],
-      "assets.deploy": ["assets.setup", "assets.build", "phx.digest playground/priv/static"],
+      "assets.deploy": [
+        "assets.setup",
+        "assets.build",
+        "phx.digest playground/priv/static"
+      ],
       "assets.lint": ["cmd npx eslint"]
     ]
   end

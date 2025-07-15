@@ -18,7 +18,7 @@ defmodule CKEditor5.Helpers do
   Checks if a given version string is in semantic versioning format (e.g., "1.0.0").
   """
   def is_semver_version?(version) when is_binary(version) do
-    String.match?(version, ~r/^\d+\.\d+\.\d+$/)
+    String.match?(version, ~r/^\d+\.\d+\.\d+(-[a-zA-Z0-9-.]+)?$/)
   end
 
   @doc """

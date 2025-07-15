@@ -1,7 +1,7 @@
 import Config
 
 config :phoenix, :json_library, Jason
-config :logger, :level, :warn
+config :logger, :level, :warning
 
 config :ckeditor5, Playground.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4000],

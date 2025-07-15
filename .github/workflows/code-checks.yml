@@ -8,6 +8,9 @@ jobs:
   elixir_checks:
     name: Elixir Checks
     runs-on: ubuntu-latest
+    env:
+      MIX_ENV: test
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - name: Checkout code
@@ -64,9 +67,14 @@ jobs:
       - name: Run Credo
         run: mix credo --strict
 
+      - name: Run tests
+        run: mix coveralls.github
+
   assets_checks:
     name: Assets checks
     runs-on: ubuntu-latest
+    env:
+      MIX_ENV: test
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

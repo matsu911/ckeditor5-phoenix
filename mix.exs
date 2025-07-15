@@ -19,7 +19,15 @@ defmodule CKEditor5.MixProject do
       docs: docs(),
       package: package(),
       aliases: aliases(),
-      dialyzer: dialyzer()
+      dialyzer: dialyzer(),
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test,
+        "coveralls.cobertura": :test
+      ]
     ]
   end
 
@@ -53,7 +61,8 @@ defmodule CKEditor5.MixProject do
       {:esbuild, "~> 0.7", only: [:dev], runtime: is_dev},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:ex_doc, ">= 0.38.2", only: :dev, runtime: false}
+      {:ex_doc, ">= 0.38.2", only: :dev, runtime: false},
+      {:excoveralls, "~> 0.18", only: :test}
     ]
   end
 

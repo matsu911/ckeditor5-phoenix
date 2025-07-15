@@ -1,14 +1,19 @@
 defmodule CKEditor5.Cloud.AssetPackage do
+  @moduledoc """
+  Represents a single asset package containing JavaScript and CSS assets.
+  This module provides functionality to merge multiple asset packages.
+  """
+
   alias CKEditor5.Cloud.AssetPackage.JSAsset
 
-  @moduledoc """
-  Represents a package of JavaScript and CSS assets for CKEditor 5 Cloud.
-  """
+  defstruct js: [], css: []
 
   @type js_asset :: JSAsset.t()
   @type css_asset :: binary()
-
-  defstruct js: [], css: []
+  @type t :: %__MODULE__{
+          js: [js_asset()],
+          css: [css_asset()]
+        }
 
   @doc """
   Merges the current asset package with another asset package, combining js and css arrays.

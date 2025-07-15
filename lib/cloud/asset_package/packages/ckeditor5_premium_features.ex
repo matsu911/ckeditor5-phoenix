@@ -6,17 +6,27 @@ defmodule CKEditor5.Cloud.AssetPackage.CKEditor5PremiumFeatures do
   alias CKEditor5.Cloud.AssetPackage
   alias CKEditor5.Cloud.AssetPackage.JSAsset
 
-  import CKEditor5.Cloud.UrlBuilder, only: [build_url: 1]
+  import CKEditor5.Cloud.UrlBuilder, only: [build_url: 2]
 
   @doc """
   Creates URLs for CKEditor5 Premium Features JavaScript and CSS files.
   """
   def build_package(version, translations \\ []) do
-    css_url = build_url(["ckeditor5-premium-features", version, "ckeditor5-premium-features.css"])
+    css_url =
+      build_url(:ckeditor, [
+        "ckeditor5-premium-features",
+        version,
+        "ckeditor5-premium-features.css"
+      ])
 
     js_asset = %JSAsset{
       name: "ckeditor5-premium-features",
-      url: build_url(["ckeditor5-premium-features", version, "ckeditor5-premium-features.js"]),
+      url:
+        build_url(:ckeditor, [
+          "ckeditor5-premium-features",
+          version,
+          "ckeditor5-premium-features.js"
+        ]),
       type: :esm
     }
 
@@ -25,7 +35,7 @@ defmodule CKEditor5.Cloud.AssetPackage.CKEditor5PremiumFeatures do
         %JSAsset{
           name: "ckeditor5-premium-features/translations/#{translation}",
           url:
-            build_url([
+            build_url(:ckeditor, [
               "ckeditor5-premium-features",
               version,
               "translations",

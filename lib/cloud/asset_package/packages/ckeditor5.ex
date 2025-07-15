@@ -6,17 +6,17 @@ defmodule CKEditor5.Cloud.AssetPackage.CKEditor5 do
   alias CKEditor5.Cloud.AssetPackage
   alias CKEditor5.Cloud.AssetPackage.JSAsset
 
-  import CKEditor5.Cloud.UrlBuilder, only: [build_url: 1]
+  import CKEditor5.Cloud.UrlBuilder, only: [build_url: 2]
 
   @doc """
   Creates URLs for CKEditor5 core JavaScript and CSS files.
   """
   def build_package(version, translations \\ []) do
-    css_url = build_url(["ckeditor5", version, "ckeditor5.css"])
+    css_url = build_url(:ckeditor, ["ckeditor5", version, "ckeditor5.css"])
 
     js_asset = %JSAsset{
       name: "ckeditor5",
-      url: build_url(["ckeditor5", version, "ckeditor5.js"]),
+      url: build_url(:ckeditor, ["ckeditor5", version, "ckeditor5.js"]),
       type: :esm
     }
 
@@ -24,7 +24,7 @@ defmodule CKEditor5.Cloud.AssetPackage.CKEditor5 do
       Enum.map(translations, fn translation ->
         %JSAsset{
           name: "ckeditor5/translations/#{translation}",
-          url: build_url(["ckeditor5", version, "translations", "#{translation}.js"]),
+          url: build_url(:ckeditor, ["ckeditor5", version, "translations", "#{translation}.js"]),
           type: :esm
         }
       end)

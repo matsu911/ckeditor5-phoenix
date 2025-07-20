@@ -3,7 +3,7 @@ defmodule CKEditor5.License.ExtractorTest do
 
   alias CKEditor5.Errors
   alias CKEditor5.License.Extractor
-  alias CKEditor5.Test.JwtHelper
+  alias CKEditor5.Test.LicenseGenerator
 
   describe "distribution_channel/1" do
     test "returns 'sh' for GPL license" do
@@ -11,7 +11,7 @@ defmodule CKEditor5.License.ExtractorTest do
     end
 
     test "extracts distribution channel from a valid license key" do
-      key = JwtHelper.generate(%{"distributionChannel" => "test-channel"})
+      key = LicenseGenerator.generate_key("test-channel")
       assert Extractor.distribution_channel(key) == {:ok, "test-channel"}
     end
 

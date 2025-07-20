@@ -3,6 +3,7 @@ defmodule CKEditor5.Components.Editor.PresetHandler do
   Handles preset loading and type overriding for the Editor component.
   """
 
+  alias CKEditor5.Errors.Error
   alias CKEditor5.Preset
   alias CKEditor5.Preset.EditorType
 
@@ -32,7 +33,7 @@ defmodule CKEditor5.Components.Editor.PresetHandler do
       new_preset = Preset.of_type(preset, type_atom)
       Map.put(assigns, :preset, new_preset)
     else
-      raise ArgumentError, "Invalid editor type provided: #{type}"
+      raise Error, message: "Invalid editor type provided: #{type}"
     end
   end
 end

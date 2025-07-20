@@ -6,7 +6,6 @@ defmodule CKEditor5.Preset do
   alias CKEditor5.{Cloud, License}
 
   @derive {Jason.Encoder, only: [:type, :config, :license]}
-  @enforce_keys [:config]
   @type t :: %__MODULE__{
           type: atom(),
           config: map(),
@@ -14,12 +13,10 @@ defmodule CKEditor5.Preset do
           license: License.t()
         }
 
-  defstruct [
-    :config,
-    type: :classic,
-    cloud: nil,
-    license: License.gpl()
-  ]
+  defstruct config: %{},
+            type: :classic,
+            cloud: nil,
+            license: License.gpl()
 
   @doc """
   Sets the type of the preset.
@@ -40,16 +37,8 @@ defmodule CKEditor5.Preset do
       type: overrides[:type] || preset.type,
       config: Map.merge(preset.config || %{}, overrides[:config] || %{}),
       license: overrides[:license] || preset.license,
-      cloud: merge_cloud(preset.cloud, overrides[:cloud])
+      cloud: Cloud.merge(preset.cloud, overrides[:cloud])
     }
-  end
-
-  defp merge_cloud(preset_cloud, nil), do: preset_cloud
-
-  defp merge_cloud(preset_cloud, overrides_cloud) when is_map(overrides_cloud) do
-    base_cloud = preset_cloud || %Cloud{}
-
-    Cloud.merge(base_cloud, overrides_cloud)
   end
 
   @doc """

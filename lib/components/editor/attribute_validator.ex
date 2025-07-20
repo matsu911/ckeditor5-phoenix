@@ -3,6 +3,7 @@ defmodule CKEditor5.Components.Editor.AttributeValidator do
   Validates attributes for different editor types in the Editor component.
   """
 
+  alias CKEditor5.Errors.Error
   alias CKEditor5.Preset
   alias CKEditor5.Preset.EditorType
 
@@ -23,8 +24,10 @@ defmodule CKEditor5.Components.Editor.AttributeValidator do
 
     case find_present_disallowed_attr(disallowed_attrs) do
       {attr, _value, hint} ->
-        raise ArgumentError,
-              "The `#{attr}` attribute is not supported for editor type '#{preset_type}'. #{hint}"
+        message =
+          "The `#{attr}` attribute is not supported for editor type '#{preset_type}'. #{hint}"
+
+        raise Error, message: message
 
       nil ->
         assigns

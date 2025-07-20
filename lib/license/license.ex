@@ -41,9 +41,21 @@ defmodule CKEditor5.License do
   end
 
   @doc """
+  Creates a new License struct with the given license key.
+  Raises an error if the key is invalid.
+  """
+  def new!(key) do
+    case new(key) do
+      {:ok, license} -> license
+      {:error, error} -> raise error
+    end
+  end
+
+  @doc """
   Creates a new GPL license struct.
   This license is compatible with all distribution channels.
   """
+  @spec gpl() :: CKEditor5.License.t()
   def gpl,
     do: %__MODULE__{
       key: "GPL",
@@ -63,10 +75,14 @@ defmodule CKEditor5.License do
   @doc """
   Formats the license key for safe display by truncating long keys.
   """
-  def format_key(license) do
-    case String.length(license.key) do
-      len when len > 8 -> String.slice(license.key, 0, 8) <> "..."
-      _ -> license.key
+  def format_key(%__MODULE__{key: key}) do
+    format_key(key)
+  end
+
+  def format_key(key) when is_binary(key) do
+    case String.length(key) do
+      len when len > 8 -> String.slice(key, 0, 8) <> "..."
+      _ -> key
     end
   end
 end

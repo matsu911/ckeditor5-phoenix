@@ -109,6 +109,18 @@ In order to run the minimal Phoenix application with CKEditor 5 integration, you
 mix playground
 ```
 
+Testing the package is done using the `mix test` command. The tests are located in the `test/` directory.
+
+```bash
+mix test
+```
+
+To obtain code coverage, you can run the following command:
+
+```bash
+mix coveralls.html
+```
+
 ## Trademarks 📜
 
 CKEditor® is a trademark of [CKSource Holding sp. z o.o.](https://cksource.com/) All rights reserved. For more information about the license of CKEditor® please visit [CKEditor's licensing page](https://ckeditor.com/legal/ckeditor-oss-license/).

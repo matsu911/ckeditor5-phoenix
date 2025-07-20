@@ -88,6 +88,12 @@ defmodule CKEditor5.Cloud do
   @doc """
   Merges the current Cloud configuration with the provided overrides.
   """
+  def merge(nil, overrides) when is_map(overrides) do
+    build_struct(overrides)
+  end
+
+  def merge(%__MODULE__{}, nil), do: nil
+
   def merge(%__MODULE__{} = cloud, overrides) when is_map(overrides) do
     %__MODULE__{
       version: Map.get(overrides, :version, cloud.version),

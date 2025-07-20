@@ -3,12 +3,11 @@ defmodule CKEditor5.LicenseTest do
 
   alias CKEditor5.Errors
   alias CKEditor5.License
-  alias CKEditor5.Test.JwtHelper
+  alias CKEditor5.Test.LicenseGenerator
 
   describe "new/1" do
     test "creates a license from a valid key" do
-      key = JwtHelper.generate(%{"distributionChannel" => "test-channel"})
-
+      key = LicenseGenerator.generate_key("test-channel")
       assert {:ok, %License{key: ^key, distribution_channel: "test-channel"}} = License.new(key)
     end
 
@@ -24,6 +23,24 @@ defmodule CKEditor5.LicenseTest do
     test "accepts a license struct" do
       license = License.gpl()
       assert {:ok, ^license} = License.new(license)
+    end
+  end
+
+  describe "new!/1" do
+    test "creates a license from a valid key" do
+      key = LicenseGenerator.generate_key("test-channel")
+
+      assert %License{key: ^key, distribution_channel: "test-channel"} = License.new!(key)
+    end
+
+    test "raises an error for an invalid key" do
+      key = "invalidkey"
+
+      assert_raise Errors.InvalidLicenseKey,
+                   "Invalid license key: '#{License.format_key(key)}'. Please provide a valid CKEditor 5 license key.",
+                   fn ->
+                     License.new!(key)
+                   end
     end
   end
 
@@ -50,7 +67,8 @@ defmodule CKEditor5.LicenseTest do
     end
 
     test "returns license from environment variable if set" do
-      key = JwtHelper.generate(%{"distributionChannel" => "env-channel"})
+      key = LicenseGenerator.generate_key("env-channel")
+
       System.put_env("CKEDITOR5_LICENSE_KEY", key)
 
       assert {:ok, %License{key: ^key, distribution_channel: "env-channel"}} =
@@ -80,6 +98,10 @@ defmodule CKEditor5.LicenseTest do
     test "truncates a long key" do
       license = %License{key: "a_very_long_license_key", distribution_channel: "sh"}
       assert License.format_key(license) == "a_very_l..."
+    end
+
+    test "handles a string key" do
+      assert License.format_key("a_very_long_license_key") == "a_very_l..."
     end
   end
 end

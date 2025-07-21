@@ -100,7 +100,7 @@ defmodule CKEditor5.Presets do
       {:ok, preset}
     else
       {:error, reason} ->
-        {:error, reason}
+        {:error, %Errors.InvalidPreset{reason: reason}}
 
       :error ->
         {:error,

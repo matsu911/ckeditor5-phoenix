@@ -8,6 +8,7 @@ defmodule CKEditor5.Cloud.CKBox do
   alias CKEditor5.{Errors, Helpers}
 
   @derive Jason.Encoder
+  @enforce_keys [:version]
   @type t :: %__MODULE__{
           version: String.t(),
           theme: String.t() | nil
@@ -22,10 +23,13 @@ defmodule CKEditor5.Cloud.CKBox do
   Defines the schema for a raw CKBox configuration map.
   """
   def s do
-    schema(%{
-      version: spec(is_binary() and (&Helpers.is_semver_version?/1)),
-      theme: spec(is_binary())
-    })
+    schema =
+      schema(%{
+        version: spec(is_binary() and (&Helpers.is_semver_version?/1)),
+        theme: spec(is_binary())
+      })
+
+    selection(schema, [:version])
   end
 
   @doc """
@@ -35,15 +39,9 @@ defmodule CKEditor5.Cloud.CKBox do
   def parse(nil), do: {:ok, nil}
 
   def parse(map) when is_map(map) do
-    case Map.get(map, :version) do
-      nil ->
-        {:error, "CKBox configuration requires a version"}
-
-      _ ->
-        case conform(map, s()) do
-          {:ok, _} -> {:ok, build_struct(map)}
-          {:error, errors} -> {:error, errors}
-        end
+    case conform(map, s()) do
+      {:ok, _} -> {:ok, build_struct(map)}
+      {:error, errors} -> {:error, errors}
     end
   end
 

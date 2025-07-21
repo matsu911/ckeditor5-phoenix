@@ -56,7 +56,9 @@ defmodule CKEditor5.Cloud.CKBoxTest do
 
     test "returns an error when version is missing" do
       config = %{theme: "dark"}
-      assert {:error, "CKBox configuration requires a version"} = CKBox.parse(config)
+
+      assert {:error, [%{input: %{theme: "dark"}, path: [:version], spec: ":required"}]} =
+               CKBox.parse(config)
     end
 
     test "returns an error for an invalid map" do

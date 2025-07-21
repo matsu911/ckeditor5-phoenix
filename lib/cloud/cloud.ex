@@ -5,6 +5,7 @@ defmodule CKEditor5.Cloud do
 
   import Norm
 
+  alias CKEditor5.Cloud.CKBox
   alias CKEditor5.{Errors, Helpers}
 
   @default_editor_version Mix.Project.config()[:cke][:default_cloud_editor_version]
@@ -13,7 +14,7 @@ defmodule CKEditor5.Cloud do
           version: String.t(),
           premium: boolean(),
           translations: [String.t()],
-          ckbox: String.t() | nil
+          ckbox: CKBox.t() | nil
         }
 
   defstruct version: @default_editor_version,
@@ -28,7 +29,7 @@ defmodule CKEditor5.Cloud do
     schema(%{
       version: spec(is_binary() and (&Helpers.is_semver_version?/1)),
       premium: spec(is_boolean()),
-      ckbox: spec(is_binary() and (&Helpers.is_semver_version?/1)),
+      ckbox: CKBox.s(),
       translations: coll_of(spec(is_binary))
     })
   end
@@ -52,8 +53,10 @@ defmodule CKEditor5.Cloud do
   def parse(nil), do: {:ok, nil}
 
   def parse(map) when is_map(map) do
-    case conform(map, s()) do
-      {:ok, _} -> {:ok, build_struct(map)}
+    with {:ok, _} <- conform(map, s()),
+         {:ok, parsed_map} <- parse_ckbox(map) do
+      {:ok, build_struct(parsed_map)}
+    else
       {:error, errors} -> {:error, errors}
     end
   end
@@ -95,11 +98,25 @@ defmodule CKEditor5.Cloud do
   def merge(%__MODULE__{}, nil), do: nil
 
   def merge(%__MODULE__{} = cloud, overrides) when is_map(overrides) do
+    merged_ckbox = CKBox.merge(cloud.ckbox, Map.get(overrides, :ckbox))
+
     %__MODULE__{
       version: Map.get(overrides, :version, cloud.version),
       premium: Map.get(overrides, :premium, cloud.premium),
       translations: [Map.get(overrides, :translations, []) | cloud.translations],
-      ckbox: Map.get(overrides, :ckbox, cloud.ckbox)
+      ckbox: merged_ckbox
     }
   end
+
+  # Parses the CKBox configuration from a map.
+  defp parse_ckbox(%{ckbox: nil} = map), do: {:ok, Map.put(map, :ckbox, nil)}
+
+  defp parse_ckbox(%{ckbox: ckbox_data} = map) do
+    case CKBox.parse(ckbox_data) do
+      {:ok, ckbox} -> {:ok, Map.put(map, :ckbox, ckbox)}
+      {:error, error} -> {:error, error}
+    end
+  end
+
+  defp parse_ckbox(map), do: {:ok, map}
 end

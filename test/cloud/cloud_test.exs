@@ -2,6 +2,7 @@ defmodule CKEditor5.CloudTest do
   use ExUnit.Case, async: true
 
   alias CKEditor5.Cloud
+  alias CKEditor5.Cloud.CKBox
   alias CKEditor5.Errors
   alias CKEditor5.Helpers
 
@@ -12,7 +13,7 @@ defmodule CKEditor5.CloudTest do
       valid_config = %{
         version: "35.4.0",
         premium: true,
-        ckbox: "35.4.0",
+        ckbox: %{version: "35.4.0", theme: "default"},
         translations: ["pl", "de"]
       }
 
@@ -32,9 +33,9 @@ defmodule CKEditor5.CloudTest do
     end
 
     test "returns an error for an invalid ckbox version" do
-      invalid_config = %{ckbox: "invalid-version"}
+      invalid_config = %{ckbox: %{version: "invalid-version"}}
       {:error, errors} = Norm.conform(invalid_config, Cloud.s())
-      assert Enum.any?(errors, &(&1.path == [:ckbox]))
+      assert Enum.any?(errors, &(&1.path == [:ckbox, :version]))
     end
 
     test "returns an error for invalid translations" do
@@ -63,15 +64,27 @@ defmodule CKEditor5.CloudTest do
     end
 
     test "parses a valid map and returns a Cloud struct" do
-      config = %{version: "36.0.0", premium: true, translations: ["pl"], ckbox: "36.0.0"}
-      {:ok, cloud} = Cloud.parse(config)
+      config = %{
+        version: "36.0.0",
+        premium: true,
+        translations: ["pl"],
+        ckbox: %{version: "36.0.0", theme: "default"}
+      }
+
+      cloud = Cloud.parse!(config)
 
       assert %Cloud{
                version: "36.0.0",
                premium: true,
                translations: ["pl"],
-               ckbox: "36.0.0"
+               ckbox: %CKBox{
+                 version: "36.0.0",
+                 theme: "default"
+               }
              } = cloud
+
+      assert cloud.ckbox.version == "36.0.0"
+      assert cloud.ckbox.theme == "default"
     end
 
     test "returns an error for an invalid map" do
@@ -108,13 +121,20 @@ defmodule CKEditor5.CloudTest do
     end
 
     test "builds a struct with given overrides" do
-      overrides = %{version: "35.0.0", premium: true, translations: ["de"], ckbox: "35.0.0"}
+      overrides = %{
+        version: "35.0.0",
+        premium: true,
+        translations: ["de"],
+        ckbox: %{version: "35.0.0", theme: "light"}
+      }
+
       cloud = Cloud.build_struct(overrides)
 
       assert cloud.version == "35.0.0"
       assert cloud.premium == true
       assert cloud.translations == ["de"]
-      assert cloud.ckbox == "35.0.0"
+      assert cloud.ckbox.version == "35.0.0"
+      assert cloud.ckbox.theme == "light"
     end
   end
 

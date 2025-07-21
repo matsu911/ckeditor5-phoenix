@@ -11,8 +11,11 @@ defmodule CKEditor5.Cloud.AssetPackage.CKBox do
   @doc """
   Creates URLs for CKBox JavaScript and CSS files.
   """
-  def build_package(version, translations \\ []) do
-    css_url = build_url(:ckbox, ["ckbox", version, "styles", "themes", "theme.css"])
+  def build_package(version, translations \\ [], theme \\ nil) do
+    translations = translations || []
+    theme = theme || "theme"
+
+    css_url = build_url(:ckbox, ["ckbox", version, "styles", "themes", "#{theme}.css"])
 
     js_asset = %JSAsset{
       name: "ckbox",

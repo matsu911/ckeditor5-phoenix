@@ -40,12 +40,11 @@ defmodule CKEditor5.Cloud.AssetPackageBuilder do
 
   # Adds CKBox package when CKBox version is specified
   # Only included when cloud.ckbox contains a version string
-  defp add_ckbox_package(asset_package, %{ckbox: ckbox_version} = cloud)
-       when is_binary(ckbox_version) do
-    ckbox_package = CKBox.build_package(ckbox_version, cloud.translations)
+  defp add_ckbox_package(asset_package, %{ckbox: %Cloud.CKBox{} = ckbox} = cloud) do
+    ckbox_package = CKBox.build_package(ckbox.version, cloud.translations, ckbox.theme)
 
     AssetPackage.merge(asset_package, ckbox_package)
   end
 
-  defp add_ckbox_package(asset_package, %{ckbox: nil}), do: asset_package
+  defp add_ckbox_package(asset_package, _cloud), do: asset_package
 end

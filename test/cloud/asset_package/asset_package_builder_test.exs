@@ -150,7 +150,7 @@ defmodule CKEditor5.Cloud.AssetPackageBuilderTest do
         version: "1.0.0",
         premium: false,
         translations: [],
-        ckbox: "2.5.0"
+        ckbox: %Cloud.CKBox{version: "2.5.0"}
       }
 
       result = AssetPackageBuilder.build(cloud)
@@ -201,7 +201,7 @@ defmodule CKEditor5.Cloud.AssetPackageBuilderTest do
         version: "2.0.0",
         premium: true,
         translations: ["fr", "es"],
-        ckbox: "3.0.0"
+        ckbox: %Cloud.CKBox{version: "3.0.0"}
       }
 
       result = AssetPackageBuilder.build(cloud)
@@ -211,6 +211,7 @@ defmodule CKEditor5.Cloud.AssetPackageBuilderTest do
       # Should contain assets from all packages
       # main + premium + ckbox + 2 translations
       assert length(result.js) >= 5
+
       # main + premium + ckbox
       assert length(result.css) >= 3
 
@@ -292,7 +293,7 @@ defmodule CKEditor5.Cloud.AssetPackageBuilderTest do
         version: "1.0.0",
         premium: false,
         translations: ["it", "pt"],
-        ckbox: "2.0.0"
+        ckbox: %Cloud.CKBox{version: "2.0.0"}
       }
 
       result = AssetPackageBuilder.build(cloud)

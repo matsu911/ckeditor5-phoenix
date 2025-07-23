@@ -32,10 +32,10 @@ defmodule CKEditor5.CloudTest do
       assert Enum.any?(errors, &(&1.path == [:premium]))
     end
 
-    test "returns an error for an invalid ckbox version" do
-      invalid_config = %{ckbox: %{version: "invalid-version"}}
+    test "returns an error for an invalid ckbox is not an map" do
+      invalid_config = %{ckbox: "not_a_map"}
       {:error, errors} = Norm.conform(invalid_config, Cloud.s())
-      assert Enum.any?(errors, &(&1.path == [:ckbox, :version]))
+      assert Enum.any?(errors, &(&1.path == [:ckbox]))
     end
 
     test "returns an error for invalid translations" do
@@ -93,6 +93,14 @@ defmodule CKEditor5.CloudTest do
 
     test "returns an error for non-map data" do
       assert Cloud.parse("not a map") == {:error, "Cloud configuration must be a map or nil"}
+    end
+
+    test "returns an error for invalid ckbox configuration" do
+      assert {:error, _} = Cloud.parse(%{ckbox: %{version: "invalid-version"}})
+    end
+
+    test "should not return error if ckbox is nil" do
+      assert {:ok, %Cloud{ckbox: nil}} = Cloud.parse(%{version: "36.0.0", ckbox: nil})
     end
   end
 

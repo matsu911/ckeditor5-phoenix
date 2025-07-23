@@ -1,6 +1,7 @@
 {
   "skip_files": [
-    "playground/"
+    "playground/",
+    "test/support/"
   ],
   "coverage_options": {
     "output_dir": "cover/",

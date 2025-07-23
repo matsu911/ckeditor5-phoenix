@@ -16,7 +16,7 @@ defmodule CKEditor5.Preset.Parser do
     schema =
       schema(%{
         type: EditorType.s(),
-        cloud: Cloud.s(),
+        cloud: spec(is_map() or is_nil()),
         license_key: spec(is_binary()),
         config: spec(is_map())
       })
@@ -74,8 +74,9 @@ defmodule CKEditor5.Preset.Parser do
 
   # Parses the Cloud configuration from a map into a Cloud struct.
   defp parse_cloud(preset_map) do
-    with {:ok, cloud_struct} <- Cloud.parse(preset_map[:cloud]) do
-      {:ok, Map.put(preset_map, :cloud, cloud_struct)}
+    case Cloud.parse(preset_map[:cloud]) do
+      {:ok, cloud_struct} -> {:ok, Map.put(preset_map, :cloud, cloud_struct)}
+      {:error, error} -> {:error, error}
     end
   end
 

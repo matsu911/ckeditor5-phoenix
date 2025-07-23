@@ -29,7 +29,7 @@ defmodule CKEditor5.Cloud do
     schema(%{
       version: spec(is_binary() and (&Helpers.is_semver_version?/1)),
       premium: spec(is_boolean()),
-      ckbox: CKBox.s(),
+      ckbox: spec(is_map() or is_nil()),
       translations: coll_of(spec(is_binary))
     })
   end

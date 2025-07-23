@@ -39,6 +39,17 @@ defmodule CKEditor5.Preset.ParserTest do
              } = preset
     end
 
+    test "returns {:ok, %Preset{}} for a empty preset with nil cloud" do
+      {:ok, preset} = Parser.parse(%{config: %{}, cloud: nil})
+
+      assert %Preset{
+               type: :classic,
+               config: %{},
+               license: %License{key: "GPL"},
+               cloud: nil
+             } = preset
+    end
+
     test "returns an error for a non-map input" do
       assert {:error, "Preset configuration must be a map"} == Parser.parse("not a map")
     end

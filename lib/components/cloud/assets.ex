@@ -29,7 +29,7 @@ defmodule CKEditor5.Components.Cloud.Assets do
     <Importmap.render preset={@preset} nonce={@nonce} />
     <Stylesheets.render preset={@preset} nonce={@nonce} />
     <UmdScripts.render preset={@preset} nonce={@nonce} />
-    <ModulePreload.module_preload preset={@preset} nonce={@nonce} />
+    <ModulePreload.render preset={@preset} nonce={@nonce} />
     """
   end
 end

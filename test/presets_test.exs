@@ -2,13 +2,12 @@ defmodule CKEditor5.PresetsTest do
   use ExUnit.Case, async: true
 
   alias CKEditor5.{Errors, Preset, Presets}
-  alias CKEditor5.Test.LicenseGenerator
+  alias CKEditor5.Test.{LicenseGenerator, PresetsHelper}
 
   describe "get/1" do
     test "returns {:ok, preset} for the default preset" do
       assert {:ok, %Preset{} = preset} = Presets.get("default")
 
-      # Verify the preset has the expected structure
       assert preset.config.toolbar
       assert preset.config.plugins
       assert preset.config.image
@@ -26,7 +25,6 @@ defmodule CKEditor5.PresetsTest do
     end
 
     test "returns preset from application configuration when available" do
-      # Setup a custom preset in the application environment
       custom_preset = %{
         config: %{
           toolbar: [:bold, :italic],
@@ -34,24 +32,18 @@ defmodule CKEditor5.PresetsTest do
         }
       }
 
-      # Store the original config
-      original_config = Application.get_env(:ckeditor5, :presets, %{})
+      original_config = PresetsHelper.put_presets_env(%{"custom" => custom_preset})
 
       try do
-        # Set custom config
-        Application.put_env(:ckeditor5, :presets, %{"custom" => custom_preset})
-
         assert {:ok, %Preset{} = preset} = Presets.get("custom")
         assert preset.config.toolbar == [:bold, :italic]
         assert preset.config.plugins == [:Bold, :Italic, :Essentials]
       after
-        # Restore original config
-        Application.put_env(:ckeditor5, :presets, original_config)
+        PresetsHelper.restore_presets_env(original_config)
       end
     end
 
     test "custom presets override default presets" do
-      # Override the default preset
       custom_default = %{
         config: %{
           toolbar: [:bold],
@@ -59,35 +51,29 @@ defmodule CKEditor5.PresetsTest do
         }
       }
 
-      original_config = Application.get_env(:ckeditor5, :presets, %{})
+      original_config = PresetsHelper.put_presets_env(%{"default" => custom_default})
 
       try do
-        Application.put_env(:ckeditor5, :presets, %{"default" => custom_default})
-
         assert {:ok, %Preset{} = preset} = Presets.get("default")
         assert preset.config.toolbar == [:bold]
         assert preset.config.plugins == [:Bold, :Essentials]
       after
-        Application.put_env(:ckeditor5, :presets, original_config)
+        PresetsHelper.restore_presets_env(original_config)
       end
     end
 
     test "returns error when preset parsing fails" do
-      # Setup an invalid preset configuration
       invalid_preset = %{
-        # This should cause parsing to fail
         type: :invalid_type,
         config: %{}
       }
 
-      original_config = Application.get_env(:ckeditor5, :presets, %{})
+      original_config = PresetsHelper.put_presets_env(%{"invalid" => invalid_preset})
 
       try do
-        Application.put_env(:ckeditor5, :presets, %{"invalid" => invalid_preset})
-
         assert {:error, _reason} = Presets.get("invalid")
       after
-        Application.put_env(:ckeditor5, :presets, original_config)
+        PresetsHelper.restore_presets_env(original_config)
       end
     end
 
@@ -102,15 +88,13 @@ defmodule CKEditor5.PresetsTest do
         license_key: key
       }
 
-      original_config = Application.get_env(:ckeditor5, :presets, %{})
+      original_config = PresetsHelper.put_presets_env(%{"licensed" => preset_with_license})
 
       try do
-        Application.put_env(:ckeditor5, :presets, %{"licensed" => preset_with_license})
-
         assert {:ok, %Preset{} = preset} = Presets.get("licensed")
         assert preset.license.key == key
       after
-        Application.put_env(:ckeditor5, :presets, original_config)
+        PresetsHelper.restore_presets_env(original_config)
       end
     end
   end
@@ -137,16 +121,14 @@ defmodule CKEditor5.PresetsTest do
         config: %{}
       }
 
-      original_config = Application.get_env(:ckeditor5, :presets, %{})
+      original_config = PresetsHelper.put_presets_env(%{"invalid" => invalid_preset})
 
       try do
-        Application.put_env(:ckeditor5, :presets, %{"invalid" => invalid_preset})
-
         assert_raise Errors.InvalidPreset, fn ->
           Presets.get!("invalid")
         end
       after
-        Application.put_env(:ckeditor5, :presets, original_config)
+        PresetsHelper.restore_presets_env(original_config)
       end
     end
 
@@ -158,15 +140,13 @@ defmodule CKEditor5.PresetsTest do
         }
       }
 
-      original_config = Application.get_env(:ckeditor5, :presets, %{})
+      original_config = PresetsHelper.put_presets_env(%{"custom" => custom_preset})
 
       try do
-        Application.put_env(:ckeditor5, :presets, %{"custom" => custom_preset})
-
         assert %Preset{} = preset = Presets.get!("custom")
         assert preset.config.toolbar == [:bold, :italic]
       after
-        Application.put_env(:ckeditor5, :presets, original_config)
+        PresetsHelper.restore_presets_env(original_config)
       end
     end
   end
@@ -204,7 +184,6 @@ defmodule CKEditor5.PresetsTest do
     test "has expected plugins" do
       {:ok, preset} = Presets.get("default")
 
-      # Check that essential plugins are present
       essential_plugins = [
         :AccessibilityHelp,
         :Autoformat,
@@ -299,27 +278,24 @@ defmodule CKEditor5.PresetsTest do
 
   describe "application environment integration" do
     test "merges application config with default presets" do
-      original_config = Application.get_env(:ckeditor5, :presets, %{})
-
-      try do
-        # Add multiple custom presets
-        custom_config = %{
-          "minimal" => %{
-            config: %{
-              toolbar: [:bold],
-              plugins: [:Bold, :Essentials]
-            }
-          },
-          "rich" => %{
-            config: %{
-              toolbar: [:bold, :italic, :link, :insertImage],
-              plugins: [:Bold, :Italic, :Link, :ImageInsert, :Essentials]
-            }
+      custom_config = %{
+        "minimal" => %{
+          config: %{
+            toolbar: [:bold],
+            plugins: [:Bold, :Essentials]
+          }
+        },
+        "rich" => %{
+          config: %{
+            toolbar: [:bold, :italic, :link, :insertImage],
+            plugins: [:Bold, :Italic, :Link, :ImageInsert, :Essentials]
           }
         }
+      }
 
-        Application.put_env(:ckeditor5, :presets, custom_config)
+      original_config = PresetsHelper.put_presets_env(custom_config)
 
+      try do
         # Default preset should still be available
         assert {:ok, _} = Presets.get("default")
 
@@ -337,16 +313,14 @@ defmodule CKEditor5.PresetsTest do
         assert "minimal" in available
         assert "rich" in available
       after
-        Application.put_env(:ckeditor5, :presets, original_config)
+        PresetsHelper.restore_presets_env(original_config)
       end
     end
 
     test "handles empty application config gracefully" do
-      original_config = Application.get_env(:ckeditor5, :presets, %{})
+      original_config = PresetsHelper.put_presets_env(%{})
 
       try do
-        Application.put_env(:ckeditor5, :presets, %{})
-
         # Default preset should still work
         assert {:ok, _} = Presets.get("default")
 
@@ -354,7 +328,7 @@ defmodule CKEditor5.PresetsTest do
         {:error, error} = Presets.get("non-existent")
         assert error.available_presets == ["default"]
       after
-        Application.put_env(:ckeditor5, :presets, original_config)
+        PresetsHelper.restore_presets_env(original_config)
       end
     end
   end

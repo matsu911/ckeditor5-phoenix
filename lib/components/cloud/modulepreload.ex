@@ -1,6 +1,6 @@
 defmodule CKEditor5.Components.Cloud.ModulePreload do
   @moduledoc """
-  A component for rendering module_preload link tags in Phoenix.
+  A component for rendering module preload link tags in Phoenix.
   This component generates link tags with rel="modulepreload" for all modules in the import map.
   It helps browsers preload ES modules, improving performance by downloading dependencies
   before they are actually needed.
@@ -13,14 +13,14 @@ defmodule CKEditor5.Components.Cloud.ModulePreload do
   alias CKEditor5.Presets
 
   @doc """
-  Renders module_preload link tags for all modules in the import map.
+  Renders module preload link tags for all modules in the import map.
   This helps browsers preload ES modules, improving performance by downloading
   dependencies before they are actually needed.
   """
   attr :preset, :string, default: "default", doc: "The name of the preset to use."
   attr :nonce, :string, default: nil, doc: "The CSP nonce to use for the script tag."
 
-  def module_preload(assigns) do
+  def render(assigns) do
     assigns = assign_modules_for_preload(assigns)
 
     ~H"""

@@ -21,7 +21,7 @@ CKEditor 5 integration library for Phoenix (Elixir) applications. Provides web c
 ```elixir
 def deps do
   [
-    {:ckeditor5_phoenix, "~> 1.0.7"}
+    {:ckeditor5_phoenix, "~> 1.0.8"}
   ]
 end
 ```

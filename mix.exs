@@ -1,7 +1,7 @@
 defmodule CKEditor5.MixProject do
   use Mix.Project
 
-  @version "1.0.7"
+  @version "1.0.8"
   @source_url "https://github.com/Mati365/ckeditor5-phoenix"
 
   def project do

@@ -29,15 +29,19 @@ jobs:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org/'
 
+      - name: Set version in mix.exs
+        run: |
+          sed -i "s/@version \".*\"/@version \"${{ github.event.inputs.version }}\"/" mix.exs
+
+      - name: Set version in npm_package/package.json
+        run: |
+          jq ".version = \"${{ github.event.inputs.version }}\"" npm_package/package.json > tmp.json && mv tmp.json npm_package/package.json
+
       - name: Install Elixir dependencies
         run: mix deps.get
 
       - name: Install npm dependencies
         run: npm ci
-        working-directory: ./npm_package
-
-      - name: Build npm package
-        run: npm run build
         working-directory: ./npm_package
 
       - name: Publish npm package
@@ -50,6 +54,14 @@ jobs:
         run: mix hex.publish --yes
         env:
           HEX_API_KEY: ${{ secrets.HEX_API_KEY }}
+
+      - name: Commit and push version bump
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add mix.exs npm_package/package.json
+          git commit -m "build: bump versions to v${{ github.event.inputs.version }}"
+          git push
 
       - name: Create git tag
         run: |

@@ -78,6 +78,8 @@ jobs:
   assets_checks:
     name: Assets checks
     runs-on: ubuntu-latest
+    env:
+      MIX_ENV: dev
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

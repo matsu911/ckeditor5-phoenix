@@ -119,3 +119,13 @@ jobs:
 
       - name: Run tests
         run: mix assets.test
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./npm_package/coverage/lcov.info
+          flags: npm
+          name: codecov-npm
+          fail_ci_if_error: false
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

@@ -45,7 +45,7 @@ jobs:
 
       - name: Set version in README.md
         run: |
-          sed -i "s/~> [0-9]\+\.[0-9]\+\.[0-9]\+/~> ${{ github.event.inputs.version }}/" README.md
+          sed -i "s/{:ckeditor5, \"~> [0-9]\+\.[0-9]\+\.[0-9]\+\"}/{:ckeditor5, \"~> ${{ github.event.inputs.version }}\"}/" README.md
 
       - name: Install Elixir dependencies
         run: mix deps.get
@@ -74,7 +74,7 @@ jobs:
 
       - name: Commit and push version bump
         run: |
-          git add mix.exs npm_package/package.json
+          git add mix.exs npm_package/package.json README.md
           git commit -m "build: bump versions to v${{ github.event.inputs.version }}"
           git push
 

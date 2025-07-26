@@ -42,29 +42,6 @@ const liveSocket = new LiveSocket('/live', Socket, {
 });
 ```
 
-Configure esbuild for CKEditor 5 cloud distribution:
-
-If you use the CKEditor 5 cloud distribution, you need to configure esbuild to exclude the `ckeditor5` package from the build process. This way, the editor will be loaded from the CDN, not from node_modules.
-
-Edit your `config/dev.exs` and `config/prod.exs` files and add the following configuration:
-
-```elixir
-config :demo, DemoWeb.Endpoint,
-  # ... other configurations
-  watchers: [
-    esbuild: {Esbuild, :install_and_run, [
-      :demo,
-      ~w(
-        --sourcemap=inline
-        --watch
-        --external:ckeditor5
-        --external:ckeditor5-premium-features
-      )
-    ]}
-    # ↑ Added --external:ckeditor5 and --external:ckeditor5-premium-features
-  ]
-```
-
 ## Editor placement 🏗️
 
 ### Classic editor 📝

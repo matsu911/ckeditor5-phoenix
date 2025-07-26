@@ -18,6 +18,8 @@ CKEditor 5 integration library for Phoenix (Elixir) applications. Provides web c
 
 ## Installation 🚀
 
+### 1. Add dependency to your project 📦
+
 ```elixir
 def deps do
   [
@@ -26,13 +28,105 @@ def deps do
 end
 ```
 
-(optionally) If you use `npm` and `node_modules` in your Phoenix application, you can install the frontend assets using the following command:
+### 2. Register the hook in your `app.js` file 🔗
 
-```bash
-npm install ckeditor5-phoenix
+```javascript
+import { Hooks } from 'ckeditor5_phoenix';
+
+// .. other configurations
+
+const liveSocket = new LiveSocket('/live', Socket, {
+  // ... other options
+  hooks: Hooks,
+});
 ```
 
-However, the ckeditor5 NPM dependency should be also installed within deps of mix package.
+### 3. Install npm package (if you use `node_modules`) 📁
+
+> [!IMPORTANT]
+> If you use `node_modules/` for dependency resolution, add `ckeditor5_phoenix` to your `assets/package.json` file:
+
+```json
+{
+  "dependencies": {
+    "ckeditor5_phoenix": "^1.0.7"
+  }
+}
+```
+
+Then run `npm install` or `yarn install` to install the package.
+
+### 4. Configure esbuild for CKEditor 5 cloud distribution ☁️
+
+If you use the CKEditor 5 cloud distribution, you need to configure esbuild to exclude the `ckeditor5` package from the build process. This way, the editor will be loaded from the CDN, not from node_modules.
+
+Edit your `config/dev.exs` and `config/prod.exs` files and add the following configuration:
+
+```elixir
+config :demo, DemoWeb.Endpoint,
+  # ... other configurations
+  watchers: [
+    esbuild: {Esbuild, :install_and_run, [
+      :demo,
+      ~w(
+        --sourcemap=inline
+        --watch
+        --external:ckeditor5
+        --external:ckeditor5-premium-features
+      )
+    ]}
+    # ↑ Added --external:ckeditor5 and --external:ckeditor5-premium-features
+  ]
+```
+
+### 4. (Optional) Pass configuration to the `ckeditor_phoenix` 🛠️
+
+You can pass additional configuration to the `ckeditor5_phoenix` package by adding the following to your `config/config.exs` file:
+
+```elixir
+config :ckeditor5_phoenix,
+  presets: %{
+    classic: %{
+      config: %{
+        toolbar: [
+          'heading',
+          '|',
+          'bold',
+          'italic',
+          'link',
+          '|',
+          'bulletedList',
+          'numberedList',
+          '|',
+          'blockQuote',
+          'insertTable',
+          'mediaEmbed',
+          '|',
+        ],
+        plugins: [
+          'Heading',
+          'Bold',
+          'Italic',
+          'Link',
+          'List',
+          'BlockQuote',
+          'Table',
+          'MediaEmbed'
+        ]
+      }
+    }
+  }
+```
+
+### 5. (Optional) Passing license key for premium features in env 🔑
+
+If you want to use premium features of CKEditor 5, you need to pass the license key in your environment variables. You can do this by adding the following line to your `.env` file:
+
+```bash
+CKEDITOR5_LICENSE_KEY=your_license_key
+```
+
+It'll be automatically picked up by the `ckeditor5_phoenix` package and passed to the CKEditor 5 instance.
 
 ## Editor placement 🏗️
 

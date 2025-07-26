@@ -54,7 +54,9 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish Hex package
-        run: mix hex.publish --yes
+        run: |
+          mix prepare.publish
+          mix hex.publish --yes
         env:
           HEX_API_KEY: ${{ secrets.HEX_API_KEY }}
 

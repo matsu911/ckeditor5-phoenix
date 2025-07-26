@@ -74,13 +74,18 @@ defmodule CKEditor5.MixProject do
       maintainers: ["Mateusz Bagiński"],
       licenses: ["MIT"],
       files: [
+        # Core elixir package
         "lib",
         "mix.exs",
         ".formatter.exs",
         ".credo.exs",
         "README.md",
         "CHANGELOG.md",
-        "LICENSE"
+        "LICENSE",
+
+        # NPM package
+        "package.json",
+        "dist"
       ],
       links: %{
         "GitHub" => @source_url
@@ -105,6 +110,11 @@ defmodule CKEditor5.MixProject do
         "cmd npm run npm_package:build",
         "tailwind ckeditor --minify",
         "esbuild ckeditor --minify"
+      ],
+      "prepare.publish": [
+        "cmd npm run npm_package:build",
+        "cmd cp -r npm_package/dist .",
+        "cmd cp npm_package/package.json ."
       ],
       "assets.deploy": [
         "assets.setup",

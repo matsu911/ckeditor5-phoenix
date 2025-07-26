@@ -16,16 +16,17 @@ config :ckeditor5_phoenix, Playground.Endpoint,
   pubsub_server: Playground.PubSub,
   serve_endpoints: true,
   watchers: [
-    esbuild: {Esbuild, :install_and_run, [:ckeditor, ~w(--sourcemap=inline --watch)]},
-    tailwind: {Tailwind, :install_and_run, [:ckeditor, ~w(--watch)]},
     npm: {
       System,
       :cmd,
       ["npm", ["run", "npm_package:watch"], [cd: File.cwd!(), into: IO.stream(:stdio, :line)]]
-    }
+    },
+    tailwind: {Tailwind, :install_and_run, [:ckeditor, ~w(--watch)]},
+    esbuild: {Esbuild, :install_and_run, [:ckeditor, ~w(--sourcemap=inline --watch)]}
   ],
   live_reload: [
     patterns: [
+      ~r"config/.*(exs)$",
       ~r"playground/.*(ex|eex|js|css)$",
       ~r"lib/.*(ex|eex|js|css)$"
     ]

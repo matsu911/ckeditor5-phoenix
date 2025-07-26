@@ -161,15 +161,23 @@ defmodule CKEditor5.PresetsTest do
         :|,
         :heading,
         :|,
+        :fontFamily,
+        :fontSize,
+        :fontColor,
+        :fontBackgroundColor,
+        :|,
+        :alignment,
         :bold,
         :italic,
         :underline,
         :|,
         :link,
         :insertImage,
-        :mediaEmbed,
         :insertTable,
+        :insertTableLayout,
         :blockQuote,
+        :emoji,
+        :mediaEmbed,
         :|,
         :bulletedList,
         :numberedList,
@@ -185,6 +193,7 @@ defmodule CKEditor5.PresetsTest do
       {:ok, preset} = Presets.get("default")
 
       essential_plugins = [
+        :Alignment,
         :AccessibilityHelp,
         :Autoformat,
         :AutoImage,
@@ -193,7 +202,13 @@ defmodule CKEditor5.PresetsTest do
         :Bold,
         :CloudServices,
         :Essentials,
+        :Emoji,
+        :Mention,
         :Heading,
+        :FontFamily,
+        :FontSize,
+        :FontColor,
+        :FontBackgroundColor,
         :ImageBlock,
         :ImageCaption,
         :ImageInline,
@@ -217,6 +232,7 @@ defmodule CKEditor5.PresetsTest do
         :PictureEditing,
         :SelectAll,
         :Table,
+        :TableLayout,
         :TableCaption,
         :TableCellProperties,
         :TableColumnResize,
@@ -327,6 +343,48 @@ defmodule CKEditor5.PresetsTest do
         # Only default should be available
         {:error, error} = Presets.get("non-existent")
         assert error.available_presets == ["default"]
+      after
+        PresetsHelper.restore_presets_env(original_config)
+      end
+    end
+
+    test "handles symbol keys in application config" do
+      custom_config = %{
+        default: %{
+          config: %{
+            toolbar: [:bold, :italic],
+            plugins: [:Bold, :Italic, :Essentials]
+          }
+        }
+      }
+
+      original_config = PresetsHelper.put_presets_env(custom_config)
+
+      try do
+        assert {:ok, preset} = Presets.get("default")
+        assert preset.config.toolbar == [:bold, :italic]
+        assert preset.config.plugins == [:Bold, :Italic, :Essentials]
+      after
+        PresetsHelper.restore_presets_env(original_config)
+      end
+    end
+
+    test "handles string keys in application config" do
+      custom_config = %{
+        "default" => %{
+          config: %{
+            toolbar: [:bold, :italic],
+            plugins: [:Bold, :Italic, :Essentials]
+          }
+        }
+      }
+
+      original_config = PresetsHelper.put_presets_env(custom_config)
+
+      try do
+        assert {:ok, preset} = Presets.get("default")
+        assert preset.config.toolbar == [:bold, :italic]
+        assert preset.config.plugins == [:Bold, :Italic, :Essentials]
       after
         PresetsHelper.restore_presets_env(original_config)
       end

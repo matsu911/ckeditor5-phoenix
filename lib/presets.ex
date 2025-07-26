@@ -15,15 +15,23 @@ defmodule CKEditor5.Presets do
           :|,
           :heading,
           :|,
+          :fontFamily,
+          :fontSize,
+          :fontColor,
+          :fontBackgroundColor,
+          :|,
+          :alignment,
           :bold,
           :italic,
           :underline,
           :|,
           :link,
           :insertImage,
-          :mediaEmbed,
           :insertTable,
+          :insertTableLayout,
           :blockQuote,
+          :emoji,
+          :mediaEmbed,
           :|,
           :bulletedList,
           :numberedList,
@@ -32,6 +40,7 @@ defmodule CKEditor5.Presets do
           :indent
         ],
         plugins: [
+          :Alignment,
           :AccessibilityHelp,
           :Autoformat,
           :AutoImage,
@@ -40,7 +49,13 @@ defmodule CKEditor5.Presets do
           :Bold,
           :CloudServices,
           :Essentials,
+          :Emoji,
+          :Mention,
           :Heading,
+          :FontFamily,
+          :FontSize,
+          :FontColor,
+          :FontBackgroundColor,
           :ImageBlock,
           :ImageCaption,
           :ImageInline,
@@ -64,6 +79,7 @@ defmodule CKEditor5.Presets do
           :PictureEditing,
           :SelectAll,
           :Table,
+          :TableLayout,
           :TableCaption,
           :TableCellProperties,
           :TableColumnResize,
@@ -75,6 +91,16 @@ defmodule CKEditor5.Presets do
           :Undo,
           :Base64UploadAdapter
         ],
+        table: %{
+          contentToolbar: [
+            :tableColumn,
+            :tableRow,
+            :mergeTableCells,
+            :tableProperties,
+            :tableCellProperties,
+            :toggleTableCaption
+          ]
+        },
         image: %{
           toolbar: [
             :imageTextAlternative,
@@ -93,7 +119,7 @@ defmodule CKEditor5.Presets do
   Returns `{:ok, preset}` on success, or `{:error, reason}` on failure.
   """
   def get(preset_name) do
-    all_presets = all()
+    all_presets = all_with_default()
 
     with {:ok, preset_config} <- Map.fetch(all_presets, preset_name),
          {:ok, preset} <- Parser.parse(preset_config) do
@@ -121,7 +147,20 @@ defmodule CKEditor5.Presets do
     end
   end
 
-  defp all do
-    Map.merge(@default_presets, Application.get_env(:ckeditor5_phoenix, :presets, %{}))
+  # Returns all available presets, merging environment-specific presets with defaults.
+  defp all_with_default do
+    Map.merge(@default_presets, string_keyed_env_presets())
+  end
+
+  # Returns all available presets, merging environment-specific presets with defaults.
+  defp string_keyed_env_presets do
+    env_presets = Application.get_env(:ckeditor5_phoenix, :presets, %{})
+
+    env_presets
+    |> Enum.map(fn
+      {k, v} when is_atom(k) -> {Atom.to_string(k), v}
+      {k, v} -> {to_string(k), v}
+    end)
+    |> Map.new()
   end
 end

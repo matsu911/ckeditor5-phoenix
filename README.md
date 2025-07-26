@@ -64,46 +64,6 @@ config :demo, DemoWeb.Endpoint,
   ]
 ```
 
-## Editor configuration ⚙️
-
-You can configure the editor _presets_ in your `config/config.exs` file. The default preset is `:default`, which provides a basic configuration with a toolbar and essential plugins. The preset is a map that contains the editor configuration, including the toolbar items and plugins. There can be multiple presets, and you can switch between them by passing the `preset` keyword argument to the `ckeditor` component.
-
-In order to override the default preset, you can add the following configuration to your `config/config.exs` file:
-
-```elixir
-config :ckeditor5_phoenix,
-  presets: %{
-    default: %{
-      config: %{
-        toolbar: [
-          :undo, :redo, :|, :heading, :|, :fontFamily, :fontSize, :fontColor, :fontBackgroundColor, :alignment, :|,
-          :bold, :italic, :underline, :|, :link, :insertImage, :insertTable, :insertTableLayout,
-          :blockQuote, :emoji, :mediaEmbed, :|, :bulletedList, :numberedList, :todoList, :outdent, :indent
-        ],
-        plugins: [
-          :Alignment, :AccessibilityHelp, :Autoformat, :AutoImage, :Autosave, :BlockQuote, :Bold, :CloudServices,
-          :Essentials, :Emoji, :Mention, :Heading, :FontFamily, :FontSize, :FontColor, :FontBackgroundColor,
-          :ImageBlock, :ImageCaption, :ImageInline, :ImageInsert, :ImageInsertViaUrl, :ImageResize, :ImageStyle,
-          :ImageTextAlternative, :ImageToolbar, :ImageUpload, :Indent, :IndentBlock, :Italic, :Link, :LinkImage,
-          :List, :ListProperties, :MediaEmbed, :Paragraph, :PasteFromOffice, :PictureEditing, :SelectAll, :Table,
-          :TableLayout, :TableCaption, :TableCellProperties, :TableColumnResize, :TableProperties, :TableToolbar,
-          :TextTransformation, :TodoList, :Underline, :Undo, :Base64UploadAdapter
-        ],
-        table: %{
-          contentToolbar: [
-            :tableColumn, :tableRow, :mergeTableCells, :tableProperties, :tableCellProperties, :toggleTableCaption
-          ]
-        },
-        image: %{
-          toolbar: [
-            :imageTextAlternative, :imageStyle, :imageResize, :imageInsertViaUrl
-          ]
-        }
-      }
-    }
-  }
-```
-
 ## Editor placement 🏗️
 
 ### Classic editor 📝
@@ -181,6 +141,46 @@ If you want to use an inline editor, you can pass the `type` keyword argument wi
   value="<p>Initial content here</p>"
   editable_height="300px"
 />
+```
+
+## Editor configuration ⚙️
+
+You can configure the editor _presets_ in your `config/config.exs` file. The default preset is `:default`, which provides a basic configuration with a toolbar and essential plugins. The preset is a map that contains the editor configuration, including the toolbar items and plugins. There can be multiple presets, and you can switch between them by passing the `preset` keyword argument to the `ckeditor` component.
+
+In order to override the default preset, you can add the following configuration to your `config/config.exs` file:
+
+```elixir
+config :ckeditor5_phoenix,
+  presets: %{
+    default: %{
+      config: %{
+        toolbar: [
+          :undo, :redo, :|, :heading, :|, :fontFamily, :fontSize, :fontColor, :fontBackgroundColor, :alignment, :|,
+          :bold, :italic, :underline, :|, :link, :insertImage, :insertTable, :insertTableLayout,
+          :blockQuote, :emoji, :mediaEmbed, :|, :bulletedList, :numberedList, :todoList, :outdent, :indent
+        ],
+        plugins: [
+          :Alignment, :AccessibilityHelp, :Autoformat, :AutoImage, :Autosave, :BlockQuote, :Bold, :CloudServices,
+          :Essentials, :Emoji, :Mention, :Heading, :FontFamily, :FontSize, :FontColor, :FontBackgroundColor,
+          :ImageBlock, :ImageCaption, :ImageInline, :ImageInsert, :ImageInsertViaUrl, :ImageResize, :ImageStyle,
+          :ImageTextAlternative, :ImageToolbar, :ImageUpload, :Indent, :IndentBlock, :Italic, :Link, :LinkImage,
+          :List, :ListProperties, :MediaEmbed, :Paragraph, :PasteFromOffice, :PictureEditing, :SelectAll, :Table,
+          :TableLayout, :TableCaption, :TableCellProperties, :TableColumnResize, :TableProperties, :TableToolbar,
+          :TextTransformation, :TodoList, :Underline, :Undo, :Base64UploadAdapter
+        ],
+        table: %{
+          contentToolbar: [
+            :tableColumn, :tableRow, :mergeTableCells, :tableProperties, :tableCellProperties, :toggleTableCaption
+          ]
+        },
+        image: %{
+          toolbar: [
+            :imageTextAlternative, :imageStyle, :imageResize, :imageInsertViaUrl
+          ]
+        }
+      }
+    }
+  }
 ```
 
 ## Editor value synchronization with LiveView 🔄

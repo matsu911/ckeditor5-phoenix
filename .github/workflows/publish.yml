@@ -10,6 +10,9 @@ on:
         required: true
         type: string
 
+env:
+  MIX_ENV: prod
+
 jobs:
   publish:
     runs-on: ubuntu-latest

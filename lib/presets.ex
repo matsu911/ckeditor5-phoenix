@@ -3,8 +3,11 @@ defmodule CKEditor5.Presets do
   Provides predefined configurations (presets) for CKEditor 5.
   """
 
+  use Memoize
+
   alias CKEditor5.Errors
   alias CKEditor5.Preset.Parser
+  alias CKEditor5.Config
 
   @default_presets %{
     "default" => %{
@@ -147,20 +150,22 @@ defmodule CKEditor5.Presets do
     end
   end
 
-  # Returns all available presets, merging environment-specific presets with defaults.
-  defp all_with_default do
-    Map.merge(@default_presets, string_keyed_env_presets())
-  end
-
-  # Returns all available presets, merging environment-specific presets with defaults.
-  defp string_keyed_env_presets do
-    env_presets = Application.get_env(:ckeditor5_phoenix, :presets, %{})
-
-    env_presets
+  @doc """
+  Returns all available presets, merging environment-specific presets with defaults.
+  """
+  def presets do
+    Config.raw_presets()
     |> Enum.map(fn
       {k, v} when is_atom(k) -> {Atom.to_string(k), v}
       {k, v} -> {to_string(k), v}
     end)
     |> Map.new()
+  end
+
+  @doc """
+  Returns all available presets, merging environment-specific presets with defaults.
+  """
+  def all_with_default do
+    Map.merge(@default_presets, presets())
   end
 end

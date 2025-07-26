@@ -1,9 +1,9 @@
 defmodule CKEditor5.Test.PresetsHelper do
   @moduledoc """
-  Specialized helper for managing :ckeditor5, :presets Application env in tests.
+  Specialized helper for managing :ckeditor5_phoenix, :presets Application env in tests.
   """
 
-  @app :ckeditor5
+  @app :ckeditor5_phoenix
   @key :presets
 
   @doc """

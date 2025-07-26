@@ -6,7 +6,7 @@ defmodule CKEditor5.MixProject do
 
   def project do
     [
-      app: :ckeditor5,
+      app: :ckeditor5_phoenix,
       description: "CKEditor 5 integration for Phoenix Framework",
       version: @version,
       cke: %{

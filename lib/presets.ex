@@ -122,6 +122,6 @@ defmodule CKEditor5.Presets do
   end
 
   defp all do
-    Map.merge(@default_presets, Application.get_env(:ckeditor5, :presets, %{}))
+    Map.merge(@default_presets, Application.get_env(:ckeditor5_phoenix, :presets, %{}))
   end
 end

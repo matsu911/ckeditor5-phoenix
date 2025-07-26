@@ -3,7 +3,7 @@ import Config
 config :phoenix, :json_library, Jason
 config :logger, :level, :debug
 
-config :ckeditor5, Playground.Endpoint,
+config :ckeditor5_phoenix, Playground.Endpoint,
   adapter: Bandit.PhoenixAdapter,
   http: [ip: {127, 0, 0, 1}, port: 4000],
   secret_key_base: "nU11FRRf5rf675y2C/A/w5MMnFFg1gVNiOw/PQ+c3G6HZhTa282rEF73U/CJqRRN",

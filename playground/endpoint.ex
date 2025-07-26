@@ -6,7 +6,7 @@ defmodule Playground.Endpoint do
   sessions, and static file serving for the playground.
   """
 
-  use Phoenix.Endpoint, otp_app: :ckeditor5
+  use Phoenix.Endpoint, otp_app: :ckeditor5_phoenix
 
   @session_options [
     store: :cookie,

@@ -5,9 +5,9 @@ defmodule CKEditor5.Presets do
 
   use Memoize
 
+  alias CKEditor5.Config
   alias CKEditor5.Errors
   alias CKEditor5.Preset.Parser
-  alias CKEditor5.Config
 
   @default_presets %{
     "default" => %{

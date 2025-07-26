@@ -49,7 +49,7 @@ defmodule CKEditor5.MixProject do
     [
       {:phoenix, "~> 1.7.21"},
       {:phoenix_html, "~> 4.1"},
-      {:phoenix_view, "~> 2.0.4"},
+      {:phoenix_view, "~> 2.0.4", only: [:dev]},
       {:phoenix_live_view, "~> 1.0"},
       {:norm, "~> 0.13"},
       {:memoize, "~> 1.4"},

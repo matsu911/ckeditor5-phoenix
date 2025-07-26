@@ -93,7 +93,7 @@ defmodule CKEditor5.MixProject do
     ]
   end
 
-  defp elixirc_paths(:test), do: ["lib", "playground", "test/support"]
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(:dev), do: ["lib", "playground"]
   defp elixirc_paths(_), do: ["lib"]
 

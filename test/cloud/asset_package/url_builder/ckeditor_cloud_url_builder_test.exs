@@ -17,19 +17,5 @@ defmodule CKEditor5.Cloud.CKEditorCloudUrlBuilderTest do
 
       assert CKEditorCloudUrlBuilder.build_url(:ckbox, path_segments) == expected_url
     end
-
-    test "builds CKEditor URL from a single resource path" do
-      resource_path = "foo/bar/baz"
-      expected_url = "https://cdn.ckeditor.com/foo/bar/baz"
-
-      assert CKEditorCloudUrlBuilder.build_url(:ckeditor, resource_path) == expected_url
-    end
-
-    test "builds CKBox URL from a single resource path" do
-      resource_path = "foo/bar/baz"
-      expected_url = "https://cdn.ckbox.io/foo/bar/baz"
-
-      assert CKEditorCloudUrlBuilder.build_url(:ckbox, resource_path) == expected_url
-    end
   end
 end

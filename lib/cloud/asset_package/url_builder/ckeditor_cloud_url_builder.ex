@@ -11,13 +11,9 @@ defmodule CKEditor5.Cloud.CKEditorCloudUrlBuilder do
 
   @impl true
   def build_url(cdn_type, path_segments) when is_atom(cdn_type) and is_list(path_segments) do
-    resource_path = Enum.join(path_segments, "/")
-    build_url(cdn_type, resource_path)
-  end
-
-  @impl true
-  def build_url(cdn_type, resource_path) when is_atom(cdn_type) and is_binary(resource_path) do
     base_url = get_base_url(cdn_type)
+    resource_path = Enum.join(path_segments, "/")
+
     "#{base_url}#{resource_path}"
   end
 

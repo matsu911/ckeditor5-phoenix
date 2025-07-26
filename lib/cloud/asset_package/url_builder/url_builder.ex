@@ -5,5 +5,5 @@ defmodule CKEditor5.Cloud.UrlBuilder do
 
   @type cdn_type() :: :ckeditor | :ckbox
 
-  @callback build_url(cdn_type(), list(binary()) | binary()) :: binary()
+  @callback build_url(cdn_type(), list(binary())) :: binary()
 end

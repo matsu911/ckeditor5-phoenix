@@ -57,6 +57,8 @@ class EditorHookImpl extends ClassHook {
     this.editorPromise = this.createEditor();
 
     EditorsRegistry.the.register(this.attrs.editorId, await this.editorPromise);
+
+    return this;
   }
 
   /**
@@ -77,7 +79,7 @@ class EditorHookImpl extends ClassHook {
   /**
    * Creates the CKEditor instance.
    */
-  private createEditor = async () => {
+  private async createEditor() {
     const { preset, editorId, editableHeight } = this.attrs;
     const { type, license, config: { plugins, ...config } } = preset;
 
@@ -94,6 +96,8 @@ class EditorHookImpl extends ClassHook {
       },
     );
 
+    this.setupContentSync(editorId, editor);
+
     if (isSingleEditingLikeEditor(type)) {
       const input = document.getElementById(`${editorId}_input`) as HTMLInputElement | null;
 
@@ -108,6 +112,45 @@ class EditorHookImpl extends ClassHook {
 
     return editor;
   };
+
+  /**
+   * Sets up the content synchronization for the editor.
+   */
+  private setupContentSync(editorId: EditorId, editor: Editor) {
+    const pushContentChange = () => {
+      this.pushEvent(
+        'ckeditor5:change',
+        {
+          editorId,
+          data: getEditorRootsValues(editor),
+        },
+      );
+    };
+
+    // Send content changes to the server.
+    editor.model.document.on('change:data', debounce(250, pushContentChange));
+    pushContentChange();
+
+    // Handle incoming data from the server.
+    this.handleEvent('ckeditor5:set-data', ({ data }) => {
+      editor.setData(data);
+    });
+  }
+}
+
+/**
+ * Gets the values of the editor's roots.
+ *
+ * @param editor The CKEditor instance.
+ * @returns An object mapping root names to their content.
+ */
+function getEditorRootsValues(editor: Editor) {
+  const roots = editor.model.document.getRootNames();
+
+  return roots.reduce<Record<string, string>>((acc, rootName) => {
+    acc[rootName] = editor.getData({ rootName });
+    return acc;
+  }, Object.create({}));
 }
 
 /**

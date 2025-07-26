@@ -314,6 +314,78 @@ describe('editor hook', () => {
     });
   });
 
+  describe('socket events', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('should push event to the server after changing data', async () => {
+      const hookElement = createEditorHtmlElement();
+      const pushSpy = vi.fn();
+
+      document.body.appendChild(hookElement);
+      EditorHook.mounted.call({
+        el: hookElement,
+        pushEvent: pushSpy,
+      });
+
+      const editor = await waitForTestEditor();
+
+      // First call after mount
+      expect(pushSpy).toHaveBeenCalledTimes(1);
+      expect(pushSpy).toHaveBeenCalledWith(
+        'ckeditor5:change',
+        {
+          editorId: hookElement.id,
+          data: {
+            main: '<p>Test content</p>',
+          },
+        },
+        undefined,
+      );
+
+      // CHeck if component responds to changes
+      editor.setData('<p>New content</p>');
+
+      await vi.advanceTimersByTimeAsync(500);
+
+      expect(pushSpy).toHaveBeenCalledTimes(2);
+      expect(pushSpy).toHaveBeenCalledWith(
+        'ckeditor5:change',
+        {
+          editorId: hookElement.id,
+          data: {
+            main: '<p>New content</p>',
+          },
+        },
+        undefined,
+      );
+    });
+
+    it('should handle incoming data from the server', async () => {
+      const hookElement = createEditorHtmlElement();
+      const handleEventSpy = vi.fn();
+
+      document.body.appendChild(hookElement);
+      EditorHook.mounted.call({
+        el: hookElement,
+        handleEvent: handleEventSpy,
+      });
+
+      const editor = await waitForTestEditor();
+
+      // Simulate server event
+      const dataFromServer = '<p>Content from server</p>';
+      handleEventSpy.mock.calls[0]![1]({ data: { main: dataFromServer } });
+
+      expect(editor.getData()).toBe(dataFromServer);
+    });
+  });
+
   describe('`cke-editable-height` attribute', () => {
     it('should set the height of the editable area', async () => {
       const editableHeight = 255;

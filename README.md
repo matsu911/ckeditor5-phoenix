@@ -69,15 +69,12 @@ config :demo, DemoWeb.Endpoint,
 You can configure the editor _presets_ in your `config/config.exs` file. The default preset is `:default`, which provides a basic configuration with a toolbar and essential plugins. The preset is a map that contains the editor configuration, including the toolbar items and plugins. There can be multiple presets, and you can switch between them by passing the `preset` keyword argument to the `ckeditor` component.
 
 In order to override the default preset, you can add the following configuration to your `config/config.exs` file:
-
-```elixir
-config :ckeditor5_phoenix,
   presets: %{
     default: %{
       config: %{
         toolbar: [
-          :undo, :redo, :|, :heading, :|, :fontFamily, :fontSize, :fontColor, :fontBackgroundColor, :|,
-          :alignment, :bold, :italic, :underline, :|, :link, :insertImage, :insertTable, :insertTableLayout,
+          :undo, :redo, :|, :heading, :|, :fontFamily, :fontSize, :fontColor, :fontBackgroundColor, :alignment, :|,
+          :bold, :italic, :underline, :|, :link, :insertImage, :insertTable, :insertTableLayout,
           :blockQuote, :emoji, :mediaEmbed, :|, :bulletedList, :numberedList, :todoList, :outdent, :indent
         ],
         plugins: [
@@ -182,6 +179,48 @@ If you want to use an inline editor, you can pass the `type` keyword argument wi
   editable_height="300px"
 />
 ```
+
+## Editor value synchronization with LiveView 🔄
+
+Below is an example of how to synchronize the CKEditor 5 editor value with the backend in LiveView, using the component and event handling in Elixir.
+
+### Template (`.heex`)
+
+```heex
+<.ckeditor value="Hello world" />
+
+<div class="bg-gray-50 mt-8 p-4 border border-gray-300">
+  <h2 class="mb-2 font-bold">Current editor value:</h2>
+  <pre class="whitespace-pre-wrap"> <%= @editor_value %> </pre>
+</div>
+```
+
+### LiveView (`.ex`)
+
+```elixir
+defmodule Playground.Live.Classic do
+  use Playground, :live_view
+  use CKEditor5
+
+  @impl true
+  def mount(_params, _session, socket) do
+    {:ok, assign(socket, editor_value: "")}
+  end
+
+  @impl true
+  def handle_event("ckeditor5:change", %{"data" => data}, socket) do
+    {:noreply, assign(socket, editor_value: data["main"])}
+  end
+end
+```
+
+In the above example:
+
+- The `<.ckeditor />` component renders the CKEditor 5 editor.
+- The editor value is sent to the backend via the `ckeditor5:change` event.
+- The editor value is displayed on the page in the `<pre>` element.
+
+This approach allows for full real-time synchronization of the editor state with the backend.
 
 ## Package development 🛠️
 

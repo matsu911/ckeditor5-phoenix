@@ -27,7 +27,7 @@ defmodule CKEditor5.Components.Editor.AttributeValidator do
         message =
           "The `#{attr}` attribute is not supported for editor type '#{preset_type}'. #{hint}"
 
-        raise Error, message: message
+        raise Error, message
 
       nil ->
         assigns

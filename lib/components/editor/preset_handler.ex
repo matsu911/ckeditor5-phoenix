@@ -27,13 +27,17 @@ defmodule CKEditor5.Components.Editor.PresetHandler do
   defp override_preset_type(%{type: nil} = assigns), do: assigns
 
   defp override_preset_type(%{type: type, preset: preset} = assigns) do
-    type_atom = String.to_atom(type)
+    type_atom =
+      cond do
+        is_atom(type) -> type
+        is_binary(type) -> String.to_atom(type)
+      end
 
     if EditorType.valid?(type_atom) do
       new_preset = Preset.of_type(preset, type_atom)
       Map.put(assigns, :preset, new_preset)
     else
-      raise Error, message: "Invalid editor type provided: #{type}"
+      raise Error, "Invalid editor type provided: #{type}"
     end
   end
 end

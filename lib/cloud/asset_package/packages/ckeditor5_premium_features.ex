@@ -6,7 +6,7 @@ defmodule CKEditor5.Cloud.AssetPackage.CKEditor5PremiumFeatures do
   alias CKEditor5.Cloud.AssetPackage
   alias CKEditor5.Cloud.AssetPackage.JSAsset
 
-  import CKEditor5.Cloud.UrlBuilder, only: [build_url: 2]
+  import CKEditor5.Cloud.CKEditorCloudUrlBuilder, only: [build_url: 2]
 
   @doc """
   Creates URLs for CKEditor5 Premium Features JavaScript and CSS files.

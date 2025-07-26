@@ -25,7 +25,7 @@ Add dependency to your project:
 ```elixir
 def deps do
   [
-    {:ckeditor5_phoenix, "~> 1.0.8"}
+    {:ckeditor5_phoenix, "~> 1.1.0"}
   ]
 end
 ```

@@ -43,6 +43,10 @@ jobs:
         run: |
           jq ".version = \"${{ github.event.inputs.version }}\"" npm_package/package.json > tmp.json && mv tmp.json npm_package/package.json
 
+      - name: Set version in README.md
+        run: |
+          sed -i "s/~> [0-9]\+\.[0-9]\+\.[0-9]\+/~> ${{ github.event.inputs.version }}/" README.md
+
       - name: Install Elixir dependencies
         run: mix deps.get
 

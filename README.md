@@ -19,8 +19,20 @@ CKEditor 5 integration library for Phoenix (Elixir) applications. Provides web c
 ## Installation 🚀
 
 ```bash
-# Under construction. Stay tuned for the upcoming release!
+def deps do
+  [
+    {:ckeditor5, "~> 1.0.4"}
+  ]
+end
 ```
+
+(optionally) If you use `npm` and `node_modules` in your Phoenix application, you can install the frontend assets using the following command:
+
+```bash
+npm install ckeditor5-phoenix
+```
+
+However, the ckeditor5 NPM dependency should be also installed within deps of mix package.
 
 ## Editor placement 🏗️
 

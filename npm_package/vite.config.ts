@@ -37,7 +37,7 @@ export default defineConfig({
     watch: false,
     environment: 'happy-dom',
     coverage: {
-      reporter: ['text', 'html'],
+      reporter: ['text', 'html', 'lcov'],
       thresholds: {
         lines: 100,
         functions: 100,

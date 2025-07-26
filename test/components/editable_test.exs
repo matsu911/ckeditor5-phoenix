@@ -4,6 +4,7 @@ defmodule CKEditor5.Components.EditableTest do
   import Phoenix.LiveViewTest
 
   alias CKEditor5.Components.Editable
+  alias Phoenix.HTML
 
   test "renders editable with all attributes and hidden input" do
     html =
@@ -32,5 +33,41 @@ defmodule CKEditor5.Components.EditableTest do
     assert html =~ ~s(phx-hook="CKEditable")
     assert html =~ ~s(data-cke-editable-root-name="main")
     refute html =~ ~s(<input)
+  end
+
+  describe "form support" do
+    test "renders editable with form field attributes" do
+      form = %HTML.Form{
+        source: nil,
+        id: "f",
+        name: "f",
+        params: %{},
+        hidden: [],
+        options: [],
+        errors: [],
+        data: %{}
+      }
+
+      field = %HTML.FormField{
+        form: form,
+        field: :body,
+        name: "f[body]",
+        id: "f_body",
+        value: "test123",
+        errors: []
+      }
+
+      html =
+        render_component(&Editable.render/1, root: "main", editor_id: "editor-1", field: field)
+
+      assert html =~ ~s(name="f[body]")
+      assert html =~ ~s(value="test123")
+    end
+
+    test "renders editable without form field attributes" do
+      html = render_component(&Editable.render/1, root: "main", editor_id: "editor-1")
+
+      refute html =~ ~s(<input)
+    end
   end
 end

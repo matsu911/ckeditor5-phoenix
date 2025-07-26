@@ -1,10 +1,12 @@
 defmodule CKEditor5.Components.EditorTest do
   use ExUnit.Case, async: true
+
   import Phoenix.LiveViewTest
 
   alias CKEditor5.Components.Editor
   alias CKEditor5.Errors.Error
   alias CKEditor5.Test.PresetsHelper
+  alias Phoenix.HTML
 
   setup do
     original =
@@ -183,6 +185,48 @@ defmodule CKEditor5.Components.EditorTest do
     test "should not raise any error if no disallowed attributes are present for non-single-editing editors" do
       html = render_component(&Editor.render/1, id: "editor13", type: :multiroot)
       assert html =~ ~s(id="editor13")
+    end
+  end
+
+  describe "form support" do
+    test "renders hidden input with correct name from :name attribute" do
+      html =
+        render_component(&Editor.render/1, id: "editor_form1", name: "my_content", value: "abc")
+
+      assert html =~ ~s(<input)
+      assert html =~ ~s(name="my_content")
+    end
+
+    test "renders hidden input with correct name from :field attribute (Phoenix.HTML.FormField)" do
+      form = %HTML.Form{
+        source: nil,
+        id: "f",
+        name: "f",
+        params: %{},
+        hidden: [],
+        options: [],
+        errors: [],
+        data: %{}
+      }
+
+      field = %HTML.FormField{
+        form: form,
+        field: :body,
+        name: "f[body]",
+        id: "f_body",
+        value: "test123",
+        errors: []
+      }
+
+      html = render_component(&Editor.render/1, id: "editor_form2", field: field)
+
+      assert html =~ ~s(<input)
+      assert html =~ ~s(name="f[body]")
+    end
+
+    test "does not render hidden input if no name, field or form is given" do
+      html = render_component(&Editor.render/1, id: "editor_form4", value: "noinput")
+      refute html =~ ~s(<input)
     end
   end
 end

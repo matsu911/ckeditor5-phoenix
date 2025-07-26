@@ -8,11 +8,10 @@ defmodule CKEditor5.Components.Editor do
 
   use Phoenix.LiveComponent
 
-  import CKEditor5.Form
+  import CKEditor5.Components.FormAttrs
 
   alias CKEditor5.Components.Editor.Assigns
   alias CKEditor5.Components.HiddenInput
-  alias CKEditor5.Helpers
 
   @doc """
   Renders the CKEditor 5 component in a LiveView.
@@ -36,10 +35,7 @@ defmodule CKEditor5.Components.Editor do
   attr :rest, :global
 
   def render(assigns) do
-    assigns =
-      assigns
-      |> Helpers.assign_id_if_missing("cke")
-      |> Assigns.prepare()
+    assigns = Assigns.prepare(assigns)
 
     ~H"""
     <div

@@ -6,7 +6,7 @@ defmodule CKEditor5.Components.Editable do
 
   use Phoenix.Component
 
-  import CKEditor5.Form
+  import CKEditor5.Components.FormAttrs
 
   alias CKEditor5.Components.HiddenInput
   alias CKEditor5.Helpers

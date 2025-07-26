@@ -1,4 +1,4 @@
-defmodule CKEditor5.Form do
+defmodule CKEditor5.Components.FormAttrs do
   @moduledoc """
   Common helper functions for CKEditor5 form components.
   """
@@ -10,15 +10,12 @@ defmodule CKEditor5.Form do
   This function checks if the `form` is present and if the `field` is an atom.
   It then retrieves the input name and value from the form and assigns them to the assigns map.
   """
-  def assign_form_fields(%{form: nil} = assigns), do: assigns
+  def assign_form_fields(%{field: nil} = assigns), do: assigns
 
-  def assign_form_fields(%{form: form, field: field_name} = assigns) when is_atom(field_name) do
-    field = HTML.Form.input_name(form, field_name)
-
+  def assign_form_fields(%{field: %HTML.FormField{} = field} = assigns) do
     assigns
-    |> Map.put(:field, field)
-    |> Map.put_new(:name, field.name)
-    |> Map.put_new(:value, field.value || "")
+    |> Map.put(:name, field.name)
+    |> Map.put(:value, field.value || "")
   end
 
   @doc """
@@ -35,11 +32,6 @@ defmodule CKEditor5.Form do
         If not provided, it will be derived from the `:field` attribute when available.
         This is useful for form integration, allowing the content to be submitted as part of a form.
         """
-
-      attr :form, :any,
-        required: false,
-        default: nil,
-        doc: "The `Phoenix.HTML.Form` for form integration."
 
       attr :field, Phoenix.HTML.FormField,
         required: false,

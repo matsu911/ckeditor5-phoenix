@@ -69,6 +69,9 @@ config :demo, DemoWeb.Endpoint,
 You can configure the editor _presets_ in your `config/config.exs` file. The default preset is `:default`, which provides a basic configuration with a toolbar and essential plugins. The preset is a map that contains the editor configuration, including the toolbar items and plugins. There can be multiple presets, and you can switch between them by passing the `preset` keyword argument to the `ckeditor` component.
 
 In order to override the default preset, you can add the following configuration to your `config/config.exs` file:
+
+```elixir
+config :ckeditor5_phoenix,
   presets: %{
     default: %{
       config: %{

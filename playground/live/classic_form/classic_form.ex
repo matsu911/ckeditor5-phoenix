@@ -13,17 +13,41 @@ defmodule Playground.Live.ClassicForm do
     {:ok,
      assign(socket,
        saved: false,
+       error: nil,
        form: Component.to_form(%{"content" => "Initial content"}, as: :form)
      )}
   end
 
   @impl true
   def handle_event("validate", %{"form" => form}, socket) do
-    {:noreply, assign(socket, saved: false, form: Component.to_form(form, as: :form))}
+    socket
+    |> assign(form: Component.to_form(form, as: :form))
+    |> assign_error(form)
+    |> then(&{:noreply, &1})
   end
 
   @impl true
   def handle_event("save", %{"form" => form}, socket) do
-    {:noreply, assign(socket, saved: true, form: Component.to_form(form, as: :form))}
+    socket =
+      socket
+      |> assign(form: Component.to_form(form, as: :form))
+      |> assign_error(form)
+
+    if socket.assigns[:error] do
+      {:noreply, assign(socket, saved: false)}
+    else
+      {:noreply, assign(socket, saved: true, error: nil)}
+    end
+  end
+
+  defp assign_error(socket, form) do
+    error =
+      if String.trim(form["content"] || "") == "" do
+        "Content can't be blank"
+      else
+        nil
+      end
+
+    assign(socket, error: error)
   end
 end

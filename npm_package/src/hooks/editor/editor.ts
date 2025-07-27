@@ -163,7 +163,10 @@ function getEditorRootsValues(editor: Editor) {
  */
 function syncEditorToInput(input: HTMLInputElement, editor: Editor) {
   const sync = () => {
-    input.value = editor.getData();
+    const newValue = editor.getData();
+
+    input.value = newValue;
+    input.dispatchEvent(new Event('input', { bubbles: true }));
   };
 
   editor.model.document.on('change:data', debounce(250, sync));

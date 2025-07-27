@@ -346,6 +346,27 @@ describe('editor hook', () => {
 
       expect(input.value).toBe('<p>Updated content</p>');
     });
+
+    it('should dispatch input event on sync', async () => {
+      const initialValue = `<p>Initial content</p>`;
+      const hookElement = createEditorHtmlElement({
+        initialValue,
+        withInput: true,
+      });
+
+      document.body.appendChild(hookElement);
+      EditorHook.mounted.call({ el: hookElement });
+
+      const editor = await waitForTestEditor();
+      const input = getTestEditorInput();
+      const inputEventSpy = vi.fn();
+      input.addEventListener('input', inputEventSpy);
+
+      editor.setData('<p>Updated content</p>');
+      await vi.advanceTimersByTimeAsync(500);
+
+      expect(inputEventSpy).toHaveBeenCalled();
+    });
   });
 
   describe('socket events', () => {

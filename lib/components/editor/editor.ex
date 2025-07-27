@@ -41,6 +41,11 @@ defmodule CKEditor5.Components.Editor do
     doc:
       "The height of the editable area (e.g., \"300px\"). If not provided, the height will be determined by the editor's content."
 
+  attr :save_debounce_ms, :integer,
+    default: 400,
+    required: false,
+    doc: "Debounce time in ms for saving/syncing editor content."
+
   attr :type, :string,
     required: false,
     default: nil,
@@ -62,6 +67,7 @@ defmodule CKEditor5.Components.Editor do
       cke-editable-height={@editable_height}
       cke-initial-value={@value || ""}
       cke-change-event={@change_event}
+      cke-save-debounce-ms={@save_debounce_ms}
     >
       <div id={"#{@id}_editor"}></div>
       <%= if @name do %>

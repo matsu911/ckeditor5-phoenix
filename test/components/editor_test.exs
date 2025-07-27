@@ -263,4 +263,22 @@ defmodule CKEditor5.Components.EditorTest do
       refute html =~ ~s(cke-change-event)
     end
   end
+
+  describe "save_debounce_ms attribute" do
+    test "sets cke-save-debounce-ms attribute with default value" do
+      html = render_component(&Editor.render/1, id: "editor_sd1", name: "content")
+      assert html =~ ~s(cke-save-debounce-ms="400")
+    end
+
+    test "sets cke-save-debounce-ms attribute with custom value" do
+      html =
+        render_component(&Editor.render/1,
+          id: "editor_sd2",
+          name: "content",
+          save_debounce_ms: 1234
+        )
+
+      assert html =~ ~s(cke-save-debounce-ms="1234")
+    end
+  end
 end

@@ -486,4 +486,75 @@ describe('editor hook', () => {
       expect(editable?.getStyle('height')).toBe(`${editableHeight}px`);
     });
   });
+
+  describe('`cke-save-debounce-ms` attribute', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('should use default debounce (400ms) for content push', async () => {
+      const hookElement = createEditorHtmlElement({
+        changeEvent: true,
+      });
+
+      document.body.appendChild(hookElement);
+
+      const pushSpy = vi.fn();
+      EditorHook.mounted.call({ el: hookElement, pushEvent: pushSpy });
+
+      const editor = await waitForTestEditor();
+
+      pushSpy.mockClear();
+      editor.setData('<p>Debounce test</p>');
+
+      await vi.advanceTimersByTimeAsync(399);
+      expect(pushSpy).not.toHaveBeenCalled();
+
+      await vi.advanceTimersByTimeAsync(2);
+      expect(pushSpy).toHaveBeenCalled();
+    });
+
+    it('should use custom debounce from cke-save-debounce-ms', async () => {
+      const hookElement = createEditorHtmlElement({
+        changeEvent: true,
+        saveDebounceMs: 1000,
+      });
+
+      document.body.appendChild(hookElement);
+
+      const pushSpy = vi.fn();
+      EditorHook.mounted.call({ el: hookElement, pushEvent: pushSpy });
+
+      const editor = await waitForTestEditor();
+      pushSpy.mockClear();
+      editor.setData('<p>Debounce test</p>');
+
+      await vi.advanceTimersByTimeAsync(999);
+      expect(pushSpy).not.toHaveBeenCalled();
+
+      await vi.advanceTimersByTimeAsync(2);
+      expect(pushSpy).toHaveBeenCalled();
+    });
+
+    it('should use custom debounce for input sync', async () => {
+      const hookElement = createEditorHtmlElement({
+        initialValue: '<p>Initial</p>',
+        withInput: true,
+        saveDebounceMs: 700,
+      });
+      document.body.appendChild(hookElement);
+      EditorHook.mounted.call({ el: hookElement });
+      const editor = await waitForTestEditor();
+      const input = getTestEditorInput();
+      editor.setData('<p>Debounced input</p>');
+      await vi.advanceTimersByTimeAsync(699);
+      expect(input.value).not.toBe('<p>Debounced input</p>');
+      await vi.advanceTimersByTimeAsync(2);
+      expect(input.value).toBe('<p>Debounced input</p>');
+    });
+  });
 });

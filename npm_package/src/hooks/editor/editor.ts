@@ -39,6 +39,7 @@ class EditorHookImpl extends ClassHook {
       preset: readPresetOrThrow(this.el),
       editableHeight: parseIntIfNotNull(this.el.getAttribute('cke-editable-height')),
       changeEvent: this.el.getAttribute('cke-change-event') !== null,
+      saveDebounceMs: parseIntIfNotNull(this.el.getAttribute('cke-save-debounce-ms')) ?? 400,
     };
 
     Object.defineProperty(this, 'attrs', {
@@ -81,7 +82,7 @@ class EditorHookImpl extends ClassHook {
    * Creates the CKEditor instance.
    */
   private async createEditor() {
-    const { preset, editorId, editableHeight, changeEvent } = this.attrs;
+    const { preset, editorId, editableHeight, changeEvent, saveDebounceMs } = this.attrs;
     const { type, license, config: { plugins, ...config } } = preset;
 
     const Constructor = await loadEditorConstructor(type);
@@ -98,7 +99,7 @@ class EditorHookImpl extends ClassHook {
     );
 
     if (changeEvent) {
-      this.setupContentPush(editorId, editor);
+      this.setupContentPush(editorId, editor, saveDebounceMs);
     }
 
     // Handle incoming data from the server.
@@ -110,7 +111,7 @@ class EditorHookImpl extends ClassHook {
       const input = document.getElementById(`${editorId}_input`) as HTMLInputElement | null;
 
       if (input) {
-        syncEditorToInput(input, editor);
+        syncEditorToInput(input, editor, saveDebounceMs);
       }
 
       if (editableHeight) {
@@ -124,7 +125,7 @@ class EditorHookImpl extends ClassHook {
   /**
    * Setups the content push event for the editor.
    */
-  private setupContentPush(editorId: EditorId, editor: Editor) {
+  private setupContentPush(editorId: EditorId, editor: Editor, saveDebounceMs: number) {
     const pushContentChange = () => {
       this.pushEvent(
         'ckeditor5:change',
@@ -135,7 +136,7 @@ class EditorHookImpl extends ClassHook {
       );
     };
 
-    editor.model.document.on('change:data', debounce(250, pushContentChange));
+    editor.model.document.on('change:data', debounce(saveDebounceMs, pushContentChange));
     pushContentChange();
   }
 }
@@ -161,7 +162,7 @@ function getEditorRootsValues(editor: Editor) {
  * @param input The input element to synchronize with the editor.
  * @param editor The CKEditor instance.
  */
-function syncEditorToInput(input: HTMLInputElement, editor: Editor) {
+function syncEditorToInput(input: HTMLInputElement, editor: Editor, saveDebounceMs: number) {
   const sync = () => {
     const newValue = editor.getData();
 
@@ -169,7 +170,7 @@ function syncEditorToInput(input: HTMLInputElement, editor: Editor) {
     input.dispatchEvent(new Event('input', { bubbles: true }));
   };
 
-  editor.model.document.on('change:data', debounce(250, sync));
+  editor.model.document.on('change:data', debounce(saveDebounceMs, sync));
   getParentFormElement(input)?.addEventListener('submit', sync);
 
   sync();

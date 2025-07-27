@@ -14,6 +14,7 @@ export function createEditorHtmlElement(
     editableHeight = null,
     withInput = false,
     changeEvent = false,
+    saveDebounceMs = undefined,
     hookAttrs,
   }: {
     id?: string;
@@ -22,6 +23,7 @@ export function createEditorHtmlElement(
     editableHeight?: number | null;
     withInput?: boolean;
     changeEvent?: boolean;
+    saveDebounceMs?: number;
     hookAttrs?: Record<string, string>;
   } = {},
 ) {
@@ -40,6 +42,9 @@ export function createEditorHtmlElement(
       ...editableHeight && {
         'cke-editable-height': editableHeight,
       },
+      ...(saveDebounceMs !== undefined && {
+        'cke-save-debounce-ms': saveDebounceMs,
+      }),
       ...hookAttrs,
     },
     html.div({ id: `${id}_editor` }),

@@ -13,7 +13,7 @@ export function createEditorHtmlElement(
     initialValue = '<p>Test content</p>',
     editableHeight = null,
     withInput = false,
-    pushEvents = false,
+    changeEvent = false,
     hookAttrs,
   }: {
     id?: string;
@@ -21,7 +21,7 @@ export function createEditorHtmlElement(
     initialValue?: string | null;
     editableHeight?: number | null;
     withInput?: boolean;
-    pushEvents?: boolean;
+    changeEvent?: boolean;
     hookAttrs?: Record<string, string>;
   } = {},
 ) {
@@ -31,8 +31,8 @@ export function createEditorHtmlElement(
       'phx-hook': 'CKEditor5',
       'phx-update': 'ignore',
       'cke-preset': JSON.stringify(preset),
-      ...(pushEvents && {
-        'cke-push-events': '',
+      ...(changeEvent && {
+        'cke-change-event': '',
       }),
       ...initialValue && {
         'cke-initial-value': initialValue,

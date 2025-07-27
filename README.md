@@ -223,7 +223,7 @@ Below is an example of how to synchronize the CKEditor 5 editor value with the b
 ### Template (`.heex`)
 
 ```heex
-<.ckeditor value="Hello world" push_events />
+<.ckeditor value="Hello world" change_event />
 
 <div class="bg-gray-50 mt-8 p-4 border border-gray-300">
   <h2 class="mb-2 font-bold">Current editor value:</h2>

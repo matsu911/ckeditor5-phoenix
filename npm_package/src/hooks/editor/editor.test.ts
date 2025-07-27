@@ -359,7 +359,7 @@ describe('editor hook', () => {
 
     it('should push event to the server after changing data when `push events` enabled', async () => {
       const hookElement = createEditorHtmlElement({
-        pushEvents: true,
+        changeEvent: true,
       });
 
       const pushSpy = vi.fn();
@@ -428,7 +428,7 @@ describe('editor hook', () => {
 
     it('should handle incoming data from the server', async () => {
       const hookElement = createEditorHtmlElement({
-        pushEvents: true,
+        changeEvent: true,
       });
 
       const handleEventSpy = vi.fn();

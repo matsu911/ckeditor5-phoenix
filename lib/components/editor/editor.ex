@@ -30,7 +30,7 @@ defmodule CKEditor5.Components.Editor do
 
   attr :preset, :string, default: "default", doc: "The name of the preset to use."
 
-  attr :push_events, :boolean,
+  attr :change_event, :boolean,
     default: false,
     doc:
       "Whether the editor should push events to the LiveView. If true, the editor will send `ckeditor5:change` event every time the content changes."
@@ -61,7 +61,7 @@ defmodule CKEditor5.Components.Editor do
       cke-preset={Jason.encode!(@preset)}
       cke-editable-height={@editable_height}
       cke-initial-value={@value || ""}
-      cke-push-events={@push_events}
+      cke-change-event={@change_event}
     >
       <div id={"#{@id}_editor"}></div>
       <%= if @name do %>

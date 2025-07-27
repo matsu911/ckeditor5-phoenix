@@ -236,10 +236,10 @@ defmodule CKEditor5.Components.EditorTest do
         render_component(&Editor.render/1,
           id: "editor_push",
           name: "content_push",
-          push_events: true
+          change_event: true
         )
 
-      assert html =~ ~s(cke-push-events)
+      assert html =~ ~s(cke-change-event)
     end
 
     test "does not push content changes when disabled" do
@@ -247,10 +247,10 @@ defmodule CKEditor5.Components.EditorTest do
         render_component(&Editor.render/1,
           id: "editor_no_push",
           name: "content_no_push",
-          push_events: false
+          change_event: false
         )
 
-      refute html =~ ~s(cke-push-events)
+      refute html =~ ~s(cke-change-event)
     end
 
     test "does not push content changes when not specified" do
@@ -260,7 +260,7 @@ defmodule CKEditor5.Components.EditorTest do
           name: "content_default_push"
         )
 
-      refute html =~ ~s(cke-push-events)
+      refute html =~ ~s(cke-change-event)
     end
   end
 end

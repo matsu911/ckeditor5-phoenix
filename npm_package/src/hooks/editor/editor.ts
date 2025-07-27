@@ -38,7 +38,7 @@ class EditorHookImpl extends ClassHook {
       editorId: this.el.getAttribute('id')!,
       preset: readPresetOrThrow(this.el),
       editableHeight: parseIntIfNotNull(this.el.getAttribute('cke-editable-height')),
-      pushEvents: this.el.getAttribute('cke-push-events') !== null,
+      changeEvent: this.el.getAttribute('cke-change-event') !== null,
     };
 
     Object.defineProperty(this, 'attrs', {
@@ -81,7 +81,7 @@ class EditorHookImpl extends ClassHook {
    * Creates the CKEditor instance.
    */
   private async createEditor() {
-    const { preset, editorId, editableHeight, pushEvents } = this.attrs;
+    const { preset, editorId, editableHeight, changeEvent } = this.attrs;
     const { type, license, config: { plugins, ...config } } = preset;
 
     const Constructor = await loadEditorConstructor(type);
@@ -97,7 +97,7 @@ class EditorHookImpl extends ClassHook {
       },
     );
 
-    if (pushEvents) {
+    if (changeEvent) {
       this.setupContentPush(editorId, editor);
     }
 

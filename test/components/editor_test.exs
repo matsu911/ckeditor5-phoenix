@@ -229,4 +229,38 @@ defmodule CKEditor5.Components.EditorTest do
       refute html =~ ~s(<input)
     end
   end
+
+  describe "push events" do
+    test "pushes content changes to LiveView when enabled" do
+      html =
+        render_component(&Editor.render/1,
+          id: "editor_push",
+          name: "content_push",
+          push_events: true
+        )
+
+      assert html =~ ~s(cke-push-events)
+    end
+
+    test "does not push content changes when disabled" do
+      html =
+        render_component(&Editor.render/1,
+          id: "editor_no_push",
+          name: "content_no_push",
+          push_events: false
+        )
+
+      refute html =~ ~s(cke-push-events)
+    end
+
+    test "does not push content changes when not specified" do
+      html =
+        render_component(&Editor.render/1,
+          id: "editor_default_push",
+          name: "content_default_push"
+        )
+
+      refute html =~ ~s(cke-push-events)
+    end
+  end
 end

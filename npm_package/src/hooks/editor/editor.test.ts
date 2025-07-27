@@ -256,6 +256,40 @@ describe('editor hook', () => {
       vi.useFakeTimers();
     });
 
+    it('should sync editor data with the input on parent form submit', async () => {
+      const initialValue = `<p>Initial content</p>`;
+      const hookElement = createEditorHtmlElement({
+        initialValue,
+        withInput: true,
+      });
+
+      // Create a form and append the editor element to it
+      const form = document.createElement('form');
+      form.appendChild(hookElement);
+      document.body.appendChild(form);
+
+      EditorHook.mounted.call({ el: hookElement });
+      await waitForTestEditor();
+
+      const input = getTestEditorInput();
+      expect(input.value).toBe(initialValue);
+
+      // Change editor data
+      const newValue = '<p>Changed by user</p>';
+      const editor = await waitForTestEditor();
+      editor.setData(newValue);
+
+      // Input should not be updated yet (debounced)
+      expect(input.value).toBe(initialValue);
+
+      // Simulate form submit
+      const submitEvent = new Event('submit');
+      form.dispatchEvent(submitEvent);
+
+      // Now input should be synced immediately
+      expect(input.value).toBe(newValue);
+    });
+
     afterEach(() => {
       vi.useRealTimers();
     });
@@ -323,8 +357,11 @@ describe('editor hook', () => {
       vi.useRealTimers();
     });
 
-    it('should push event to the server after changing data', async () => {
-      const hookElement = createEditorHtmlElement();
+    it('should push event to the server after changing data when `push events` enabled', async () => {
+      const hookElement = createEditorHtmlElement({
+        pushEvents: true,
+      });
+
       const pushSpy = vi.fn();
 
       document.body.appendChild(hookElement);
@@ -348,7 +385,7 @@ describe('editor hook', () => {
         undefined,
       );
 
-      // CHeck if component responds to changes
+      // Check if component responds to changes
       editor.setData('<p>New content</p>');
 
       await vi.advanceTimersByTimeAsync(500);
@@ -366,8 +403,34 @@ describe('editor hook', () => {
       );
     });
 
-    it('should handle incoming data from the server', async () => {
+    it('should not push event to the server if `push events` is not enabled', async () => {
       const hookElement = createEditorHtmlElement();
+
+      const pushSpy = vi.fn();
+
+      document.body.appendChild(hookElement);
+      EditorHook.mounted.call({
+        el: hookElement,
+        pushEvent: pushSpy,
+      });
+
+      const editor = await waitForTestEditor();
+
+      expect(pushSpy).not.toHaveBeenCalled();
+
+      // Check if component responds to changes
+      editor.setData('<p>New content</p>');
+
+      await vi.advanceTimersByTimeAsync(500);
+
+      expect(pushSpy).not.toHaveBeenCalled();
+    });
+
+    it('should handle incoming data from the server', async () => {
+      const hookElement = createEditorHtmlElement({
+        pushEvents: true,
+      });
+
       const handleEventSpy = vi.fn();
 
       document.body.appendChild(hookElement);

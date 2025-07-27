@@ -17,7 +17,23 @@ defmodule CKEditor5.Components.Editor do
   Renders the CKEditor 5 component in a LiveView.
   """
   attr :id, :string, required: false, doc: "The ID for the editor instance."
+
+  attr :class, :string,
+    required: false,
+    default: "",
+    doc: "Additional CSS classes to apply to the editor container."
+
+  attr :style, :string,
+    required: false,
+    default: "",
+    doc: "Inline styles to apply to the editor container."
+
   attr :preset, :string, default: "default", doc: "The name of the preset to use."
+
+  attr :push_events, :boolean,
+    default: false,
+    doc:
+      "Whether the editor should push events to the LiveView. If true, the editor will send `ckeditor5:change` event every time the content changes."
 
   attr :editable_height, :string,
     default: nil,
@@ -32,20 +48,20 @@ defmodule CKEditor5.Components.Editor do
 
   form_attrs()
 
-  attr :rest, :global
-
   def render(assigns) do
     assigns = Assigns.prepare(assigns)
 
     ~H"""
     <div
       id={@id}
+      class={@class}
+      style={@style}
       phx-hook="CKEditor5"
       phx-update="ignore"
       cke-preset={Jason.encode!(@preset)}
       cke-editable-height={@editable_height}
       cke-initial-value={@value || ""}
-      {@rest}
+      cke-push-events={@push_events}
     >
       <div id={"#{@id}_editor"}></div>
       <%= if @name do %>

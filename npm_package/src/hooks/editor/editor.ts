@@ -38,6 +38,7 @@ class EditorHookImpl extends ClassHook {
       editorId: this.el.getAttribute('id')!,
       preset: readPresetOrThrow(this.el),
       editableHeight: parseIntIfNotNull(this.el.getAttribute('cke-editable-height')),
+      pushEvents: this.el.getAttribute('cke-push-events') !== null,
     };
 
     Object.defineProperty(this, 'attrs', {
@@ -80,7 +81,7 @@ class EditorHookImpl extends ClassHook {
    * Creates the CKEditor instance.
    */
   private async createEditor() {
-    const { preset, editorId, editableHeight } = this.attrs;
+    const { preset, editorId, editableHeight, pushEvents } = this.attrs;
     const { type, license, config: { plugins, ...config } } = preset;
 
     const Constructor = await loadEditorConstructor(type);
@@ -96,7 +97,14 @@ class EditorHookImpl extends ClassHook {
       },
     );
 
-    this.setupContentSync(editorId, editor);
+    if (pushEvents) {
+      this.setupContentPush(editorId, editor);
+    }
+
+    // Handle incoming data from the server.
+    this.handleEvent('ckeditor5:set-data', ({ data }) => {
+      editor.setData(data);
+    });
 
     if (isSingleEditingLikeEditor(type)) {
       const input = document.getElementById(`${editorId}_input`) as HTMLInputElement | null;
@@ -114,9 +122,9 @@ class EditorHookImpl extends ClassHook {
   };
 
   /**
-   * Sets up the content synchronization for the editor.
+   * Setups the content push event for the editor.
    */
-  private setupContentSync(editorId: EditorId, editor: Editor) {
+  private setupContentPush(editorId: EditorId, editor: Editor) {
     const pushContentChange = () => {
       this.pushEvent(
         'ckeditor5:change',
@@ -127,14 +135,8 @@ class EditorHookImpl extends ClassHook {
       );
     };
 
-    // Send content changes to the server.
     editor.model.document.on('change:data', debounce(250, pushContentChange));
     pushContentChange();
-
-    // Handle incoming data from the server.
-    this.handleEvent('ckeditor5:set-data', ({ data }) => {
-      editor.setData(data);
-    });
   }
 }
 
@@ -165,7 +167,19 @@ function syncEditorToInput(input: HTMLInputElement, editor: Editor) {
   };
 
   editor.model.document.on('change:data', debounce(250, sync));
+  getParentFormElement(input)?.addEventListener('submit', sync);
+
   sync();
+}
+
+/**
+ * Gets the parent form element of the given HTML element.
+ *
+ * @param element The HTML element to find the parent form for.
+ * @returns The parent form element or null if not found.
+ */
+function getParentFormElement(element: HTMLElement) {
+  return element.closest('form') as HTMLFormElement | null;
 }
 
 /**

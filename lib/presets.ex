@@ -27,7 +27,10 @@ defmodule CKEditor5.Presets do
           :bold,
           :italic,
           :underline,
-          %{items: [:strikethrough, :superscript, :subscript]},
+          %{
+            label: "Text Style",
+            items: [:strikethrough, :superscript, :subscript]
+          },
           :|,
           :link,
           :insertImage,

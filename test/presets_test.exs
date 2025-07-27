@@ -170,7 +170,10 @@ defmodule CKEditor5.PresetsTest do
         :bold,
         :italic,
         :underline,
-        %{items: [:strikethrough, :superscript, :subscript]},
+        %{
+          label: "Text Style",
+          items: [:strikethrough, :superscript, :subscript]
+        },
         :|,
         :link,
         :insertImage,

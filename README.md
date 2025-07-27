@@ -18,6 +18,16 @@ CKEditor 5 integration library for Phoenix (Elixir) applications. Provides web c
   <img src="docs/intro-classic-editor.png" alt="CKEditor 5 Classic Editor in Phoenix (Elixir) application">
 </p>
 
+## Psst... 👀
+
+If you're looking for similar stuff, check these out:
+
+* [ckeditor5-rails](https://github.com/Mati365/ckeditor5-rails)
+  Smooth CKEditor 5 integration for Ruby on Rails. Works with standard forms, Turbo, and Hotwire. Easy setup, custom builds, and localization support.
+
+* [ckeditor5-livewire](https://github.com/Mati365/ckeditor5-livewire)
+  Drop-in CKEditor 5 solution for Laravel + Livewire apps. Works great with Blade forms too. Includes JS hooks, flexible config, and easy customization.
+
 ## Installation 🚀
 
 Add dependency to your project:

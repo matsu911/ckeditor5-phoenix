@@ -74,66 +74,28 @@ config :demo, DemoWeb.Endpoint,
   ]
 ```
 
-## CKEditor 5 in a Phoenix LiveView form 📝
-
-Here is a simple example of how to use CKEditor 5 inside a Phoenix LiveView form. The editor value is kept in sync with the backend. When you save the form, the content is shown below the form.
-
-### Template (`classic_form.html.heex`)
+Next, add CKEditor 5 to your view as follows:
 
 ```heex
-<.form for={@form} phx-change="validate" phx-submit="save" class="space-y-4">
-  <div>
-    <label class="block mb-1 font-bold">Content</label>
-    <.live_component
-      id="editor"
-      module={CKEditor5.Components.Editor}
-      field={@form[:content]}
-    />
-  </div>
-  <button type="submit" class="bg-blue-600 px-4 py-2 rounded text-white">Save</button>
-</.form>
+<%!-- In your <head> section, include the CKEditor 5 cloud assets --%>
+<.cke_cloud_assets />
 
-<%= if @saved do %>
-  <div class="bg-green-100 mt-4 p-4 border border-green-400">
-    <strong>Saved content:</strong>
-    <div class="mt-2 max-w-none prose" style="white-space: pre-wrap;">
-      <%= @form[:content].value %>
-    </div>
-  </div>
-<% end %>
+<%!-- In your <body>, you can use the classic editor as a function component: --%>
+<.ckeditor
+  type="classic"
+  value="<p>Initial content here</p>"
+  editable_height="300px"
+/>
+
+<%!-- Or, if you prefer, as a LiveComponent for more advanced scenarios: --%>
+<.live_component
+  id="editor"
+  module={CKEditor5.Components.Editor}
+  type="classic"
+/>
 ```
 
-### LiveView (`classic_form.ex`)
-
-```elixir
-defmodule Playground.Live.ClassicForm do
-  @moduledoc """
-  LiveView for demonstrating CKEditor5 Classic integration with a form.
-  """
-
-  alias Phoenix.Component
-
-  use Playground, :live_view
-  use CKEditor5
-
-  @impl true
-  def mount(_params, _session, socket) do
-    {:ok, assign(socket, saved: false, form: Component.to_form(%{"content" => "Initial content"}, as: :form))}
-  end
-
-  @impl true
-  def handle_event("validate", %{"form" => form}, socket) do
-    {:noreply, assign(socket, saved: false, form: Component.to_form(form, as: :form))}
-  end
-
-  @impl true
-  def handle_event("save", %{"form" => form}, socket) do
-    {:noreply, assign(socket, saved: true, form: Component.to_form(form, as: :form))}
-  end
-end
-```
-
----
+🎉 Voila! You now have CKEditor 5 integrated into your Phoenix application. The editor will be loaded from the CKEditor 5 cloud distribution, and you can start using it right away. 🚀
 
 ## Editor placement 🏗️
 
@@ -261,7 +223,7 @@ Below is an example of how to synchronize the CKEditor 5 editor value with the b
 ### Template (`.heex`)
 
 ```heex
-<.ckeditor value="Hello world" />
+<.ckeditor value="Hello world" push_events />
 
 <div class="bg-gray-50 mt-8 p-4 border border-gray-300">
   <h2 class="mb-2 font-bold">Current editor value:</h2>
@@ -292,9 +254,67 @@ In the above example:
 
 - The `<.ckeditor />` component renders the CKEditor 5 editor.
 - The editor value is sent to the backend via the `ckeditor5:change` event.
-- The editor value is displayed on the page in the `<pre>` element.
 
 This approach allows for full real-time synchronization of the editor state with the backend.
+
+## CKEditor 5 in a Phoenix LiveView form 📝
+
+Here is a simple example of how to use CKEditor 5 inside a Phoenix LiveView form. The editor value is kept in sync with the backend. When you save the form, the content is shown below the form.
+
+### Template (`classic_form.html.heex`)
+
+```heex
+<.form for={@form} phx-change="validate" phx-submit="save" class="space-y-4">
+  <div>
+    <label class="block mb-1 font-bold">Content</label>
+    <.live_component
+      id="editor"
+      module={CKEditor5.Components.Editor}
+      field={@form[:content]}
+    />
+  </div>
+  <button type="submit" class="bg-blue-600 px-4 py-2 rounded text-white">Save</button>
+</.form>
+
+<%= if @saved do %>
+  <div class="bg-green-100 mt-4 p-4 border border-green-400">
+    <strong>Saved content:</strong>
+    <div class="mt-2 max-w-none prose" style="white-space: pre-wrap;">
+      <%= @form[:content].value %>
+    </div>
+  </div>
+<% end %>
+```
+
+### LiveView (`classic_form.ex`)
+
+```elixir
+defmodule Playground.Live.ClassicForm do
+  @moduledoc """
+  LiveView for demonstrating CKEditor5 Classic integration with a form.
+  """
+
+  alias Phoenix.Component
+
+  use Playground, :live_view
+  use CKEditor5
+
+  @impl true
+  def mount(_params, _session, socket) do
+    {:ok, assign(socket, saved: false, form: Component.to_form(%{"content" => "Initial content"}, as: :form))}
+  end
+
+  @impl true
+  def handle_event("validate", %{"form" => form}, socket) do
+    {:noreply, assign(socket, saved: false, form: Component.to_form(form, as: :form))}
+  end
+
+  @impl true
+  def handle_event("save", %{"form" => form}, socket) do
+    {:noreply, assign(socket, saved: true, form: Component.to_form(form, as: :form))}
+  end
+end
+```
 
 ## Package development 🛠️
 

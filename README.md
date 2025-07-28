@@ -261,7 +261,7 @@ This approach allows for full real-time synchronization of the editor state with
 
 Here is a simple example of how to use CKEditor 5 inside a Phoenix LiveView form. The editor value is kept in sync with the backend. When you save the form, the content is shown below the form.
 
-### Template (`classic_form.html.heex`)
+### Template (`.html.heex`)
 
 ```heex
 <.form for={@form} phx-change="validate" phx-submit="save" class="space-y-4">
@@ -286,7 +286,7 @@ Here is a simple example of how to use CKEditor 5 inside a Phoenix LiveView form
 <% end %>
 ```
 
-### LiveView (`classic_form.ex`)
+### LiveView (`.ex`)
 
 ```elixir
 defmodule Playground.Live.ClassicForm do

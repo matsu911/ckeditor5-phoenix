@@ -28,5 +28,6 @@ defmodule Playground.Router do
     live "/classic", Live.Classic
     live "/multiroot", Live.Multiroot
     live "/classic-form", Live.ClassicForm
+    live "/i18n", Live.I18n
   end
 end

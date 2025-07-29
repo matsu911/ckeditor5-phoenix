@@ -24,12 +24,18 @@ defmodule CKEditor5.Components.Cloud.Assets do
   attr :preset, :string, default: "default", doc: "The name of the preset to use."
   attr :nonce, :string, default: nil, doc: "The CSP nonce to use for the script and link tags."
 
+  attr :translations, :any,
+    default: nil,
+    doc:
+      "The languages codes for the editor (e.g., 'en', 'pl', 'de', etc.)." <>
+        "If not provided, then the `cloud.translations` will be used to load language files."
+
   def render(assigns) do
     ~H"""
-    <Importmap.render preset={@preset} nonce={@nonce} />
+    <Importmap.render preset={@preset} nonce={@nonce} translations={@translations} />
     <Stylesheets.render preset={@preset} nonce={@nonce} />
     <UmdScripts.render preset={@preset} nonce={@nonce} />
-    <ModulePreload.render preset={@preset} nonce={@nonce} />
+    <ModulePreload.render preset={@preset} nonce={@nonce} translations={@translations} />
     """
   end
 end

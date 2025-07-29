@@ -15,6 +15,7 @@ defmodule CKEditor5.Components.Cloud.Importmap do
 
   import Phoenix.HTML
 
+  alias CKEditor5.Cloud
   alias CKEditor5.Cloud.AssetPackageBuilder
   alias CKEditor5.Preset.CloudCompatibilityChecker
   alias CKEditor5.Presets
@@ -25,6 +26,13 @@ defmodule CKEditor5.Components.Cloud.Importmap do
   to specify which preset's import map to use.
   """
   attr :preset, :string, default: "default", doc: "The name of the preset to use."
+
+  attr :translations, :any,
+    default: nil,
+    doc:
+      "The languages codes for the editor (e.g., 'en', 'pl', 'de', etc.)." <>
+        "If not provided, then the `cloud.translations` will be used to load language files."
+
   attr :nonce, :string, default: nil, doc: "The CSP nonce to use for the script tag."
 
   def render(assigns) do
@@ -35,13 +43,15 @@ defmodule CKEditor5.Components.Cloud.Importmap do
     """
   end
 
-  defp assign_importmap(%{preset: preset} = assigns) do
+  defp assign_importmap(%{preset: preset, translations: translations} = assigns) do
     preset = Presets.get!(preset)
 
     CloudCompatibilityChecker.ensure_cloud_configured!(preset)
 
     imports =
-      AssetPackageBuilder.build(preset.cloud)
+      preset.cloud
+      |> Cloud.override_translations(translations)
+      |> AssetPackageBuilder.build()
       |> Map.get(:js)
       |> Enum.filter(&(&1.type == :esm))
       |> Enum.map(&{&1.name, &1.url})

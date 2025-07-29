@@ -69,7 +69,7 @@ defmodule CKEditor5.Cloud.AssetPackage.CKEditor5PremiumFeaturesTest do
 
       # Check translation JS asset
       assert %JSAsset{
-               name: "ckeditor5-premium-features/translations/zh",
+               name: "ckeditor5-premium-features/translations/zh.js",
                url:
                  "https://cdn.ckeditor.com/ckeditor5-premium-features/1.0.0/translations/zh.js",
                type: :esm
@@ -97,9 +97,9 @@ defmodule CKEditor5.Cloud.AssetPackage.CKEditor5PremiumFeaturesTest do
       translation_names = Enum.map(translation_assets, & &1.name)
 
       assert translation_names == [
-               "ckeditor5-premium-features/translations/ja",
-               "ckeditor5-premium-features/translations/ko",
-               "ckeditor5-premium-features/translations/ru"
+               "ckeditor5-premium-features/translations/ja.js",
+               "ckeditor5-premium-features/translations/ko.js",
+               "ckeditor5-premium-features/translations/ru.js"
              ]
 
       translation_urls = Enum.map(translation_assets, & &1.url)

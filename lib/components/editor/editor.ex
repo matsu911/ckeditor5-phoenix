@@ -51,6 +51,19 @@ defmodule CKEditor5.Components.Editor do
     default: nil,
     doc: "The type of the editor. Overrides the type from the preset."
 
+  attr :language, :string,
+    required: false,
+    default: nil,
+    doc:
+      "The language code for the editor UI (e.g., 'en', 'pl', 'de', etc.). If not provided, will use the default \"en\" language."
+
+  attr :content_language, :string,
+    required: false,
+    default: nil,
+    doc:
+      "The content language code for the editor (e.g. 'en', 'pl', 'de', etc.). This is used to set the `lang` attribute on the editable area. " <>
+        "If not provided, it will default to the same value as `language`."
+
   form_attrs()
 
   def render(assigns) do
@@ -68,6 +81,8 @@ defmodule CKEditor5.Components.Editor do
       cke-initial-value={@value || ""}
       cke-change-event={@change_event}
       cke-save-debounce-ms={@save_debounce_ms}
+      cke-language={@language}
+      cke-content-language={@content_language}
     >
       <div id={"#{@id}_editor"}></div>
       <%= if @name do %>

@@ -68,22 +68,22 @@ defmodule CKEditor5.Cloud.AssetPackageBuilderTest do
       # Check translation assets are included
       pl_translation =
         Enum.find(result.js, fn asset ->
-          asset.name == "ckeditor5/translations/pl"
+          asset.name == "ckeditor5/translations/pl.js"
         end)
 
       assert %JSAsset{
-               name: "ckeditor5/translations/pl",
+               name: "ckeditor5/translations/pl.js",
                url: "https://cdn.ckeditor.com/ckeditor5/1.0.0/translations/pl.js",
                type: :esm
              } = pl_translation
 
       de_translation =
         Enum.find(result.js, fn asset ->
-          asset.name == "ckeditor5/translations/de"
+          asset.name == "ckeditor5/translations/de.js"
         end)
 
       assert %JSAsset{
-               name: "ckeditor5/translations/de",
+               name: "ckeditor5/translations/de.js",
                url: "https://cdn.ckeditor.com/ckeditor5/1.0.0/translations/de.js",
                type: :esm
              } = de_translation
@@ -230,8 +230,8 @@ defmodule CKEditor5.Cloud.AssetPackageBuilderTest do
       main_js = Enum.find(result.js, &(&1.name == "ckeditor5"))
       premium_js = Enum.find(result.js, &(&1.name == "ckeditor5-premium-features"))
       ckbox_js = Enum.find(result.js, &(&1.name == "ckbox"))
-      fr_translation = Enum.find(result.js, &(&1.name == "ckeditor5/translations/fr"))
-      es_translation = Enum.find(result.js, &(&1.name == "ckeditor5/translations/es"))
+      fr_translation = Enum.find(result.js, &(&1.name == "ckeditor5/translations/fr.js"))
+      es_translation = Enum.find(result.js, &(&1.name == "ckeditor5/translations/es.js"))
 
       assert main_js != nil
       assert premium_js != nil
@@ -270,12 +270,12 @@ defmodule CKEditor5.Cloud.AssetPackageBuilderTest do
       # Check that premium translations are included
       premium_ja_translation =
         Enum.find(result.js, fn asset ->
-          asset.name == "ckeditor5-premium-features/translations/ja"
+          asset.name == "ckeditor5-premium-features/translations/ja.js"
         end)
 
       premium_ko_translation =
         Enum.find(result.js, fn asset ->
-          asset.name == "ckeditor5-premium-features/translations/ko"
+          asset.name == "ckeditor5-premium-features/translations/ko.js"
         end)
 
       assert premium_ja_translation != nil

@@ -97,6 +97,41 @@ Next, add CKEditor 5 to your view as follows:
 
 🎉 Voila! You now have CKEditor 5 integrated into your Phoenix application. The editor will be loaded from the CKEditor 5 cloud distribution, and you can start using it right away. 🚀
 
+## Using translations (localization) 🌐
+
+You can easily enable different languages in CKEditor 5 by specifying which translation files should be loaded. There are two ways to do this:
+
+1. **Via the `cloud.translations` preset option**: In your config, you can set which language files will be included in the import map and preloaded automatically.
+2. **Directly in the `translations` parameter of the `<.cke_cloud_assets />` component**: You can pass a list of language codes (like `["pl", "de"]`) to load only those translations for the editor.
+
+### Minimal usage example
+
+In your layout or page template:
+
+```heex
+<.cke_cloud_assets translations={["pl", "de"]} />
+```
+
+This will preload only the Polish and German translation files for CKEditor 5 from the cloud. The editor UI will then be able to use these languages.
+
+You can also control available translations globally in your config using the `cloud.translations` preset.
+
+#### Setting editor UI and content language
+
+You can control the language of the editor interface (UI) and the language of the content separately using the `language` and `content_language` attributes in the `.ckeditor` component:
+
+```heex
+<.ckeditor
+  language="de"           # Editor UI in German
+  content_language="pl"   # Content (editable area) in Polish
+/>
+```
+
+**Difference:**
+
+* `language` sets the language for the editor's UI (toolbars, tooltips, menus, etc.).
+* `content_language` sets the `lang` attribute for the editable area, which is important for spellchecking, screen readers, and content semantics. If not set, it defaults to the same as `language`.
+
 ## Editor placement 🏗️
 
 ### Classic editor 📝

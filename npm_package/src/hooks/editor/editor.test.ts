@@ -557,4 +557,39 @@ describe('editor hook', () => {
       expect(input.value).toBe('<p>Debounced input</p>');
     });
   });
+
+  describe('`cke-language` and `cke-content-language` options', () => {
+    it('should pass the correct language to the editor (ui and content)', async () => {
+      const hookElement = createEditorHtmlElement({
+        language: { ui: 'pl', content: 'de' },
+      });
+
+      hookElement.setAttribute('cke-language', 'pl');
+      hookElement.setAttribute('cke-content-language', 'de');
+
+      document.body.appendChild(hookElement);
+      EditorHook.mounted.call({ el: hookElement });
+
+      const editor = await waitForTestEditor();
+      const configLanguage = editor.config.get('language') as any;
+
+      expect(configLanguage).toBeDefined();
+      expect(configLanguage?.ui).toBe('pl');
+      expect(configLanguage?.content).toBe('de');
+    });
+
+    it('should use default language if not set', async () => {
+      const hookElement = createEditorHtmlElement();
+
+      document.body.appendChild(hookElement);
+      EditorHook.mounted.call({ el: hookElement });
+
+      const editor = await waitForTestEditor();
+      const configLanguage = editor.config.get('language') as any;
+
+      expect(configLanguage).toBeDefined();
+      expect(configLanguage?.ui).toBe('en');
+      expect(configLanguage?.content).toBe('en');
+    });
+  });
 });

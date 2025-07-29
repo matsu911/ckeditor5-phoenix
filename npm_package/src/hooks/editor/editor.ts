@@ -13,6 +13,7 @@ import {
   isSingleEditingLikeEditor,
   loadEditorConstructor,
   loadEditorPlugins,
+  loadEditorTranslations,
   queryAllEditorEditables,
   readPresetOrThrow,
   setEditorEditableHeight,
@@ -40,6 +41,10 @@ class EditorHookImpl extends ClassHook {
       editableHeight: parseIntIfNotNull(this.el.getAttribute('cke-editable-height')),
       changeEvent: this.el.getAttribute('cke-change-event') !== null,
       saveDebounceMs: parseIntIfNotNull(this.el.getAttribute('cke-save-debounce-ms')) ?? 400,
+      language: {
+        ui: this.el.getAttribute('cke-language') || 'en',
+        content: this.el.getAttribute('cke-content-language') || 'en',
+      },
     };
 
     Object.defineProperty(this, 'attrs', {
@@ -82,11 +87,24 @@ class EditorHookImpl extends ClassHook {
    * Creates the CKEditor instance.
    */
   private async createEditor() {
-    const { preset, editorId, editableHeight, changeEvent, saveDebounceMs } = this.attrs;
+    const { preset, editorId, editableHeight, changeEvent, saveDebounceMs, language } = this.attrs;
     const { type, license, config: { plugins, ...config } } = preset;
 
     const Constructor = await loadEditorConstructor(type);
     const rootEditables = getInitialRootsContentElements(editorId, type);
+
+    const { loadedPlugins, hasPremium } = await loadEditorPlugins(plugins);
+
+    // Load the translations for the editor.
+    const translations = [language.ui, language.content];
+    const loadedTranslations = await Promise.all(
+      [
+        loadEditorTranslations('ckeditor5', translations),
+        /* v8 ignore next */
+        hasPremium && loadEditorTranslations('ckeditor5-premium-features', translations),
+      ].filter(pkg => !!pkg),
+    )
+      .then(translations => translations.flat());
 
     const editor = await Constructor.create(
       rootEditables as any,
@@ -94,7 +112,11 @@ class EditorHookImpl extends ClassHook {
         ...config,
         initialData: getInitialRootsValues(editorId, type),
         licenseKey: license.key,
-        plugins: await loadEditorPlugins(plugins),
+        plugins: loadedPlugins,
+        language,
+        ...loadedTranslations.length && {
+          translations: loadedTranslations,
+        },
       },
     );
 

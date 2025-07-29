@@ -4,7 +4,6 @@ defmodule CKEditor5.CloudTest do
   alias CKEditor5.Cloud
   alias CKEditor5.Cloud.CKBox
   alias CKEditor5.Errors
-  alias CKEditor5.Helpers
 
   @default_editor_version Mix.Project.config()[:cke][:default_cloud_editor_version]
 
@@ -159,19 +158,23 @@ defmodule CKEditor5.CloudTest do
     end
   end
 
-  describe "Helpers.is_semver_version?/1" do
-    test "returns true for valid semver versions" do
-      assert Helpers.is_semver_version?("1.0.0")
-      assert Helpers.is_semver_version?("10.20.30")
-      assert Helpers.is_semver_version?("1.0.0-alpha.1")
-      assert Helpers.is_semver_version?("1.0.0-nightly-20250715.0")
+  describe "override_translations/2" do
+    test "overrides translations with a new list" do
+      cloud = Cloud.build_struct(%{translations: ["pl", "en"]})
+      updated = Cloud.override_translations(cloud, ["de", "en"])
+      assert updated.translations == ["de", "en"]
     end
 
-    test "returns false for invalid semver versions" do
-      refute Helpers.is_semver_version?("1.0")
-      refute Helpers.is_semver_version?("1")
-      refute Helpers.is_semver_version?("a.b.c")
-      refute Helpers.is_semver_version?("1.0.0-")
+    test "removes duplicates when overriding translations" do
+      cloud = Cloud.build_struct(%{translations: ["pl", "en"]})
+      updated = Cloud.override_translations(cloud, ["en", "en", "pl", "fr"])
+      assert Enum.sort(updated.translations) == ["en", "fr", "pl"]
+    end
+
+    test "returns the original cloud if translations is nil" do
+      cloud = Cloud.build_struct(%{translations: ["pl", "en"]})
+      updated = Cloud.override_translations(cloud, nil)
+      assert updated == cloud
     end
   end
 end

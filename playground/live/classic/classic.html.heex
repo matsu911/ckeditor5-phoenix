@@ -1,5 +1,11 @@
+<.back_to_home />
 
-<.ckeditor value="Hello world" />
+<.live_component
+  id="editor"
+  module={CKEditor5.Components.Editor}
+  value={@editor_value}
+  change_event
+/>
 
 <div class="bg-gray-50 mt-8 p-4 border border-gray-300">
   <h2 class="mb-2 font-bold">Current editor value:</h2>

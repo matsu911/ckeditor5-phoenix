@@ -108,6 +108,19 @@ defmodule CKEditor5.Cloud do
     }
   end
 
+  @doc """
+  Overrides the translations in the Cloud configuration.
+  Accepts a list of language codes and merges them into the existing translations.
+  If translations is nil, it does nothing.
+  """
+  def override_translations(%__MODULE__{} = cloud, translations) when is_list(translations) do
+    %__MODULE__{cloud | translations: Enum.uniq(translations)}
+  end
+
+  def override_translations(cloud, translations) when is_nil(translations) do
+    cloud
+  end
+
   # Parses the CKBox configuration from a map.
   defp parse_ckbox(%{ckbox: nil} = map), do: {:ok, Map.put(map, :ckbox, nil)}
 

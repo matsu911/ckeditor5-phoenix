@@ -10,7 +10,7 @@ import type { EditorPlugin } from '../typings';
  * @returns Promise that resolves to an array of loaded Plugin instances
  * @throws Error if a plugin is not found in either package
  */
-export async function loadEditorPlugins(plugins: EditorPlugin[]): Promise<PluginConstructor[]> {
+export async function loadEditorPlugins(plugins: EditorPlugin[]): Promise<LoadedPlugins> {
   const basePackage: Record<string, any> = await import('ckeditor5');
   let premiumPackage: Record<string, any> | null = null;
 
@@ -46,5 +46,16 @@ export async function loadEditorPlugins(plugins: EditorPlugin[]): Promise<Plugin
     /* v8 ignore end */
   });
 
-  return Promise.all(loaders);
+  return {
+    loadedPlugins: await Promise.all(loaders),
+    hasPremium: !!premiumPackage,
+  };
 }
+
+/**
+ * Type representing the loaded plugins and whether premium features are available.
+ */
+type LoadedPlugins = {
+  loadedPlugins: PluginConstructor[];
+  hasPremium: boolean;
+};

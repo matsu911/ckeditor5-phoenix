@@ -3,7 +3,13 @@ defmodule CKEditor5.Components.Editor.Assigns do
   Handles assigns processing for the Editor component.
   """
 
-  alias CKEditor5.Components.Editor.{AttributeValidator, PresetHandler, ValueNormalizer}
+  alias CKEditor5.Components.Editor.{
+    AttributeValidator,
+    LanguageHandler,
+    PresetHandler,
+    ValueNormalizer
+  }
+
   alias CKEditor5.Components.FormAttrs
   alias CKEditor5.Helpers
 
@@ -17,5 +23,6 @@ defmodule CKEditor5.Components.Editor.Assigns do
     |> PresetHandler.process_preset()
     |> AttributeValidator.validate_for_editor_type()
     |> ValueNormalizer.normalize_values()
+    |> LanguageHandler.assign_language()
   end
 end

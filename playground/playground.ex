@@ -6,6 +6,8 @@ defmodule Playground do
   including router, controller, and HTML helper macros.
   """
 
+  alias Playground.Components
+
   def static_paths, do: ~w(assets fonts images favicon.ico robots.txt)
 
   def router do
@@ -46,6 +48,8 @@ defmodule Playground do
   def live_view do
     quote do
       use Phoenix.LiveView
+
+      import Components.Core
 
       unquote(verified_routes())
     end

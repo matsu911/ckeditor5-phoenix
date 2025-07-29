@@ -281,4 +281,28 @@ defmodule CKEditor5.Components.EditorTest do
       assert html =~ ~s(cke-save-debounce-ms="1234")
     end
   end
+
+  describe "language attribute handling" do
+    test "sets default language to en if not provided" do
+      html = render_component(&Editor.render/1, id: "editor_lang1", name: "content")
+      assert html =~ ~s(cke-language="en")
+      assert html =~ ~s(cke-content-language="en")
+    end
+
+    test "maps en-US to en" do
+      html =
+        render_component(&Editor.render/1, id: "editor_lang2", name: "content", language: "en-US")
+
+      assert html =~ ~s(cke-language="en")
+      assert html =~ ~s(cke-content-language="en")
+    end
+
+    test "passes Chinese language code correctly" do
+      html =
+        render_component(&Editor.render/1, id: "editor_lang3", name: "content", language: "zh-CN")
+
+      assert html =~ ~s(cke-language="zh-cn")
+      assert html =~ ~s(cke-content-language="zh-cn")
+    end
+  end
 end

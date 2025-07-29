@@ -8,7 +8,7 @@ defmodule Playground.Live.Classic do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, editor_value: "")}
+    {:ok, assign(socket, editor_value: "Hello World!")}
   end
 
   @impl true

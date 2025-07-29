@@ -23,7 +23,7 @@ defmodule CKEditor5.Cloud.AssetPackage.CKEditor5 do
     translation_js_assets =
       Enum.map(translations, fn translation ->
         %JSAsset{
-          name: "ckeditor5/translations/#{translation}",
+          name: "ckeditor5/translations/#{translation}.js",
           url: build_url(:ckeditor, ["ckeditor5", version, "translations", "#{translation}.js"]),
           type: :esm
         }

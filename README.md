@@ -165,7 +165,7 @@ def handle_event("ckeditor5:change", %{"data" => data}, socket) do
 end
 ```
 
-The events are send automatically when the content is modified. It's possible to change debounce time for the events by setting `debounce` attribute on the editor component:
+The events are send automatically when the content is modified. It's possible to change debounce time for the events by setting `debounce_ms` attribute on the editor component:
 
 ```heex
 <.ckeditor value={@content} change_event debounce_ms={500} />

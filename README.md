@@ -114,6 +114,8 @@ config :my_app, MyAppWeb.Endpoint,
   ]
 ```
 
+3. Add license key to your preset or environment variable. See [Providing the License Key 🗝️](#providing-the-license-key-) section for details.
+
 ### 🏠 Self-hosted
 
 Bundle CKEditor 5 with your application for full control over assets and configuration. Recommended for advanced users or those with custom builds.

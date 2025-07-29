@@ -18,6 +18,30 @@ CKEditor 5 integration library for Phoenix (Elixir) applications. Provides web c
   <img src="docs/intro-classic-editor.png" alt="CKEditor 5 Classic Editor in Phoenix (Elixir) application">
 </p>
 
+## Table of Contents
+
+- [CKEditor 5 Phoenix Integration ✨](#ckeditor-5-phoenix-integration-)
+  - [Table of Contents](#table-of-contents)
+  - [Psst... 👀](#psst-)
+  - [Installation 🚀](#installation-)
+  - [Using translations (localization) 🌐](#using-translations-localization-)
+    - [Minimal usage example](#minimal-usage-example)
+      - [Setting editor UI and content language](#setting-editor-ui-and-content-language)
+  - [Editor placement 🏗️](#editor-placement-️)
+    - [Classic editor 📝](#classic-editor-)
+    - [Multiroot editor 🌳](#multiroot-editor-)
+    - [Inline editor 📝](#inline-editor-)
+  - [Editor configuration ⚙️](#editor-configuration-️)
+  - [Editor value synchronization with LiveView 🔄](#editor-value-synchronization-with-liveview-)
+    - [Template (`.heex`)](#template-heex)
+    - [LiveView (`.ex`)](#liveview-ex)
+  - [CKEditor 5 in a Phoenix LiveView form 📝](#ckeditor-5-in-a-phoenix-liveview-form-)
+    - [Template (`.html.heex`)](#template-htmlheex)
+    - [LiveView (`.ex`)](#liveview-ex-1)
+  - [Package development 🛠️](#package-development-️)
+  - [Trademarks 📜](#trademarks-)
+  - [License 📜](#license-)
+
 ## Psst... 👀
 
 If you're looking for similar stuff, check these out:

@@ -2,10 +2,6 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-green.svg?style=flat-square)](http://makeapullrequest.com)
-![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/mati365/ckeditor5-phoenix?style=flat-square)
-[![GitHub issues](https://img.shields.io/github/issues/mati365/ckeditor5-phoenix?style=flat-square)](https://github.com/Mati365/ckeditor5-phoenix/issues)
-[![Elixir Coverage](https://img.shields.io/badge/Elixir-100%25-brightgreen?logo=elixir&logoColor=white&style=flat-square)](https://coveralls.io/github/Mati365/ckeditor5-phoenix?branch=main)
-[![TS Coverage](https://img.shields.io/badge/TypeScript-100%25-brightgreen?logo=typescript&logoColor=white&style=flat-square)](https://codecov.io/gh/Mati365/ckeditor5-phoenix?flag=npm)
 ![NPM Version](https://img.shields.io/npm/v/ckeditor5-phoenix?style=flat-square)
 ![Hex.pm Version](https://img.shields.io/hexpm/v/ckeditor5_phoenix?style=flat-square&color=%239245ba)
 
@@ -22,40 +18,34 @@ CKEditor 5 integration library for Phoenix (Elixir) applications. Provides web c
 
 - [CKEditor 5 Phoenix Integration ✨](#ckeditor-5-phoenix-integration-)
   - [Table of Contents](#table-of-contents)
-  - [Psst... 👀](#psst-)
   - [Installation 🚀](#installation-)
-  - [Cloud Distribution vs Self-hosted 🌩️🏠](#cloud-distribution-vs-self-hosted-️)
-    - [Cloud Distribution (CKEditor 5 from CDN) 🌩️](#cloud-distribution-ckeditor-5-from-cdn-️)
-    - [Self-hosted (CKEditor 5 from NPM package) 🏠](#self-hosted-ckeditor-5-from-npm-package-)
-  - [Using translations (localization) 🌐](#using-translations-localization-)
-    - [Minimal usage example](#minimal-usage-example)
-      - [Setting editor UI and content language](#setting-editor-ui-and-content-language)
-  - [Editor placement 🏗️](#editor-placement-️)
+  - [Installation Methods 🛠️](#installation-methods-️)
+    - [📡 CDN Distribution (Recommended)](#-cdn-distribution-recommended)
+    - [🏠 Self-hosted](#-self-hosted)
+  - [Basic Usage 🏁](#basic-usage-)
+    - [Simple Editor ✏️](#simple-editor-️)
+    - [With LiveView Sync 🔄](#with-liveview-sync-)
+  - [Editor Types 🖊️](#editor-types-️)
     - [Classic editor 📝](#classic-editor-)
     - [Multiroot editor 🌳](#multiroot-editor-)
     - [Inline editor 📝](#inline-editor-)
-  - [Editor configuration ⚙️](#editor-configuration-️)
-  - [Editor value synchronization with LiveView 🔄](#editor-value-synchronization-with-liveview-)
-    - [Template (`.heex`)](#template-heex)
-    - [LiveView (`.ex`)](#liveview-ex)
-  - [CKEditor 5 in a Phoenix LiveView form 📝](#ckeditor-5-in-a-phoenix-liveview-form-)
-    - [Template (`.html.heex`)](#template-htmlheex)
-    - [LiveView (`.ex`)](#liveview-ex-1)
+  - [Forms Integration 🧾](#forms-integration-)
+    - [Phoenix Form Helper](#phoenix-form-helper)
+    - [LiveView Handler](#liveview-handler)
+  - [Configuration ⚙️](#configuration-️)
+    - [Custom Presets 🧩](#custom-presets-)
+    - [Use Custom Preset 🧩](#use-custom-preset-)
+  - [Localization 🌍](#localization-)
+    - [CDN Translation Loading 🌐](#cdn-translation-loading-)
+    - [Global Translation Config 🌐](#global-translation-config-)
   - [Package development 🛠️](#package-development-️)
+  - [Psst... 👀](#psst-)
   - [Trademarks 📜](#trademarks-)
   - [License 📜](#license-)
 
-## Psst... 👀
-
-If you're looking for similar projects, check these out:
-
-- [ckeditor5-rails](https://github.com/Mati365/ckeditor5-rails)
-  Effortless CKEditor 5 integration for Ruby on Rails. Works seamlessly with standard forms, Turbo, and Hotwire. Easy setup, custom builds, and localization support.
-
-- [ckeditor5-livewire](https://github.com/Mati365/ckeditor5-livewire)
-  Plug-and-play CKEditor 5 solution for Laravel + Livewire applications. Fully compatible with Blade forms. Includes JavaScript hooks, flexible configuration, and easy customization.
-
 ## Installation 🚀
+
+Easily add CKEditor 5 Phoenix to your Phoenix (Elixir) project. This section explains how to add the dependency, register the JavaScript hook, and use the editor in your templates.
 
 Add dependency to your project:
 
@@ -67,145 +57,113 @@ def deps do
 end
 ```
 
-Register the hook in your `app.js` file:
+Register the JavaScript hook:
 
 ```javascript
-// If you use `node_modules/` directory then the `ckeditor5-phoenix` NPM package should be used.
 import { Hooks } from 'ckeditor5_phoenix';
 
-// .. other configurations
-
 const liveSocket = new LiveSocket('/live', Socket, {
-  // ... other options
   hooks: Hooks,
 });
 ```
 
-## Cloud Distribution vs Self-hosted 🌩️🏠
+Add editor to your template:
 
-You can integrate CKEditor 5 with your Phoenix application in two ways:
+```heex
+<%!-- CDN version (recommended for quick start) --%>
+<.cke_cloud_assets />
 
-### Cloud Distribution (CKEditor 5 from CDN) 🌩️
+<.ckeditor
+  type="classic"
+  value="<p>Hello world!</p>"
+/>
+```
 
-**When to use:**
+That's it! 🎉
 
-- You want to load the editor and its assets (JS, CSS, translations) directly from the CKEditor 5 Cloud CDN.
-- You do not want to build the editor yourself or include its files in your own project.
+## Installation Methods 🛠️
 
-**Requirements:**
+Choose how you want to include CKEditor 5 in your project. Use the CDN for a quick start or self-host for more control and customization.
 
-- You must use the `<.cke_cloud_assets />` helper in the `<head>` section to load the required scripts and styles from the CDN.
-- In your `esbuild` config, you need to exclude the `ckeditor5` and `ckeditor5-premium-features` packages:
+### 📡 CDN Distribution (Recommended)
+
+Load CKEditor 5 directly from CDN - no build required. This is the fastest way to get started and is ideal for most users.
+
+**Setup:**
+
+1. Use `<.cke_cloud_assets />` in your layout's `<head>`
+2. Exclude CKEditor from your bundler:
 
 ```elixir
-config :demo, DemoWeb.Endpoint,
-  # ... other configurations
+# config/config.exs
+config :my_app, MyAppWeb.Endpoint,
   watchers: [
     esbuild: {Esbuild, :install_and_run, [
-      :demo,
-      ~w(
-        --sourcemap=inline
-        --watch
-        --external:ckeditor5
-        --external:ckeditor5-premium-features
-      )
+      :my_app,
+      ~w(--external:ckeditor5 --external:ckeditor5-premium-features)
     ]}
-    # ↑ Added --external:ckeditor5 and --external:ckeditor5-premium-features
   ]
 ```
 
-**Usage example:**
+### 🏠 Self-hosted
 
-```heex
-<%!-- In the <head> section --%>
-<.cke_cloud_assets />
+Bundle CKEditor 5 with your application for full control over assets and configuration. Recommended for advanced users or those with custom builds.
 
-<%!-- In the <body> --%>
-<.ckeditor
-  type="classic"
-  value="<p>Initial content here</p>"
-  editable_height="300px"
-/>
-```
+**Setup:**
 
-> **Note:** The `<.cke_cloud_assets />` helper is required only when using Cloud Distribution (CDN). Do not use it in self-hosted mode!
-
-### Self-hosted (CKEditor 5 from NPM package) 🏠
-
-**When to use:**
-
-- You want to build the editor yourself (e.g., a custom build) and serve JS/CSS files from your own application.
-- The editor and its styles are available locally in `node_modules` or your own build directory.
-
-**Requirements:**
-
-- 🚫 DO NOT use the `<.cke_cloud_assets />` helper (this is only for cloud distribution).
-- You must manually import CKEditor 5 styles into your main application CSS file (e.g., `app.css` or `app.scss`).
-
-**Example of importing styles (e.g., in `assets/css/app.css`):**
+1. **Don't** use `<.cke_cloud_assets />`
+2. Import styles manually in your CSS:
 
 ```css
+/* assets/css/app.css */
 @import "ckeditor5/ckeditor5.css";
 ```
 
-**Editor usage example:**
+## Basic Usage 🏁
+
+Get started with the most common usage patterns. Learn how to render the editor in your templates and handle content changes.
+
+### Simple Editor ✏️
+
+The lightest way to use CKEditor 5 in your Phoenix application. Just include the editor component with initial content. The editor will be rendered with a default toolbar and basic features defined in `:default` preset.
 
 ```heex
-<%!-- DO NOT use <.cke_cloud_assets /> --%>
+<%!-- CDN only: Load assets in <head> --%>
+<.cke_cloud_assets />
 
+<%!-- Editor --%>
 <.ckeditor
   type="classic"
-  value="<p>Initial content here</p>"
+  value="<p>Initial content</p>"
   editable_height="300px"
 />
 ```
 
-> **Note:** In self-hosted mode, you are responsible for loading the editor styles correctly in your application. The `<.cke_cloud_assets />` helper is not needed and should not be used.
+### With LiveView Sync 🔄
 
-🎉 Voila! Choose one of the above integration paths and enjoy CKEditor 5 in your Phoenix application! 🚀
-
-## Using translations (localization) 🌐
-
-You can easily enable different languages in CKEditor 5 by specifying which translation files should be loaded. There are two ways to do this:
-
-1. **Via the `cloud.translations` preset option**: In your config, you can set which language files will be included in the import map and preloaded automatically.
-   _(Only applies to cloud distribution!)_
-2. **Directly in the `translations` parameter of the `<.cke_cloud_assets />` component**: You can pass a list of language codes (like `["pl", "de"]`) to load only those translations for the editor.
-   _(Use `<.cke_cloud_assets />` only with cloud distribution!)_
-
-> ⚠️ **Note:** The `<.cke_cloud_assets />` helper and its `translations` option should only be used if you are using the cloud distribution (CDN).
-> If you are using the self-hosted setup, your bundler (like esbuild, webpack, etc.) will automatically handle translations based on your imports and configuration.
-> **Do not use `<.cke_cloud_assets />` in self-hosted mode!**
-
-### Minimal usage example
-
-In your layout or page template (cloud distribution only):
+Editor with LiveView support for real-time content updates. In other words, the editor will send changes to the server when the content is modified. Use the `change_event` attribute to handle changes in your LiveView.
 
 ```heex
-<.cke_cloud_assets translations={["pl", "de"]} />
+<.ckeditor value={@content} change_event />
 ```
 
-This will preload only the Polish and German translation files for CKEditor 5 from the cloud. The editor UI will then be able to use these languages.
+```elixir
+def handle_event("ckeditor5:change", %{"data" => data}, socket) do
+  {:noreply, assign(socket, content: data["main"])}
+end
+```
 
-You can also control available translations globally in your config using the `cloud.translations` preset.
-
-#### Setting editor UI and content language
-
-You can control the language of the editor interface (UI) and the language of the content separately using the `language` and `content_language` attributes in the `.ckeditor` component:
+The events are send automatically when the content is modified. It's possible to change debounce time for the events by setting `debounce` attribute on the editor component:
 
 ```heex
-<.ckeditor
-  language="de"           # Editor UI in German
-  content_language="pl"   # Content (editable area) in Polish
-/>
+<.ckeditor value={@content} change_event debounce_ms={500} />
 ```
 
-**Difference:**
+It may improve performance by reducing the number of events sent to the server, especially for large content or frequent changes.
 
-* `language` sets the language for the editor's UI (toolbars, tooltips, menus, etc.).
-* `content_language` sets the `lang` attribute for the editable area, which is important for spellchecking, screen readers, and content semantics. If not set, it defaults to the same as `language`.
+## Editor Types 🖊️
 
-## Editor placement 🏗️
+CKEditor 5 supports multiple editor types to fit different use cases. This section shows how to use classic, inline, multiroot, and decoupled editors.
 
 ### Classic editor 📝
 
@@ -284,173 +242,172 @@ If you want to use an inline editor, you can pass the `type` keyword argument wi
 />
 ```
 
-## Editor configuration ⚙️
+## Forms Integration 🧾
+
+Integrate CKEditor 5 with Phoenix forms and LiveView. Learn how to use the editor in forms and handle events for real-time updates.
+
+### Phoenix Form Helper
+
+```heex
+<.form for={@form} phx-submit="save">
+  <.live_component
+    id="content-editor"
+    module={CKEditor5.Components.Editor}
+    field={@form[:content]}
+  />
+
+  <button type="submit">Save</button>
+</.form>
+```
+
+### LiveView Handler
+
+```elixir
+defmodule MyApp.PageLive do
+  use MyAppWeb, :live_view
+  use CKEditor5  # Adds event handlers
+
+  def mount(_params, _session, socket) do
+    form = to_form(%{"content" => ""}, as: :form)
+    {:ok, assign(socket, form: form)}
+  end
+
+  def handle_event("validate", %{"form" => params}, socket) do
+    {:noreply, assign(socket, form: to_form(params, as: :form))}
+  end
+
+  def handle_event("save", %{"form" => params}, socket) do
+    # Process form data
+    {:noreply, socket}
+  end
+end
+```
+
+## Configuration ⚙️
 
 You can configure the editor _presets_ in your `config/config.exs` file. The default preset is `:default`, which provides a basic configuration with a toolbar and essential plugins. The preset is a map that contains the editor configuration, including the toolbar items and plugins. There can be multiple presets, and you can switch between them by passing the `preset` keyword argument to the `ckeditor` component.
 
-In order to override the default preset, you can add the following configuration to your `config/config.exs` file:
+### Custom Presets 🧩
+
+In order to override the default preset or add custom presets, you can add the following configuration to your `config/config.exs` file:
 
 ```elixir
+# config/config.exs
 config :ckeditor5_phoenix,
   presets: %{
-    default: %{
+    minimal: %{
+      config: %{
+        toolbar: [:bold, :italic, :link],
+        plugins: [:Bold, :Italic, :Link, :Essentials, :Paragraph]
+      }
+    },
+    full: %{
       config: %{
         toolbar: [
-          :undo, :redo, :|, :heading, :|, :fontFamily, :fontSize, :fontColor, :fontBackgroundColor, :alignment, :|,
-          :bold, :italic, :underline, :|, :link, :insertImage, :insertTable, :insertTableLayout,
-          :blockQuote, :emoji, :mediaEmbed, :|, :bulletedList, :numberedList, :todoList, :outdent, :indent
+          :heading, :|, :bold, :italic, :underline, :|,
+          :link, :insertImage, :insertTable, :|,
+          :bulletedList, :numberedList, :blockQuote
         ],
         plugins: [
-          :Alignment, :AccessibilityHelp, :Autoformat, :AutoImage, :Autosave, :BlockQuote, :Bold, :CloudServices,
-          :Essentials, :Emoji, :Mention, :Heading, :FontFamily, :FontSize, :FontColor, :FontBackgroundColor,
-          :ImageBlock, :ImageCaption, :ImageInline, :ImageInsert, :ImageInsertViaUrl, :ImageResize, :ImageStyle,
-          :ImageTextAlternative, :ImageToolbar, :ImageUpload, :Indent, :IndentBlock, :Italic, :Link, :LinkImage,
-          :List, :ListProperties, :MediaEmbed, :Paragraph, :PasteFromOffice, :PictureEditing, :SelectAll, :Table,
-          :TableLayout, :TableCaption, :TableCellProperties, :TableColumnResize, :TableProperties, :TableToolbar,
-          :TextTransformation, :TodoList, :Underline, :Undo, :Base64UploadAdapter
-        ],
-        table: %{
-          contentToolbar: [
-            :tableColumn, :tableRow, :mergeTableCells, :tableProperties, :tableCellProperties, :toggleTableCaption
-          ]
-        },
-        image: %{
-          toolbar: [
-            :imageTextAlternative, :imageStyle, :imageResize, :imageInsertViaUrl
-          ]
-        }
+          :Heading, :Bold, :Italic, :Underline, :Link,
+          :ImageBlock, :ImageUpload, :Table, :List, :BlockQuote,
+          :Essentials, :Paragraph
+        ]
       }
     }
   }
 ```
 
-## Editor value synchronization with LiveView 🔄
+### Use Custom Preset 🧩
 
-Below is an example of how to synchronize the CKEditor 5 editor value with the backend in LiveView, using the component and event handling in Elixir.
-
-### Template (`.heex`)
+To use a custom preset, pass the `preset` keyword argument to the `ckeditor` component. For example, to use the `minimal` preset defined above:
 
 ```heex
-<.ckeditor value="Hello world" change_event />
-
-<div class="bg-gray-50 mt-8 p-4 border border-gray-300">
-  <h2 class="mb-2 font-bold">Current editor value:</h2>
-  <pre class="whitespace-pre-wrap"> <%= @editor_value %> </pre>
-</div>
+<.ckeditor preset="minimal" value="<p>Simple editor</p>" />
 ```
 
-### LiveView (`.ex`)
+## Localization 🌍
 
-```elixir
-defmodule Playground.Live.Classic do
-  use Playground, :live_view
-  use CKEditor5
+Support multiple languages in the editor UI and content. Learn how to load translations via CDN or configure them globally.
 
-  @impl true
-  def mount(_params, _session, socket) do
-    {:ok, assign(socket, editor_value: "")}
-  end
+### CDN Translation Loading 🌐
 
-  @impl true
-  def handle_event("ckeditor5:change", %{"data" => data}, socket) do
-    {:noreply, assign(socket, editor_value: data["main"])}
-  end
-end
-```
-
-In the above example:
-
-- The `<.ckeditor />` component renders the CKEditor 5 editor.
-- The editor value is sent to the backend via the `ckeditor5:change` event.
-
-This approach allows for full real-time synchronization of the editor state with the backend.
-
-## CKEditor 5 in a Phoenix LiveView form 📝
-
-Here is a simple example of how to use CKEditor 5 inside a Phoenix LiveView form. The editor value is kept in sync with the backend. When you save the form, the content is shown below the form.
-
-### Template (`.html.heex`)
+Depending on your setup, you can preload translations via CDN or let your bundler handle them automatically using lazy imports.
 
 ```heex
-<.form for={@form} phx-change="validate" phx-submit="save" class="space-y-4">
-  <div>
-    <label class="block mb-1 font-bold">Content</label>
-    <.live_component
-      id="editor"
-      module={CKEditor5.Components.Editor}
-      field={@form[:content]}
-    />
-  </div>
-  <button type="submit" class="bg-blue-600 px-4 py-2 rounded text-white">Save</button>
-</.form>
+<%!-- CDN only: Load specific translations --%>
+<.cke_cloud_assets translations={["pl", "de", "fr"]} />
 
-<%= if @saved do %>
-  <div class="bg-green-100 mt-4 p-4 border border-green-400">
-    <strong>Saved content:</strong>
-    <div class="mt-2 max-w-none prose" style="white-space: pre-wrap;">
-      <%= @form[:content].value %>
-    </div>
-  </div>
-<% end %>
+<.ckeditor
+  language="pl"
+  content_language="en"
+  value="<p>Content in English, UI in Polish</p>"
+/>
 ```
 
-### LiveView (`.ex`)
+### Global Translation Config 🌐
+
+You can also configure translations globally in your `config/config.exs` file. This is useful if you want to load translations for multiple languages at once or set a default language for the editor. Keep in mind that this configuration is only used when loading translations via CDN. If you are using self-hosted setup, translations are handled by your bundler automatically.
 
 ```elixir
-defmodule Playground.Live.ClassicForm do
-  @moduledoc """
-  LiveView for demonstrating CKEditor5 Classic integration with a form.
-  """
-
-  alias Phoenix.Component
-
-  use Playground, :live_view
-  use CKEditor5
-
-  @impl true
-  def mount(_params, _session, socket) do
-    {:ok, assign(socket, saved: false, form: Component.to_form(%{"content" => "Initial content"}, as: :form))}
-  end
-
-  @impl true
-  def handle_event("validate", %{"form" => form}, socket) do
-    {:noreply, assign(socket, saved: false, form: Component.to_form(form, as: :form))}
-  end
-
-  @impl true
-  def handle_event("save", %{"form" => form}, socket) do
-    {:noreply, assign(socket, saved: true, form: Component.to_form(form, as: :form))}
-  end
-end
+# config/config.exs
+config :ckeditor5_phoenix,
+  presets: %{
+    default: %{
+      cloud: %{
+        translations: ["pl", "de", "fr"]  # CDN only
+      }
+    }
+  }
 ```
+
+**Note:** For self-hosted setups, translations are handled by your bundler automatically.
 
 ## Package development 🛠️
 
-In order to run the minimal Phoenix application with CKEditor 5 integration, you need to install the dependencies and run the server:
+In order to contribute to CKEditor 5 Phoenix or run it locally for manual testing, here are some handy commands to get you started.
+
+To run the minimal Phoenix application with CKEditor 5 integration, install dependencies and start the server:
 
 ```bash
 mix playground
 ```
 
-Testing the package is done using the `mix test` command. The tests are located in the `test/` directory.
+Run tests using the `mix test` command. All tests are located in the `test/` directory.
 
 ```bash
 mix test
 ```
 
-To obtain code coverage, you can run the following command:
+To generate a code coverage report, use:
 
 ```bash
 mix coveralls.html
 ```
 
+## Psst... 👀
+
+Discover related projects for other frameworks and languages. Find inspiration or alternative integrations for CKEditor 5.
+
+Looking for similar projects or inspiration? Check out these repositories:
+
+- [ckeditor5-rails](https://github.com/Mati365/ckeditor5-rails)
+  Effortless CKEditor 5 integration for Ruby on Rails. Works seamlessly with standard forms, Turbo, and Hotwire. Easy setup, custom builds, and localization support.
+
+- [ckeditor5-livewire](https://github.com/Mati365/ckeditor5-livewire)
+  Plug-and-play CKEditor 5 solution for Laravel + Livewire applications. Fully compatible with Blade forms. Includes JavaScript hooks, flexible configuration, and easy customization.
+
 ## Trademarks 📜
+
+Information about CKEditor® trademarks and licensing. Clarifies the relationship between this package and CKSource.
 
 CKEditor® is a trademark of [CKSource Holding sp. z o.o.](https://cksource.com/) All rights reserved. For more information about the license of CKEditor® please visit [CKEditor's licensing page](https://ckeditor.com/legal/ckeditor-oss-license/).
 
 This package is not owned by CKSource and does not use the CKEditor® trademark for commercial purposes. It should not be associated with or considered an official CKSource product.
 
 ## License 📜
+
+Details about the MIT license for this project and CKEditor 5's GPL license. Make sure to review both licenses for compliance.
 
 This project is licensed under the terms of the [MIT LICENSE](LICENSE).
 

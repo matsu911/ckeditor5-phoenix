@@ -91,10 +91,9 @@ Choose how you want to include CKEditor 5 in your project. Use the CDN for a qui
 ### 📡 CDN Distribution (Recommended)
 
 > [!WARNING]
-> **CDN usage requires a license key and is a paid option.**
-> You must obtain a CKEditor 5 Cloud Services key from CKSource to use the CDN.
-> This is the simplest and fastest installation method, but may incur costs depending on your usage.
-> See [CKEditor 5 Cloud Services Pricing](https://ckeditor.com/pricing/) for details.
+> **CDN usage requires a license key from CKSource.**
+> The first 1,000 loads per month are free; above that, usage is paid.
+> See [CKEditor 5 Pricing](https://ckeditor.com/pricing/) for details.
 
 Load CKEditor 5 directly from CDN - no build required. This is the fastest way to get started and is ideal for most users.
 
@@ -114,7 +113,7 @@ config :my_app, MyAppWeb.Endpoint,
   ]
 ```
 
-3. Add license key to your preset or environment variable. See [Providing the License Key 🗝️](#providing-the-license-key-) section for details.
+3. Add license key to your preset or environment variable. See [Providing the License Key 🗝️](#providing-the-license-key-%EF%B8%8F) section for details.
 
 ### 🏠 Self-hosted
 

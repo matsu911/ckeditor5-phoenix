@@ -37,7 +37,7 @@ CKEditor 5 integration library for Phoenix (Elixir) applications. Provides web c
     - [Use Custom Preset 🧩](#use-custom-preset-)
   - [Localization 🌍](#localization-)
     - [CDN Translation Loading 🌐](#cdn-translation-loading-)
-    - [Global Translation Config 🌐](#global-translation-config-)
+    - [Global Translation Config 🛠️](#global-translation-config-️)
   - [Package development 🛠️](#package-development-️)
   - [Psst... 👀](#psst-)
   - [Trademarks 📜](#trademarks-)
@@ -71,12 +71,11 @@ Add editor to your template:
 
 ```heex
 <%!-- CDN version (recommended for quick start) --%>
+<%!-- Place this in your layout's <head> --%>
 <.cke_cloud_assets />
 
-<.ckeditor
-  type="classic"
-  value="<p>Hello world!</p>"
-/>
+<%!-- Place it in <body> where you want the editor to appear --%>
+<.ckeditor type="classic" value="<p>Hello world!</p>" />
 ```
 
 That's it! 🎉
@@ -347,7 +346,7 @@ Depending on your setup, you can preload translations via CDN or let your bundle
 />
 ```
 
-### Global Translation Config 🌐
+### Global Translation Config 🛠️
 
 You can also configure translations globally in your `config/config.exs` file. This is useful if you want to load translations for multiple languages at once or set a default language for the editor. Keep in mind that this configuration is only used when loading translations via CDN. If you are using self-hosted setup, translations are handled by your bundler automatically.
 

@@ -39,6 +39,7 @@ CKEditor 5 integration library for Phoenix (Elixir) applications. Provides web c
   - [Configuration ⚙️](#configuration-️)
     - [Custom Presets 🧩](#custom-presets-)
     - [Use Custom Preset 🧩](#use-custom-preset-)
+    - [Providing the License Key 🗝️](#providing-the-license-key-️)
   - [Localization 🌍](#localization-)
     - [CDN Translation Loading 🌐](#cdn-translation-loading-)
     - [Global Translation Config 🛠️](#global-translation-config-️)
@@ -88,6 +89,12 @@ That's it! 🎉
 Choose how you want to include CKEditor 5 in your project. Use the CDN for a quick start or self-host for more control and customization.
 
 ### 📡 CDN Distribution (Recommended)
+
+> [!WARNING]
+> **CDN usage requires a license key and is a paid option.**
+> You must obtain a CKEditor 5 Cloud Services key from CKSource to use the CDN.
+> This is the simplest and fastest installation method, but may incur costs depending on your usage.
+> See [CKEditor 5 Cloud Services Pricing](https://ckeditor.com/pricing/) for details.
 
 Load CKEditor 5 directly from CDN - no build required. This is the fastest way to get started and is ideal for most users.
 
@@ -330,6 +337,26 @@ To use a custom preset, pass the `preset` keyword argument to the `ckeditor` com
 ```heex
 <.ckeditor preset="minimal" value="<p>Simple editor</p>" />
 ```
+
+### Providing the License Key 🗝️
+
+CKEditor 5 requires a license key when using the official CDN or premium features. You can provide the license key in two simple ways:
+
+1. **Environment variable**: Set the `CKEDITOR5_LICENSE_KEY` environment variable before starting your Phoenix app. This is the easiest and most common way.
+2. **Preset config**: You can also set the license key directly in your preset configuration in `config/config.exs`:
+
+   ```elixir
+   config :ckeditor5_phoenix,
+     presets: %{
+       default: %{
+         license_key: "your-license-key-here"
+       }
+     }
+   ```
+
+If you use CKEditor 5 under the GPL license, you do not need to provide a license key. However, if you choose to set one, it must be set to `GPL`.
+
+If both are set, the preset config takes priority. For more details, see the [CKEditor 5 licensing guide](https://ckeditor.com/docs/ckeditor5/latest/getting-started/licensing/license-and-legal.html).
 
 ## Localization 🌍
 

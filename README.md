@@ -114,7 +114,8 @@ Bundle CKEditor 5 with your application for full control over assets and configu
 **Setup:**
 
 1. **Don't** use `<.cke_cloud_assets />`
-2. Import styles manually in your CSS:
+2. Install `ckeditor5` package via npm `npm install ckeditor5`
+3. Import styles manually in your CSS:
 
 ```css
 /* assets/css/app.css */

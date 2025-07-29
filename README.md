@@ -74,8 +74,7 @@ const liveSocket = new LiveSocket('/live', Socket, {
 Add editor to your template:
 
 ```heex
-<%!-- CDN version (recommended for quick start) --%>
-<%!-- Place this in your layout's <head> --%>
+<%!-- CDN version (recommended for quick start, place it in `<head>`) --%>
 <.cke_cloud_assets />
 
 <%!-- Place it in <body> where you want the editor to appear --%>

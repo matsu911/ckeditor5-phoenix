@@ -24,6 +24,9 @@ CKEditor 5 integration library for Phoenix (Elixir) applications. Provides web c
   - [Table of Contents](#table-of-contents)
   - [Psst... 👀](#psst-)
   - [Installation 🚀](#installation-)
+  - [Cloud Distribution vs Self-hosted 🌩️🏠](#cloud-distribution-vs-self-hosted-️)
+    - [Cloud Distribution (CKEditor 5 from CDN) 🌩️](#cloud-distribution-ckeditor-5-from-cdn-️)
+    - [Self-hosted (CKEditor 5 from NPM package) 🏠](#self-hosted-ckeditor-5-from-npm-package-)
   - [Using translations (localization) 🌐](#using-translations-localization-)
     - [Minimal usage example](#minimal-usage-example)
       - [Setting editor UI and content language](#setting-editor-ui-and-content-language)
@@ -44,13 +47,13 @@ CKEditor 5 integration library for Phoenix (Elixir) applications. Provides web c
 
 ## Psst... 👀
 
-If you're looking for similar stuff, check these out:
+If you're looking for similar projects, check these out:
 
-* [ckeditor5-rails](https://github.com/Mati365/ckeditor5-rails)
-  Smooth CKEditor 5 integration for Ruby on Rails. Works with standard forms, Turbo, and Hotwire. Easy setup, custom builds, and localization support.
+- [ckeditor5-rails](https://github.com/Mati365/ckeditor5-rails)
+  Effortless CKEditor 5 integration for Ruby on Rails. Works seamlessly with standard forms, Turbo, and Hotwire. Easy setup, custom builds, and localization support.
 
-* [ckeditor5-livewire](https://github.com/Mati365/ckeditor5-livewire)
-  Drop-in CKEditor 5 solution for Laravel + Livewire apps. Works great with Blade forms too. Includes JS hooks, flexible config, and easy customization.
+- [ckeditor5-livewire](https://github.com/Mati365/ckeditor5-livewire)
+  Plug-and-play CKEditor 5 solution for Laravel + Livewire applications. Fully compatible with Blade forms. Includes JavaScript hooks, flexible configuration, and easy customization.
 
 ## Installation 🚀
 
@@ -78,8 +81,21 @@ const liveSocket = new LiveSocket('/live', Socket, {
 });
 ```
 
-If you use the CKEditor 5 cloud distribution, you need to configure esbuild to exclude the `ckeditor5` package from the build process. This way, the editor will be loaded from the CDN, not from node_modules.
-Edit your `config/dev.exs` and `config/prod.exs` files and add the following configuration:
+## Cloud Distribution vs Self-hosted 🌩️🏠
+
+You can integrate CKEditor 5 with your Phoenix application in two ways:
+
+### Cloud Distribution (CKEditor 5 from CDN) 🌩️
+
+**When to use:**
+
+- You want to load the editor and its assets (JS, CSS, translations) directly from the CKEditor 5 Cloud CDN.
+- You do not want to build the editor yourself or include its files in your own project.
+
+**Requirements:**
+
+- You must use the `<.cke_cloud_assets />` helper in the `<head>` section to load the required scripts and styles from the CDN.
+- In your `esbuild` config, you need to exclude the `ckeditor5` and `ckeditor5-premium-features` packages:
 
 ```elixir
 config :demo, DemoWeb.Endpoint,
@@ -98,39 +114,72 @@ config :demo, DemoWeb.Endpoint,
   ]
 ```
 
-Next, add CKEditor 5 to your view as follows:
+**Usage example:**
 
 ```heex
-<%!-- In your <head> section, include the CKEditor 5 cloud assets --%>
+<%!-- In the <head> section --%>
 <.cke_cloud_assets />
 
-<%!-- In your <body>, you can use the classic editor as a function component: --%>
+<%!-- In the <body> --%>
 <.ckeditor
   type="classic"
   value="<p>Initial content here</p>"
   editable_height="300px"
 />
+```
 
-<%!-- Or, if you prefer, as a LiveComponent for more advanced scenarios: --%>
-<.live_component
-  id="editor"
-  module={CKEditor5.Components.Editor}
+> **Note:** The `<.cke_cloud_assets />` helper is required only when using Cloud Distribution (CDN). Do not use it in self-hosted mode!
+
+### Self-hosted (CKEditor 5 from NPM package) 🏠
+
+**When to use:**
+
+- You want to build the editor yourself (e.g., a custom build) and serve JS/CSS files from your own application.
+- The editor and its styles are available locally in `node_modules` or your own build directory.
+
+**Requirements:**
+
+- 🚫 DO NOT use the `<.cke_cloud_assets />` helper (this is only for cloud distribution).
+- You must manually import CKEditor 5 styles into your main application CSS file (e.g., `app.css` or `app.scss`).
+
+**Example of importing styles (e.g., in `assets/css/app.css`):**
+
+```css
+@import "ckeditor5/ckeditor5.css";
+```
+
+**Editor usage example:**
+
+```heex
+<%!-- DO NOT use <.cke_cloud_assets /> --%>
+
+<.ckeditor
   type="classic"
+  value="<p>Initial content here</p>"
+  editable_height="300px"
 />
 ```
 
-🎉 Voila! You now have CKEditor 5 integrated into your Phoenix application. The editor will be loaded from the CKEditor 5 cloud distribution, and you can start using it right away. 🚀
+> **Note:** In self-hosted mode, you are responsible for loading the editor styles correctly in your application. The `<.cke_cloud_assets />` helper is not needed and should not be used.
+
+🎉 Voila! Choose one of the above integration paths and enjoy CKEditor 5 in your Phoenix application! 🚀
 
 ## Using translations (localization) 🌐
 
 You can easily enable different languages in CKEditor 5 by specifying which translation files should be loaded. There are two ways to do this:
 
 1. **Via the `cloud.translations` preset option**: In your config, you can set which language files will be included in the import map and preloaded automatically.
+   _(Only applies to cloud distribution!)_
 2. **Directly in the `translations` parameter of the `<.cke_cloud_assets />` component**: You can pass a list of language codes (like `["pl", "de"]`) to load only those translations for the editor.
+   _(Use `<.cke_cloud_assets />` only with cloud distribution!)_
+
+> ⚠️ **Note:** The `<.cke_cloud_assets />` helper and its `translations` option should only be used if you are using the cloud distribution (CDN).
+> If you are using the self-hosted setup, your bundler (like esbuild, webpack, etc.) will automatically handle translations based on your imports and configuration.
+> **Do not use `<.cke_cloud_assets />` in self-hosted mode!**
 
 ### Minimal usage example
 
-In your layout or page template:
+In your layout or page template (cloud distribution only):
 
 ```heex
 <.cke_cloud_assets translations={["pl", "de"]} />

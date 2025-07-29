@@ -30,8 +30,8 @@ CKEditor 5 integration library for Phoenix (Elixir) applications. Provides web c
     - [Multiroot editor 🌳](#multiroot-editor-)
     - [Inline editor 📝](#inline-editor-)
   - [Forms Integration 🧾](#forms-integration-)
-    - [Phoenix Form Helper](#phoenix-form-helper)
-    - [LiveView Handler](#liveview-handler)
+    - [Phoenix Form Helper 🧑‍💻](#phoenix-form-helper-)
+    - [LiveView Handler ⚡](#liveview-handler-)
   - [Configuration ⚙️](#configuration-️)
     - [Custom Presets 🧩](#custom-presets-)
     - [Use Custom Preset 🧩](#use-custom-preset-)
@@ -246,7 +246,9 @@ If you want to use an inline editor, you can pass the `type` keyword argument wi
 
 Integrate CKEditor 5 with Phoenix forms and LiveView. Learn how to use the editor in forms and handle events for real-time updates.
 
-### Phoenix Form Helper
+### Phoenix Form Helper 🧑‍💻
+
+The `ckeditor` creates hidden input field that is used to store value of the editor within the form. The `name` of such input is built from `field` attribute of the `ckeditor` component. The value of the input is set to the content of the editor.
 
 ```heex
 <.form for={@form} phx-submit="save">
@@ -260,7 +262,7 @@ Integrate CKEditor 5 with Phoenix forms and LiveView. Learn how to use the edito
 </.form>
 ```
 
-### LiveView Handler
+### LiveView Handler ⚡
 
 ```elixir
 defmodule MyApp.PageLive do

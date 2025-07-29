@@ -33,6 +33,7 @@ CKEditor 5 integration library for Phoenix (Elixir) applications. Provides web c
     - [Classic editor 📝](#classic-editor-)
     - [Multiroot editor 🌳](#multiroot-editor-)
     - [Inline editor 📝](#inline-editor-)
+    - [Decoupled editor 📝](#decoupled-editor-)
   - [Forms Integration 🧾](#forms-integration-)
     - [Phoenix Form Helper 🧑‍💻](#phoenix-form-helper-)
     - [LiveView Handler ⚡](#liveview-handler-)
@@ -251,6 +252,30 @@ If you want to use an inline editor, you can pass the `type` keyword argument wi
   value="<p>Initial content here</p>"
   editable_height="300px"
 />
+```
+
+### Decoupled editor 📝
+
+The decoupled editor is a more advanced type of editor that allows you to separate the toolbar from the editable area. This is useful when you want to create a custom layout or use the editor in a more complex UI.
+
+![CKEditor 5 Decoupled Editor in Elixir Phoenix application](docs/decoupled-editor.png)
+
+```heex
+<%!-- In <head> --%>
+<.cke_cloud_assets />
+
+<%!-- In <body> --%>
+<.ckeditor type="decoupled" >
+
+<div class="flex flex-col gap-4">
+  <.cke_ui_part name="toolbar" />
+  <.cke_editable
+    root="main"
+    value="<p>Initial content here</p>"
+    class="border border-gray-300"
+    editable_height="300px"
+  />
+</div>
 ```
 
 ## Forms Integration 🧾

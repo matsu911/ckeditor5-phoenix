@@ -62,6 +62,8 @@ jobs:
 
       - name: Run dialyzer
         run: mix dialyzer --format github --format dialyxir
+        env:
+          MIX_ENV: dev
 
       - name: Check formatting
         run: mix format --check-formatted

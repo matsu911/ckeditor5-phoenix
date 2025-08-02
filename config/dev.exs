@@ -1,7 +1,12 @@
 import Config
 
+cke_playground_dist_channel =
+  System.get_env("CKEDITOR5_PLAYGROUND_MODE", "sh") |> String.to_atom()
+
 config :phoenix, :json_library, Jason
 config :logger, :level, :debug
+
+config :ckeditor5_phoenix, Playground.DistributionChannel, cke_playground_dist_channel
 
 config :ckeditor5_phoenix, Playground.Endpoint,
   adapter: Bandit.PhoenixAdapter,
@@ -35,16 +40,20 @@ config :ckeditor5_phoenix, Playground.Endpoint,
 config :esbuild,
   version: "0.25.0",
   ckeditor: [
-    args: ~w(
+    args:
+      ~w(
       ./js/app.ts
       --bundle
       --target=es2022
       --format=esm
       --splitting
-      --external:ckeditor5
-      --external:ckeditor5-premium-features
       --outdir=./priv/static
-    ),
+    ) ++
+        if cke_playground_dist_channel == :cloud do
+          ~w(--external:ckeditor5 --external:ckeditor5-premium-features)
+        else
+          []
+        end,
     cd: Path.expand("../playground/", __DIR__),
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
   ]
@@ -52,6 +61,9 @@ config :esbuild,
 config :tailwind,
   version: "4.0.0",
   ckeditor: [
-    args: ~w(--input=css/app.scss --output=priv/static/app.css),
+    args: ~w(
+      --input=css/app.#{cke_playground_dist_channel}.scss
+      --output=priv/static/app.css
+    ),
     cd: Path.expand("../playground", __DIR__)
   ]

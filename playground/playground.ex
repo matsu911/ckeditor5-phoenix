@@ -20,35 +20,11 @@ defmodule Playground do
     end
   end
 
-  def controller do
-    quote do
-      use Phoenix.Controller, formats: [:html, :json]
-
-      import Plug.Conn
-
-      unquote(verified_routes())
-    end
-  end
-
-  def html do
-    quote do
-      use Phoenix.Component
-
-      import Phoenix.HTML
-
-      import Phoenix.Controller,
-        only: [get_csrf_token: 0, view_module: 1, view_template: 1]
-
-      alias Phoenix.LiveView.JS
-
-      unquote(verified_routes())
-    end
-  end
-
   def live_view do
     quote do
       use Phoenix.LiveView
 
+      import Playground.DistributionChannel
       import Components.Core
 
       unquote(verified_routes())
@@ -63,6 +39,7 @@ defmodule Playground do
         root: "playground/templates",
         namespace: Playground
 
+      import Playground.DistributionChannel
       import Phoenix.HTML
 
       unquote(verified_routes())

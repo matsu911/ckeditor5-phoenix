@@ -499,6 +499,12 @@ To run the minimal Phoenix application with CKEditor 5 integration, install depe
 mix playground
 ```
 
+In order to run the playground in cloud mode, set the `CKEDITOR5_PLAYGROUND_MODE` environment variable to `cloud`:
+
+```bash
+CKEDITOR5_PLAYGROUND_MODE=cloud mix playground
+```
+
 Run tests using the `mix test` command. All tests are located in the `test/` directory.
 
 ```bash

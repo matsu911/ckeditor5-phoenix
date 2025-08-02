@@ -94,18 +94,12 @@ Bundle CKEditor 5 with your application for full control over assets, custom bui
 5. **Use in templates** (no CDN assets needed):
 
    ```heex
-   <%!-- No <.cke_cloud_assets /> needed --%>
    <.ckeditor type="classic" value="<p>Hello world!</p>" />
    ```
 
 ### 📡 CDN Distribution
 
 Load CKEditor 5 directly from CKSource's CDN - no build configuration required. This method is ideal for most users who want quick setup and don't need custom builds.
-
-> [!IMPORTANT]
-> **CDN usage requires a license key from CKSource.**
-> The first 1,000 loads per month are free; above that, usage is paid.
-> See [CKEditor 5 Pricing](https://ckeditor.com/pricing/) for details.
 
 **Complete setup:**
 

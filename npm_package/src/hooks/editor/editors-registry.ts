@@ -20,6 +20,11 @@ export class EditorsRegistry {
   private readonly callbacks = new Map<EditorId | null, EditorCallback<any>[]>();
 
   /**
+   * Set of watchers that observe changes to the editors registry.
+   */
+  private readonly watchers = new Set<EditorsWatcher>();
+
+  /**
    * Private constructor to enforce singleton pattern.
    */
   private constructor() {}
@@ -80,6 +85,8 @@ export class EditorsRegistry {
     if (this.editors.size === 1) {
       this.register(null, editor);
     }
+
+    this.notifyWatchers();
   }
 
   /**
@@ -100,6 +107,8 @@ export class EditorsRegistry {
 
     editors.delete(editorId);
     callbacks.delete(editorId);
+
+    this.notifyWatchers();
   }
 
   /**
@@ -145,6 +154,40 @@ export class EditorsRegistry {
     this.callbacks.clear();
 
     await Promise.all(promises);
+
+    this.notifyWatchers();
+  }
+
+  /**
+   * Registers a watcher that will be called whenever the editors registry changes.
+   *
+   * @param watcher The watcher function to register.
+   * @returns A function to unregister the watcher.
+   */
+  watch(watcher: EditorsWatcher): () => void {
+    this.watchers.add(watcher);
+
+    // Call the watcher immediately with the current state
+    watcher(new Map(this.editors));
+
+    return this.unwatch.bind(this, watcher);
+  }
+
+  /**
+   * Unregisters a watcher.
+   *
+   * @param watcher The watcher function to unregister.
+   */
+  unwatch(watcher: EditorsWatcher): void {
+    this.watchers.delete(watcher);
+  }
+
+  /**
+   * Notifies all watchers about changes to the editors registry.
+   */
+  private notifyWatchers(): void {
+    const editorsCopy = new Map(this.editors);
+    this.watchers.forEach(watcher => watcher(editorsCopy));
   }
 }
 
@@ -152,3 +195,8 @@ export class EditorsRegistry {
  * Callback type for editor operations.
  */
 type EditorCallback<E extends Editor = Editor> = (editor: E) => void;
+
+/**
+ * Callback type for watching editors registry changes.
+ */
+type EditorsWatcher = (editors: Map<EditorId | null, Editor>) => void;

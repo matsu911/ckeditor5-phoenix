@@ -27,6 +27,7 @@ defmodule Playground.Router do
     live "/", Live.Home
     live "/classic", Live.Classic
     live "/inline", Live.Inline
+    live "/balloon", Live.Balloon
     live "/decoupled", Live.Decoupled
     live "/multiroot", Live.Multiroot
     live "/classic-form", Live.ClassicForm

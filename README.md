@@ -177,6 +177,8 @@ Create a basic editor with default toolbar and features. Perfect for simple cont
 
 Enable real-time synchronization between the editor and your LiveView. Content changes are automatically sent to the server with configurable debouncing for performance optimization.
 
+![CKEditor 5 Live Sync example](docs/live-sync.gif)
+
 ```heex
 <.live_component
   id="editor"

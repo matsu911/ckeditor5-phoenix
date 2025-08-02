@@ -8,12 +8,19 @@ defmodule Playground.Live.Classic do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, editor_value: "Hello World!")}
+    {:ok, assign(socket, editor_value: "Hello World!", editor_focused?: false)}
   end
 
   @impl true
-  def handle_event(event, %{"data" => data}, socket)
-      when event in ["ckeditor5:change", "ckeditor5:focus", "ckeditor5:blur"] do
+  def handle_event("ckeditor5:change", %{"data" => data}, socket) do
     {:noreply, assign(socket, editor_value: data["main"])}
+  end
+
+  def handle_event("ckeditor5:focus", _, socket) do
+    {:noreply, assign(socket, editor_focused?: true)}
+  end
+
+  def handle_event("ckeditor5:blur", %{"data" => data}, socket) do
+    {:noreply, assign(socket, editor_value: data["main"], editor_focused?: false)}
   end
 end

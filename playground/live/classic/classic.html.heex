@@ -9,7 +9,12 @@
   blur_event
 />
 
-<div class="bg-gray-50 mt-8 p-4 border border-gray-300">
+<div
+  class={[
+    "bg-gray-50 mt-8 p-4 border border-gray-300",
+    if(@editor_focused?, do: "ring-2 ring-blue-500")
+  ]}
+>
   <h2 class="mb-2 font-bold">Current editor value:</h2>
   <pre class="whitespace-pre-wrap"> <%= @editor_value %> </pre>
 </div>

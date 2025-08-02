@@ -2,6 +2,8 @@ import type { PluginConstructor } from 'ckeditor5';
 
 import type { EditorPlugin } from '../typings';
 
+import { getCustomEditorPlugin } from '../custom-editor-plugins';
+
 /**
  * Loads CKEditor plugins from base and premium packages.
  * First tries to load from the base 'ckeditor5' package, then falls back to 'ckeditor5-premium-features'.
@@ -19,6 +21,14 @@ export async function loadEditorPlugins(plugins: EditorPlugin[]): Promise<Loaded
     // Coverage is disabled due to Vitest issues with mocking dynamic imports.
 
     /* v8 ignore start */
+    // If the plugin is not found in the base package, try custom plugins.
+    const customPlugin = await getCustomEditorPlugin(plugin);
+
+    if (customPlugin) {
+      return customPlugin;
+    }
+
+    // If not found, try to load from the base package.
     const { [plugin]: basePkgImport } = basePackage;
 
     if (basePkgImport) {

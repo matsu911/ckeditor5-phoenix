@@ -43,6 +43,8 @@ CKEditor 5 integration library for Phoenix (Elixir) applications. Provides web c
   - [Localization 🌍](#localization-)
     - [CDN Translation Loading 🌐](#cdn-translation-loading-)
     - [Global Translation Config 🛠️](#global-translation-config-️)
+  - [Custom plugins 🧩](#custom-plugins-)
+    - [Registering Custom Plugins](#registering-custom-plugins)
   - [Package development 🛠️](#package-development-️)
   - [Psst... 👀](#psst-)
   - [Trademarks 📜](#trademarks-)
@@ -488,6 +490,62 @@ config :ckeditor5_phoenix,
 ```
 
 **Note:** For self-hosted setups, translations are handled by your bundler automatically.
+
+## Custom plugins 🧩
+
+Register custom CKEditor 5 plugins to extend functionality or add new features. This allows you to integrate your own plugins seamlessly into the editor.
+
+### Registering Custom Plugins
+
+To register a custom plugin, use the `registerCustomEditorPlugin` function. This function takes the plugin name and the plugin _reader_ that returns a class extending `Plugin`.
+
+```javascript
+import { registerCustomEditorPlugin } from 'ckeditor5_phoenix';
+
+const unregisterPlugin = registerCustomEditorPlugin('MyCustomPlugin', async () => {
+  // It's recommended to use lazy import to avoid bundling ckeditor code in your application bundle.
+  const { Plugin } = await import('ckeditor5');
+
+  return class extends Plugin {
+    static get pluginName() {
+      return 'MyCustomPlugin';
+    }
+
+    init() {
+      console.log('MyCustomPlugin initialized');
+      // Custom plugin logic here
+    }
+  };
+});
+```
+
+In order to use the plugin you need to extend your config in `config/config.exs`:
+
+```elixir
+config :ckeditor5_phoenix,
+  presets: %{
+    default: %{
+      config: %{
+        plugins: [:MyCustomPlugin, :Essentials, :Paragraph],
+        # ... other config options
+      }
+    }
+  }
+```
+
+It must be called before the editor is initialized. You can unregister the plugin later by calling the returned function:
+
+```javascript
+unregisterPlugin();
+```
+
+If you want to de-register all registered plugins, you can use the `unregisterAllCustomEditorPlugins` function:
+
+```javascript
+import { unregisterAllCustomEditorPlugins } from 'ckeditor5_phoenix';
+
+unregisterAllCustomEditorPlugins();
+```
 
 ## Package development 🛠️
 

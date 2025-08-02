@@ -44,7 +44,8 @@ CKEditor 5 integration library for Phoenix (Elixir) applications. Provides web c
     - [CDN Translation Loading 🌐](#cdn-translation-loading-)
     - [Global Translation Config 🛠️](#global-translation-config-️)
   - [Custom plugins 🧩](#custom-plugins-)
-    - [Registering Custom Plugins](#registering-custom-plugins)
+  - [Watch registered editors 👀](#watch-registered-editors-)
+    - [Wait for particular editor to be registered ⏳](#wait-for-particular-editor-to-be-registered-)
   - [Package development 🛠️](#package-development-️)
   - [Psst... 👀](#psst-)
   - [Trademarks 📜](#trademarks-)
@@ -493,10 +494,6 @@ config :ckeditor5_phoenix,
 
 ## Custom plugins 🧩
 
-Register custom CKEditor 5 plugins to extend functionality or add new features. This allows you to integrate your own plugins seamlessly into the editor.
-
-### Registering Custom Plugins
-
 To register a custom plugin, use the `registerCustomEditorPlugin` function. This function takes the plugin name and the plugin _reader_ that returns a class extending `Plugin`.
 
 ```javascript
@@ -537,15 +534,49 @@ It must be called before the editor is initialized. You can unregister the plugi
 
 ```javascript
 unregisterPlugin();
+// or CustomEditorPluginsRegistry.the.unregister('MyCustomPlugin');
 ```
 
 If you want to de-register all registered plugins, you can use the `unregisterAllCustomEditorPlugins` function:
 
 ```javascript
-import { unregisterAllCustomEditorPlugins } from 'ckeditor5_phoenix';
+import { CustomEditorPluginsRegistry } from 'ckeditor5_phoenix';
 
-unregisterAllCustomEditorPlugins();
+CustomEditorPluginsRegistry.the.unregisterAll();
 ```
+
+## Watch registered editors 👀
+
+You can watch the registered editors using the `watch` function. This is useful if you want to react to changes in the registered editors, for example, to update the UI or perform some actions when an editor is added or removed.
+
+```javascript
+import { EditorsRegistry } from 'ckeditor5_phoenix';
+
+const unregisterWatcher = EditorsRegistry.the.watch((editors) => {
+  console.log('Registered editors changed:', editors);
+});
+
+// Later, you can unregister the watcher
+unregisterWatcher();
+```
+
+### Wait for particular editor to be registered ⏳
+
+You can also wait for a specific editor to be registered using the `waitForEditor` function. This is useful if you want to perform some actions after a specific editor is registered.
+
+This method can be called before the editor is initialized, and it will resolve when the editor is registered.
+
+```javascript
+import { EditorsRegistry } from 'ckeditor5_phoenix';
+
+EditorsRegistry.the.waitForEditor('editor1').then((editor) => {
+  console.log('Editor "editor1" is registered:', editor);
+});
+
+// ... init editor somewhere later
+```
+
+The `id` of the editor must be used to identify the editor. If the editor is already registered, the promise will resolve immediately.
 
 ## Package development 🛠️
 

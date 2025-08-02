@@ -23,8 +23,8 @@ CKEditor 5 integration library for Phoenix (Elixir) applications. Provides web c
 - [CKEditor 5 Phoenix Integration ✨](#ckeditor-5-phoenix-integration-)
   - [Table of Contents](#table-of-contents)
   - [Installation 🚀](#installation-)
-    - [📡 CDN Distribution](#-cdn-distribution)
     - [🏠 Self-hosted via NPM](#-self-hosted-via-npm)
+    - [📡 CDN Distribution](#-cdn-distribution)
   - [Basic Usage 🏁](#basic-usage-)
     - [Simple Editor ✏️](#simple-editor-️)
     - [With LiveView Sync 🔄](#with-liveview-sync-)
@@ -51,6 +51,52 @@ CKEditor 5 integration library for Phoenix (Elixir) applications. Provides web c
 ## Installation 🚀
 
 Choose between two installation methods based on your needs. Both approaches provide the same functionality but differ in how CKEditor 5 assets are loaded and managed.
+
+### 🏠 Self-hosted via NPM
+
+Bundle CKEditor 5 with your application for full control over assets, custom builds, and offline support. This method is recommended for advanced users or production applications with specific requirements.
+
+**Complete setup:**
+
+1. **Add dependency** to your `mix.exs`:
+
+   ```elixir
+   def deps do
+     [
+       {:ckeditor5_phoenix, "~> 1.4.0"}
+     ]
+   end
+   ```
+
+2. **Install CKEditor 5 via NPM:**
+
+   ```bash
+   npm install ckeditor5
+   ```
+
+3. **Register JavaScript hook** in your `app.js`:
+
+   ```javascript
+   import { Hooks } from 'ckeditor5_phoenix';
+
+   const liveSocket = new LiveSocket('/live', Socket, {
+     hooks: Hooks,
+   });
+   ```
+
+4. **Import styles** in your `app.css`:
+
+   ```css
+   /* assets/css/app.css */
+   @import "ckeditor5/ckeditor5.css";
+   ```
+
+5. **Use in templates** (no CDN assets needed):
+
+   ```heex
+   <%!-- No <.cke_cloud_assets /> needed --%>
+   <.ckeditor type="classic" value="<p>Hello world!</p>" />
+   ```
 
 ### 📡 CDN Distribution
 
@@ -108,52 +154,6 @@ Load CKEditor 5 directly from CKSource's CDN - no build configuration required. 
    ```
 
 That's it! 🎉
-
-### 🏠 Self-hosted via NPM
-
-Bundle CKEditor 5 with your application for full control over assets, custom builds, and offline support. This method is recommended for advanced users or production applications with specific requirements.
-
-**Complete setup:**
-
-1. **Add dependency** to your `mix.exs`:
-
-   ```elixir
-   def deps do
-     [
-       {:ckeditor5_phoenix, "~> 1.4.0"}
-     ]
-   end
-   ```
-
-2. **Install CKEditor 5 via NPM:**
-
-   ```bash
-   npm install ckeditor5
-   ```
-
-3. **Register JavaScript hook** in your `app.js`:
-
-   ```javascript
-   import { Hooks } from 'ckeditor5_phoenix';
-
-   const liveSocket = new LiveSocket('/live', Socket, {
-     hooks: Hooks,
-   });
-   ```
-
-4. **Import styles** in your `app.css`:
-
-   ```css
-   /* assets/css/app.css */
-   @import "ckeditor5/ckeditor5.css";
-   ```
-
-5. **Use in templates** (no CDN assets needed):
-
-   ```heex
-   <%!-- No <.cke_cloud_assets /> needed --%>
-   <.ckeditor type="classic" value="<p>Hello world!</p>" />
-   ```
 
 ## Basic Usage 🏁
 

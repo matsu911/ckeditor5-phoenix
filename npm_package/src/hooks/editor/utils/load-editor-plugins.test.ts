@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type { EditorPlugin } from '../typings';
 
-import { registerCustomEditorPlugin, unregisterAllCustomEditorPlugins } from '../custom-editor-plugins';
+import { CustomEditorPluginsRegistry } from '../custom-editor-plugins';
 import { loadEditorPlugins } from './load-editor-plugins';
 
 class CustomPlugin {
@@ -51,12 +51,10 @@ describe('loadEditorPlugins', () => {
   });
 
   describe('custom plugins', () => {
-    afterEach(() => {
-      unregisterAllCustomEditorPlugins();
-    });
+    afterEach(CustomEditorPluginsRegistry.the.unregisterAll);
 
     it('should load custom plugins', async () => {
-      registerCustomEditorPlugin('CustomPlugin', () => CustomPlugin);
+      CustomEditorPluginsRegistry.the.register('CustomPlugin', () => CustomPlugin);
 
       const plugins: EditorPlugin[] = ['CustomPlugin'];
       const { loadedPlugins } = await loadEditorPlugins(plugins);
@@ -66,7 +64,7 @@ describe('loadEditorPlugins', () => {
     });
 
     it('should prefer loading custom plugins over base package', async () => {
-      registerCustomEditorPlugin('Plugin1', () => CustomPlugin);
+      CustomEditorPluginsRegistry.the.register('Plugin1', () => CustomPlugin);
 
       const plugins: EditorPlugin[] = ['Plugin1'];
       const { loadedPlugins } = await loadEditorPlugins(plugins);
@@ -76,7 +74,7 @@ describe('loadEditorPlugins', () => {
     });
 
     it('should be possible to load async custom plugins', async () => {
-      registerCustomEditorPlugin('AsyncPlugin', async () => {
+      CustomEditorPluginsRegistry.the.register('AsyncPlugin', async () => {
         return new Promise((resolve) => {
           setTimeout(() => resolve(CustomPlugin), 20);
         });

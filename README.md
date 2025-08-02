@@ -500,9 +500,9 @@ Register custom CKEditor 5 plugins to extend functionality or add new features. 
 To register a custom plugin, use the `registerCustomEditorPlugin` function. This function takes the plugin name and the plugin _reader_ that returns a class extending `Plugin`.
 
 ```javascript
-import { registerCustomEditorPlugin } from 'ckeditor5_phoenix';
+import { CustomEditorPluginsRegistry } from 'ckeditor5_phoenix';
 
-const unregisterPlugin = registerCustomEditorPlugin('MyCustomPlugin', async () => {
+const unregisterPlugin = CustomEditorPluginsRegistry.the.register('MyCustomPlugin', async () => {
   // It's recommended to use lazy import to avoid bundling ckeditor code in your application bundle.
   const { Plugin } = await import('ckeditor5');
 

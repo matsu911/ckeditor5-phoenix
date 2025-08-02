@@ -37,6 +37,80 @@ config :ckeditor5_phoenix, Playground.Endpoint,
     ]
   ]
 
+config :ckeditor5_phoenix,
+  presets: %{
+    custom: %{
+      config: %{
+        toolbar: [
+          :undo,
+          :redo,
+          :|,
+          :heading,
+          :|,
+          :bold,
+          :italic,
+          :underline,
+          :|,
+          :link,
+          :insertImage,
+          :insertTable,
+          :blockQuote,
+          :|,
+          :bulletedList,
+          :numberedList,
+          :outdent,
+          :indent
+        ],
+        plugins: [
+          :HelloWorldPlugin,
+          :AccessibilityHelp,
+          :Autoformat,
+          :BlockQuote,
+          :Bold,
+          :Essentials,
+          :Heading,
+          :ImageBlock,
+          :ImageCaption,
+          :ImageInsert,
+          :ImageInsertViaUrl,
+          :ImageResize,
+          :ImageStyle,
+          :ImageTextAlternative,
+          :ImageToolbar,
+          :ImageUpload,
+          :Indent,
+          :Italic,
+          :Link,
+          :LinkImage,
+          :List,
+          :Paragraph,
+          :PasteFromOffice,
+          :SelectAll,
+          :Table,
+          :TableToolbar,
+          :TextTransformation,
+          :Underline,
+          :Undo,
+          :Base64UploadAdapter
+        ],
+        table: %{
+          contentToolbar: [
+            :tableColumn,
+            :tableRow,
+            :mergeTableCells
+          ]
+        },
+        image: %{
+          toolbar: [
+            :imageTextAlternative,
+            :imageStyle,
+            :imageResize
+          ]
+        }
+      }
+    }
+  }
+
 config :esbuild,
   version: "0.25.0",
   ckeditor: [

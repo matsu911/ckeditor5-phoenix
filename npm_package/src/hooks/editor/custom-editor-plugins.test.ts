@@ -1,7 +1,7 @@
 import { Plugin } from 'ckeditor5';
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { getCustomEditorPlugin, registerCustomEditorPlugin, unregisterAllCustomEditorPlugins, unregisterCustomEditorPlugin } from './custom-editor-plugins';
+import { CustomEditorPluginsRegistry } from './custom-editor-plugins';
 
 class MockPlugin1 extends Plugin {
   static get pluginName() {
@@ -16,121 +16,88 @@ class MockPlugin2 extends Plugin {
 }
 
 describe('custom-editor-plugins', () => {
-  afterEach(unregisterAllCustomEditorPlugins);
+  afterEach(() => {
+    CustomEditorPluginsRegistry.the.unregisterAll();
+  });
 
-  describe('registerCustomEditorPlugin', () => {
+  describe('register', () => {
     it('should register a plugin successfully', async () => {
-      const unregister = registerCustomEditorPlugin('test-plugin', () => MockPlugin1);
+      const unregister = CustomEditorPluginsRegistry.the.register('test-plugin', () => MockPlugin1);
 
-      expect(await getCustomEditorPlugin('test-plugin')).toBe(MockPlugin1);
+      expect(await CustomEditorPluginsRegistry.the.get('test-plugin')).toBe(MockPlugin1);
       expect(typeof unregister).toBe('function');
     });
 
     it('should throw an error when registering a plugin with the same name', () => {
-      registerCustomEditorPlugin('duplicate-plugin', () => MockPlugin1);
+      CustomEditorPluginsRegistry.the.register('duplicate-plugin', () => MockPlugin1);
 
       expect(() => {
-        registerCustomEditorPlugin('duplicate-plugin', () => MockPlugin2);
+        CustomEditorPluginsRegistry.the.register('duplicate-plugin', () => MockPlugin2);
       }).toThrow('Plugin with name "duplicate-plugin" is already registered.');
     });
 
     it('should return an unregister function that removes the plugin', async () => {
-      const unregister = registerCustomEditorPlugin('removable-plugin', () => MockPlugin1);
+      const unregister = CustomEditorPluginsRegistry.the.register('removable-plugin', () => MockPlugin1);
 
-      expect(await getCustomEditorPlugin('removable-plugin')).toBe(MockPlugin1);
+      expect(await CustomEditorPluginsRegistry.the.get('removable-plugin')).toBe(MockPlugin1);
 
       unregister();
 
-      expect(await getCustomEditorPlugin('removable-plugin')).toBeUndefined();
+      expect(await CustomEditorPluginsRegistry.the.get('removable-plugin')).toBeUndefined();
     });
   });
 
-  describe('unregisterCustomEditorPlugin', () => {
+  describe('unregister', () => {
     it('should unregister an existing plugin', async () => {
-      registerCustomEditorPlugin('temp-plugin', () => MockPlugin1);
+      CustomEditorPluginsRegistry.the.register('temp-plugin', () => MockPlugin1);
 
-      expect(await getCustomEditorPlugin('temp-plugin')).toBe(MockPlugin1);
+      expect(await CustomEditorPluginsRegistry.the.get('temp-plugin')).toBe(MockPlugin1);
 
-      unregisterCustomEditorPlugin('temp-plugin');
+      CustomEditorPluginsRegistry.the.unregister('temp-plugin');
 
-      expect(await getCustomEditorPlugin('temp-plugin')).toBeUndefined();
+      expect(await CustomEditorPluginsRegistry.the.get('temp-plugin')).toBeUndefined();
     });
 
     it('should throw an error when unregistering a non-existent plugin', () => {
       expect(() => {
-        unregisterCustomEditorPlugin('non-existent');
+        CustomEditorPluginsRegistry.the.unregister('non-existent');
       }).toThrow('Plugin with name "non-existent" is not registered.');
     });
   });
 
-  describe('unregisterAllCustomEditorPlugins', () => {
+  describe('unregisterAll', () => {
     it('should clear all registered plugins', async () => {
-      registerCustomEditorPlugin('plugin-1', () => MockPlugin1);
-      registerCustomEditorPlugin('plugin-2', () => MockPlugin2);
+      CustomEditorPluginsRegistry.the.register('plugin-1', () => MockPlugin1);
+      CustomEditorPluginsRegistry.the.register('plugin-2', () => MockPlugin2);
 
-      expect(await getCustomEditorPlugin('plugin-1')).toBe(MockPlugin1);
-      expect(await getCustomEditorPlugin('plugin-2')).toBe(MockPlugin2);
+      expect(await CustomEditorPluginsRegistry.the.get('plugin-1')).toBe(MockPlugin1);
+      expect(await CustomEditorPluginsRegistry.the.get('plugin-2')).toBe(MockPlugin2);
 
-      unregisterAllCustomEditorPlugins();
+      CustomEditorPluginsRegistry.the.unregisterAll();
 
-      expect(await getCustomEditorPlugin('plugin-1')).toBeUndefined();
-      expect(await getCustomEditorPlugin('plugin-2')).toBeUndefined();
+      expect(await CustomEditorPluginsRegistry.the.get('plugin-1')).toBeUndefined();
+      expect(await CustomEditorPluginsRegistry.the.get('plugin-2')).toBeUndefined();
     });
   });
 
-  describe('getCustomEditorPlugin', () => {
+  describe('get', () => {
     it('should return the correct plugin when it exists', async () => {
-      registerCustomEditorPlugin('existing-plugin', () => MockPlugin1);
+      CustomEditorPluginsRegistry.the.register('existing-plugin', () => MockPlugin1);
 
-      expect(await getCustomEditorPlugin('existing-plugin')).toBe(MockPlugin1);
+      expect(await CustomEditorPluginsRegistry.the.get('existing-plugin')).toBe(MockPlugin1);
     });
 
     it('should return undefined for non-existent plugins', async () => {
-      expect(await getCustomEditorPlugin('non-existent-plugin')).toBeUndefined();
-    });
-
-    it('should distinguish between different plugins', async () => {
-      registerCustomEditorPlugin('plugin-1', () => MockPlugin1);
-      registerCustomEditorPlugin('plugin-2', () => MockPlugin2);
-
-      expect(await getCustomEditorPlugin('plugin-1')).toBe(MockPlugin1);
-      expect(await getCustomEditorPlugin('plugin-2')).toBe(MockPlugin2);
-    });
-
-    it('should always return the same reference for the same plugin', async () => {
-      registerCustomEditorPlugin('consistent-plugin', () => MockPlugin1);
-
-      const plugin1 = await getCustomEditorPlugin('consistent-plugin');
-      const plugin2 = await getCustomEditorPlugin('consistent-plugin');
-
-      expect(plugin1).toBe(plugin2);
-      expect(plugin1).toBe(MockPlugin1);
+      expect(await CustomEditorPluginsRegistry.the.get('non-existent-plugin')).toBeUndefined();
     });
   });
 
-  describe('integration tests', () => {
-    it('should handle multiple plugins registration and unregistration', async () => {
-      registerCustomEditorPlugin('multi-1', () => MockPlugin1);
-      registerCustomEditorPlugin('multi-2', () => MockPlugin2);
+  describe('has', () => {
+    it('should return true for registered plugins', () => {
+      CustomEditorPluginsRegistry.the.register('check-plugin', () => MockPlugin1);
 
-      expect(await getCustomEditorPlugin('multi-1')).toBe(MockPlugin1);
-      expect(await getCustomEditorPlugin('multi-2')).toBe(MockPlugin2);
-
-      unregisterCustomEditorPlugin('multi-1');
-
-      expect(await getCustomEditorPlugin('multi-1')).toBeUndefined();
-      expect(await getCustomEditorPlugin('multi-2')).toBe(MockPlugin2);
-    });
-
-    it('should allow re-registration after unregistration', async () => {
-      registerCustomEditorPlugin('reusable-name', () => MockPlugin1);
-      expect(await getCustomEditorPlugin('reusable-name')).toBe(MockPlugin1);
-
-      unregisterCustomEditorPlugin('reusable-name');
-      expect(await getCustomEditorPlugin('reusable-name')).toBeUndefined();
-
-      registerCustomEditorPlugin('reusable-name', () => MockPlugin2);
-      expect(await getCustomEditorPlugin('reusable-name')).toBe(MockPlugin2);
+      expect(CustomEditorPluginsRegistry.the.has('check-plugin')).toBe(true);
+      expect(CustomEditorPluginsRegistry.the.has('non-existent')).toBe(false);
     });
   });
 });

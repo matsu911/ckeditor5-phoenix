@@ -51,7 +51,9 @@ describe('loadEditorPlugins', () => {
   });
 
   describe('custom plugins', () => {
-    afterEach(CustomEditorPluginsRegistry.the.unregisterAll);
+    afterEach(() => {
+      CustomEditorPluginsRegistry.the.unregisterAll();
+    });
 
     it('should load custom plugins', async () => {
       CustomEditorPluginsRegistry.the.register('CustomPlugin', () => CustomPlugin);

@@ -23,9 +23,8 @@ CKEditor 5 integration library for Phoenix (Elixir) applications. Provides web c
 - [CKEditor 5 Phoenix Integration ✨](#ckeditor-5-phoenix-integration-)
   - [Table of Contents](#table-of-contents)
   - [Installation 🚀](#installation-)
-  - [Installation Methods 🛠️](#installation-methods-️)
-    - [📡 CDN Distribution (Recommended)](#-cdn-distribution-recommended)
-    - [🏠 Self-hosted](#-self-hosted)
+    - [📡 CDN Distribution](#-cdn-distribution)
+    - [🏠 Self-hosted via NPM](#-self-hosted-via-npm)
   - [Basic Usage 🏁](#basic-usage-)
     - [Simple Editor ✏️](#simple-editor-️)
     - [With LiveView Sync 🔄](#with-liveview-sync-)
@@ -51,99 +50,139 @@ CKEditor 5 integration library for Phoenix (Elixir) applications. Provides web c
 
 ## Installation 🚀
 
-Easily add CKEditor 5 Phoenix to your Phoenix (Elixir) project. This section explains how to add the dependency, register the JavaScript hook, and use the editor in your templates.
+Choose between two installation methods based on your needs. Both approaches provide the same functionality but differ in how CKEditor 5 assets are loaded and managed.
 
-Add dependency to your project:
+**CDN vs Self-hosted comparison:**
 
-```elixir
-def deps do
-  [
-    {:ckeditor5_phoenix, "~> 1.4.0"}
-  ]
-end
-```
+| Feature | CDN Distribution | Self-hosted via NPM |
+|---------|------------------|---------------------|
+| **Installation complexity** | Simple - add script tags | Requires NPM and bundler setup |
+| **CKEditor 5 assets** | Loaded from CKSource servers | Bundled with your application |
+| **Build configuration** | No build changes needed | Must configure bundler exclusions |
+| **Internet dependency** | Requires internet connection | Works completely offline |
+| **License requirements** | Always requires CKSource license | GPL license available (free) |
+| **Monthly usage limits** | 1,000 free loads, then paid | No usage limits |
+| **Bundle size impact** | Zero - assets served from CDN | Adds ~500KB to your app bundle |
+| **Editor customization** | Limited to configuration options | Full control over editor builds |
+| **Loading performance** | Fast CDN delivery | Depends on your server performance |
+| **Version updates** | Automatic via CDN | Manual via NPM updates |
 
-Register the JavaScript hook:
+### 📡 CDN Distribution
 
-```javascript
-import { Hooks } from 'ckeditor5_phoenix';
-
-const liveSocket = new LiveSocket('/live', Socket, {
-  hooks: Hooks,
-});
-```
-
-Add editor to your template:
-
-```heex
-<%!-- CDN version (recommended for quick start, place it in `<head>`) --%>
-<.cke_cloud_assets />
-
-<%!-- Place it in <body> where you want the editor to appear --%>
-<.ckeditor type="classic" value="<p>Hello world!</p>" />
-```
-
-That's it! 🎉
-
-## Installation Methods 🛠️
-
-Choose how you want to include CKEditor 5 in your project. Use the CDN for a quick start or self-host for more control and customization.
-
-### 📡 CDN Distribution (Recommended)
+Load CKEditor 5 directly from CKSource's CDN - no build configuration required. This method is ideal for most users who want quick setup and don't need custom builds.
 
 > [!WARNING]
 > **CDN usage requires a license key from CKSource.**
 > The first 1,000 loads per month are free; above that, usage is paid.
 > See [CKEditor 5 Pricing](https://ckeditor.com/pricing/) for details.
 
-Load CKEditor 5 directly from CDN - no build required. This is the fastest way to get started and is ideal for most users.
+**Complete setup:**
 
-**Setup:**
+1. **Add dependency** to your `mix.exs`:
 
-1. Use `<.cke_cloud_assets />` in your layout's `<head>`
-2. Exclude CKEditor from your bundler:
+   ```elixir
+   def deps do
+     [
+       {:ckeditor5_phoenix, "~> 1.4.0"}
+     ]
+   end
+   ```
 
-```elixir
-# config/config.exs
-config :my_app, MyAppWeb.Endpoint,
-  watchers: [
-    esbuild: {Esbuild, :install_and_run, [
-      :my_app,
-      ~w(--external:ckeditor5 --external:ckeditor5-premium-features)
-    ]}
-  ]
-```
+2. **Register JavaScript hook** in your `app.js`:
 
-3. Add license key to your preset or environment variable. See [Providing the License Key 🗝️](#providing-the-license-key-%EF%B8%8F) section for details.
+   ```javascript
+   import { Hooks } from 'ckeditor5_phoenix';
 
-### 🏠 Self-hosted
+   const liveSocket = new LiveSocket('/live', Socket, {
+     hooks: Hooks,
+   });
+   ```
 
-Bundle CKEditor 5 with your application for full control over assets and configuration. Recommended for advanced users or those with custom builds.
+3. **Exclude CKEditor from bundler** in your `config/config.exs`:
 
-**Setup:**
+   ```elixir
+   config :my_app, MyAppWeb.Endpoint,
+     watchers: [
+       esbuild: {Esbuild, :install_and_run, [
+         :my_app,
+         ~w(--external:ckeditor5 --external:ckeditor5-premium-features)
+       ]}
+     ]
+   ```
 
-1. **Don't** use `<.cke_cloud_assets />`
-2. Install `ckeditor5` package via npm `npm install ckeditor5`
-3. Import styles manually in your CSS:
+4. **Add license key** (see [Providing the License Key 🗝️](#providing-the-license-key-️) section)
 
-```css
-/* assets/css/app.css */
-@import "ckeditor5/ckeditor5.css";
-```
+5. **Use in templates:**
+
+   ```heex
+   <%!-- Load CDN assets in <head> --%>
+   <.cke_cloud_assets />
+
+   <%!-- Use editor anywhere in <body> --%>
+   <.ckeditor type="classic" value="<p>Hello world!</p>" />
+   ```
+
+That's it! 🎉
+
+### 🏠 Self-hosted via NPM
+
+Bundle CKEditor 5 with your application for full control over assets, custom builds, and offline support. This method is recommended for advanced users or production applications with specific requirements.
+
+**Complete setup:**
+
+1. **Add dependency** to your `mix.exs`:
+
+   ```elixir
+   def deps do
+     [
+       {:ckeditor5_phoenix, "~> 1.4.0"}
+     ]
+   end
+   ```
+
+2. **Install CKEditor 5 via NPM:**
+
+   ```bash
+   npm install ckeditor5
+   ```
+
+3. **Register JavaScript hook** in your `app.js`:
+
+   ```javascript
+   import { Hooks } from 'ckeditor5_phoenix';
+
+   const liveSocket = new LiveSocket('/live', Socket, {
+     hooks: Hooks,
+   });
+   ```
+
+4. **Import styles** in your `app.css`:
+
+   ```css
+   /* assets/css/app.css */
+   @import "ckeditor5/ckeditor5.css";
+   ```
+
+5. **Use in templates** (no CDN assets needed):
+
+   ```heex
+   <%!-- No <.cke_cloud_assets /> needed --%>
+   <.ckeditor type="classic" value="<p>Hello world!</p>" />
+   ```
 
 ## Basic Usage 🏁
 
-Get started with the most common usage patterns. Learn how to render the editor in your templates and handle content changes.
+Get started with the most common usage patterns. These examples show how to render editors in your templates and handle real-time content changes.
 
 ### Simple Editor ✏️
 
-The lightest way to use CKEditor 5 in your Phoenix application. Just include the editor component with initial content. The editor will be rendered with a default toolbar and basic features defined in `:default` preset.
+Create a basic editor with default toolbar and features. Perfect for simple content editing without server synchronization.
 
 ```heex
 <%!-- CDN only: Load assets in <head> --%>
 <.cke_cloud_assets />
 
-<%!-- Editor --%>
+<%!-- Render editor with initial content --%>
 <.ckeditor
   type="classic"
   value="<p>Initial content</p>"
@@ -153,11 +192,17 @@ The lightest way to use CKEditor 5 in your Phoenix application. Just include the
 
 ### With LiveView Sync 🔄
 
-Editor with LiveView support for real-time content updates. In other words, the editor will send changes to the server when the content is modified. Use the `change_event` attribute to handle changes in your LiveView.
+Enable real-time synchronization between the editor and your LiveView. Content changes are automatically sent to the server with configurable debouncing for performance optimization.
 
 ```heex
-<.ckeditor value={@content} change_event />
+<.ckeditor
+  value={@content}
+  change_event
+  debounce_ms={500}
+/>
 ```
+
+Handle content changes in your LiveView:
 
 ```elixir
 def handle_event("ckeditor5:change", %{"data" => data}, socket) do
@@ -165,31 +210,33 @@ def handle_event("ckeditor5:change", %{"data" => data}, socket) do
 end
 ```
 
-The events are send automatically when the content is modified. It's possible to change debounce time for the events by setting `debounce_ms` attribute on the editor component:
+**Event details:**
 
-```heex
-<.ckeditor value={@content} change_event debounce_ms={500} />
-```
-
-It may improve performance by reducing the number of events sent to the server, especially for large content or frequent changes.
+- Events are sent automatically when content changes
+- `debounce_ms` controls the delay between changes and events (default: 300ms)
+- Higher debounce values improve performance for large content or frequent changes
 
 ## Editor Types 🖊️
 
-CKEditor 5 supports multiple editor types to fit different use cases. This section shows how to use classic, inline, multiroot, and decoupled editors.
+CKEditor 5 Phoenix supports four distinct editor types, each designed for specific use cases. Choose the one that best fits your application's layout and functionality requirements.
 
 ### Classic editor 📝
 
-The classic editor is the most common type of editor. It provides a toolbar with various formatting options like bold, italic, underline, and link.
+Traditional WYSIWYG editor with a fixed toolbar above the editing area. Best for standard content editing scenarios like blog posts, articles, or forms.
 
-It looks like this:
+**Features:**
+
+- Fixed toolbar with all editing tools
+- Familiar interface similar to desktop word processors
+- Works well in forms and modal dialogs
 
 ![CKEditor 5 Classic Editor in Elixir Phoenix application with Menubar](docs/classic-editor-with-toolbar.png)
 
 ```heex
-<%!-- In <head> --%>
+<%!-- CDN assets in <head> --%>
 <.cke_cloud_assets />
 
-<%!-- In <body> --%>'
+<%!-- Classic editor in <body> --%>
 <.ckeditor
   type="classic"
   value="<p>Initial content here</p>"
@@ -199,22 +246,27 @@ It looks like this:
 
 ### Multiroot editor 🌳
 
-The multiroot editor allows you to create an editor with multiple editable areas. It's useful when you want to create a CMS with multiple editable areas on a single page.
+Advanced editor supporting multiple independent editable areas within a single editor instance. Perfect for complex layouts like page builders, newsletters, or multi-section content management.
 
-- `ckeditor` component is used to create the editor container. It'll initialize the editor without any editable nor toolbar. The full list of attributes can be found in the [source](lib/components/editor/editor.ex).
-- `cke_editable` component is used to create editable areas within the editor. Each editable area can have its own name and initial value. The full list of attributes can be found in the [source](lib/components/editable.ex).
+**Features:**
+
+- Multiple editable areas with shared toolbar
+- Each area can have different content
+- Ideal for CMS and page builder applications
 
 ![CKEditor 5 Multiroot Editor in Elixir Phoenix application](docs/multiroot-editor.png)
 
 ```heex
-<%!-- In <head> --%>
+<%!-- CDN assets in <head> --%>
 <.cke_cloud_assets />
 
-<%!-- In <body> --%>
+<%!-- Editor container --%>
 <.ckeditor type="multiroot" />
 
+<%!-- Shared toolbar --%>
 <.cke_ui_part name="toolbar" />
 
+<%!-- Multiple editable areas --%>
 <div class="flex flex-col gap-4">
   <.cke_editable
     root="header"
@@ -236,55 +288,76 @@ The multiroot editor allows you to create an editor with multiple editable areas
 
 ### Inline editor 📝
 
-Inline editor allows you to create an editor that can be placed inside any element. Keep in mind that inline editor does not work with `textarea` elements so it might be not suitable for all use cases.
+Minimalist editor that appears directly within content when clicked. Ideal for in-place editing scenarios where the editing interface should be invisible until needed.
+
+**Features:**
+
+- No visible toolbar until content is focused
+- Seamless integration with existing layouts
+- Great for editing headings, captions, or short content
 
 ![CKEditor 5 Inline Editor in Elixir Phoenix application](docs/inline-editor.png)
 
-If you want to use an inline editor, you can pass the `type` keyword argument with the value `:inline`:
-
 ```heex
-<%!-- In <head> --%>
+<%!-- CDN assets in <head> --%>
 <.cke_cloud_assets />
 
-<%!-- In <body> --%>
+<%!-- Inline editor --%>
 <.ckeditor
   type="inline"
-  value="<p>Initial content here</p>"
+  value="<p>Click here to edit this content</p>"
   editable_height="300px"
 />
 ```
 
+**Note:** Inline editors don't work with `<textarea>` elements and may not be suitable for traditional form scenarios.
+
 ### Decoupled editor 🌐
 
-The decoupled editor is a more advanced type of editor that allows you to separate the toolbar from the editable area. This is useful when you want to create a custom layout or use the editor in a more complex UI.
+Flexible editor where toolbar and editing area are completely separated. Provides maximum layout control for custom interfaces and complex applications.
+
+**Features:**
+
+- Complete separation of toolbar and content area
+- Custom positioning and styling of UI elements
+- Full control over editor layout and appearance
 
 ![CKEditor 5 Decoupled Editor in Elixir Phoenix application](docs/decoupled-editor.png)
 
 ```heex
-<%!-- In <head> --%>
+<%!-- CDN assets in <head> --%>
 <.cke_cloud_assets />
 
-<%!-- In <body> --%>
-<.ckeditor type="decoupled" >
+<%!-- Decoupled editor container --%>
+<.ckeditor type="decoupled">
+  <div class="flex flex-col gap-4">
+    <%!-- Toolbar can be placed anywhere --%>
+    <.cke_ui_part name="toolbar" />
 
-<div class="flex flex-col gap-4">
-  <.cke_ui_part name="toolbar" />
-  <.cke_editable
-    root="main"
-    value="<p>Initial content here</p>"
-    class="border border-gray-300"
-    editable_height="300px"
-  />
-</div>
+    <%!-- Editable area with custom styling --%>
+    <.cke_editable
+      root="main"
+      value="<p>Initial content here</p>"
+      class="border border-gray-300 p-4 rounded"
+      editable_height="300px"
+    />
+  </div>
+</.ckeditor>
 ```
 
 ## Forms Integration 🧾
 
-Integrate CKEditor 5 with Phoenix forms and LiveView. Learn how to use the editor in forms and handle events for real-time updates.
+Seamlessly integrate CKEditor 5 with Phoenix forms and LiveView for robust content management. Learn how to handle form submissions and real-time updates.
 
 ### Phoenix Form Helper 🧑‍💻
 
-The `ckeditor` creates hidden input field that is used to store value of the editor within the form. The `name` of such input is built from `field` attribute of the `ckeditor` component. The value of the input is set to the content of the editor.
+The editor automatically creates hidden input fields for form integration. Content is synchronized with form fields using the `field` attribute, making it compatible with standard Phoenix form helpers.
+
+**How it works:**
+
+- Hidden input field is created automatically
+- Field name is derived from the `field` attribute
+- Content is synchronized on form submission
 
 ```heex
 <.form for={@form} phx-submit="save">
@@ -300,6 +373,8 @@ The `ckeditor` creates hidden input field that is used to store value of the edi
 
 ### LiveView Handler ⚡
 
+Complete LiveView integration with event handling for both real-time updates and form processing.
+
 ```elixir
 defmodule MyApp.PageLive do
   use MyAppWeb, :live_view
@@ -310,13 +385,27 @@ defmodule MyApp.PageLive do
     {:ok, assign(socket, form: form)}
   end
 
+  # Handle real-time content changes
+  def handle_event("ckeditor5:change", %{"data" => data}, socket) do
+    # Update content in real-time
+    updated_params = Map.put(socket.assigns.form.params, "content", data["main"])
+    {:noreply, assign(socket, form: to_form(updated_params, as: :form))}
+  end
+
+  # Handle form validation
   def handle_event("validate", %{"form" => params}, socket) do
     {:noreply, assign(socket, form: to_form(params, as: :form))}
   end
 
+  # Handle form submission
   def handle_event("save", %{"form" => params}, socket) do
-    # Process form data
-    {:noreply, socket}
+    # Process and save form data
+    case save_content(params) do
+      {:ok, _} ->
+        {:noreply, put_flash(socket, :info, "Content saved successfully!")}
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, "Failed to save content")}
+    end
   end
 end
 ```

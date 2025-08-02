@@ -87,7 +87,6 @@ Bundle CKEditor 5 with your application for full control over assets, custom bui
 4. **Import styles** in your `app.css`:
 
    ```css
-   /* assets/css/app.css */
    @import "ckeditor5/ckeditor5.css";
    ```
 

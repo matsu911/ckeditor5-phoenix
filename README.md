@@ -548,10 +548,11 @@ config :ckeditor5_phoenix,
 To register a custom plugin, use the `registerCustomEditorPlugin` function. This function takes the plugin name and the plugin _reader_ that returns a class extending `Plugin`.
 
 ```javascript
-import { CustomEditorPluginsRegistry } from 'ckeditor5_phoenix';
+import { CustomEditorPluginsRegistry as Registry } from 'ckeditor5_phoenix';
 
-const unregisterPlugin = CustomEditorPluginsRegistry.the.register('MyCustomPlugin', async () => {
-  // It's recommended to use lazy import to avoid bundling ckeditor code in your application bundle.
+const unregister = Registry.the.register( 'MyCustomPlugin', async () => {
+  // It's recommended to use lazy import to
+  // avoid bundling ckeditor code in your application bundle.
   const { Plugin } = await import('ckeditor5');
 
   return class extends Plugin {
@@ -584,11 +585,11 @@ config :ckeditor5_phoenix,
 It must be called before the editor is initialized. You can unregister the plugin later by calling the returned function:
 
 ```javascript
-unregisterPlugin();
+unregister();
 // or CustomEditorPluginsRegistry.the.unregister('MyCustomPlugin');
 ```
 
-If you want to de-register all registered plugins, you can use the `unregisterAllCustomEditorPlugins` function:
+If you want to de-register all registered plugins, you can use the `unregisterAll` method:
 
 ```javascript
 import { CustomEditorPluginsRegistry } from 'ckeditor5_phoenix';

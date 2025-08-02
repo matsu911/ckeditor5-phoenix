@@ -216,6 +216,14 @@ function getParentFormElement(element: HTMLElement) {
  * @returns The root element(s) for the editor.
  */
 function getInitialRootsContentElements(editorId: EditorId, type: EditorType) {
+  // While the `decoupled` editor is a single editing-like editor, it has a different structure
+  // and requires special handling to get the main editable.
+  if (type === 'decoupled') {
+    const { content } = queryDecoupledMainEditableOrThrow(editorId);
+
+    return content;
+  }
+
   if (isSingleEditingLikeEditor(type)) {
     return document.getElementById(`${editorId}_editor`)!;
   }
@@ -235,12 +243,14 @@ function getInitialRootsContentElements(editorId: EditorId, type: EditorType) {
  * @returns The initial values for the editor's roots.
  */
 function getInitialRootsValues(editorId: EditorId, type: EditorType) {
-  // If the editor is decoupled, the initial value might be specified in the `main` editable.
+  // While the `decoupled` editor is a single editing-like editor, it has a different structure
+  // and requires special handling to get the main editable.
   if (type === 'decoupled') {
-    const mainEditableValue = queryAllEditorEditables(editorId)['main']?.initialValue;
+    const { initialValue } = queryDecoupledMainEditableOrThrow(editorId);
 
-    if (mainEditableValue) {
-      return mainEditableValue;
+    // If initial value is not set, then pick it from the editor element.
+    if (initialValue) {
+      return initialValue;
     }
   }
 
@@ -254,6 +264,21 @@ function getInitialRootsValues(editorId: EditorId, type: EditorType) {
   const editables = queryAllEditorEditables(editorId);
 
   return mapObjectValues(editables, ({ initialValue }) => initialValue);
+}
+
+/**
+ * Queries the main editable for a decoupled editor and throws an error if not found.
+ *
+ * @param editorId The ID of the editor to query.
+ */
+function queryDecoupledMainEditableOrThrow(editorId: EditorId) {
+  const mainEditable = queryAllEditorEditables(editorId)['main'];
+
+  if (!mainEditable) {
+    throw new Error(`No "main" editable found for editor with ID "${editorId}".`);
+  }
+
+  return mainEditable;
 }
 
 /**

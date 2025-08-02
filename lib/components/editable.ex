@@ -11,6 +11,9 @@ defmodule CKEditor5.Components.Editable do
   alias CKEditor5.Components.HiddenInput
   alias CKEditor5.Helpers
 
+  # Default root name for decoupled editors, while optional in multiroot editors.
+  @default_root "main"
+
   attr :id, :string,
     doc: """
     The ID of the component. If not provided, it will be generated from the
@@ -18,7 +21,8 @@ defmodule CKEditor5.Components.Editable do
     """
 
   attr :root, :string,
-    required: true,
+    required: false,
+    default: @default_root,
     doc: """
     The name of the root that is associated with this editable area. Editor may contain multiple
     roots which correspond to separate documents (or sections) of the editor. This name will be used

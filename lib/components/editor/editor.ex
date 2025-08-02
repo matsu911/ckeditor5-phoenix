@@ -64,6 +64,10 @@ defmodule CKEditor5.Components.Editor do
       "The content language code for the editor (e.g. 'en', 'pl', 'de', etc.). This is used to set the `lang` attribute on the editable area. " <>
         "If not provided, it will default to the same value as `language`."
 
+  slot :inner_block,
+    required: false,
+    doc: "Optional content to render inside the editor container."
+
   form_attrs()
 
   def render(assigns) do
@@ -93,6 +97,7 @@ defmodule CKEditor5.Components.Editor do
           required={@required}
         />
       <% end %>
+      <%= render_slot(@inner_block) %>
     </div>
     """
   end

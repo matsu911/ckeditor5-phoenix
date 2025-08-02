@@ -107,7 +107,7 @@ export function makeHook(constructor: new () => ClassHook): RequiredBy<Hook<any>
       instance.pushEventTo = (selector, event, payload, callback) => this.pushEventTo?.(selector, event, payload, callback);
       instance.handleEvent = (event, callback) => this.handleEvent?.(event, callback);
 
-      instance.mounted?.();
+      return instance.mounted?.();
     },
 
     /**

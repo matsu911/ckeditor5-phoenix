@@ -2,6 +2,7 @@ import { DecoupledEditor } from 'ckeditor5';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
+  createEditableHtmlElement,
   createEditorHtmlElement,
   createEditorPreset,
   createUIPartHtmlElement,
@@ -141,6 +142,8 @@ async function appendDecoupledEditor(id: EditorId = 'test-editor') {
   });
 
   document.body.appendChild(hookElement);
+  document.body.appendChild(createEditableHtmlElement());
+
   EditorHook.mounted.call({ el: hookElement });
 
   const editor = await waitForTestEditor<DecoupledEditor>(id);

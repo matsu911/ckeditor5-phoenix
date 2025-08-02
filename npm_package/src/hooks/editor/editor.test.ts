@@ -1,4 +1,9 @@
-import { ClassicEditor, DecoupledEditor, InlineEditor, MultiRootEditor } from 'ckeditor5';
+import {
+  ClassicEditor,
+  DecoupledEditor,
+  InlineEditor,
+  MultiRootEditor,
+} from 'ckeditor5';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
@@ -31,7 +36,9 @@ describe('editor hook', () => {
       document.body.appendChild(hookElement);
       EditorHook.mounted.call({ el: hookElement });
 
-      expect(await EditorsRegistry.the.waitForEditor('magic-editor')).toBeInstanceOf(ClassicEditor);
+      expect(
+        await EditorsRegistry.the.waitForEditor('magic-editor'),
+      ).toBeInstanceOf(ClassicEditor);
     });
 
     describe('classic', () => {
@@ -79,7 +86,7 @@ describe('editor hook', () => {
     });
 
     describe('decoupled', () => {
-      it('should be possible to create decoupled editor with editable', async () => {
+      it('should be possible to create decoupled editor with editable (without initial value)', async () => {
         const hookElement = createEditorHtmlElement({
           preset: createEditorPreset('decoupled'),
         });
@@ -97,6 +104,41 @@ describe('editor hook', () => {
         expect(isEditorShown()).toBe(true);
       });
 
+      it('should be possible to create decoupled editor with editable (with initial value)', async () => {
+        const hookElement = createEditorHtmlElement({
+          preset: createEditorPreset('decoupled'),
+        });
+
+        document.body.appendChild(hookElement);
+        document.body.appendChild(
+          createEditableHtmlElement({
+            initialValue: '<p>Editable initial value</p>',
+          }),
+        );
+
+        EditorHook.mounted.call({ el: hookElement });
+
+        const editor = await waitForTestEditor();
+
+        expect(editor).toBeInstanceOf(DecoupledEditor);
+        expect(editor.getData()).toBe('<p>Editable initial value</p>');
+
+        expect(isEditorShown()).toBe(true);
+      });
+
+      it('should raise exception if `main` editable is not present', async () => {
+        const hookElement = createEditorHtmlElement({
+          preset: createEditorPreset('decoupled'),
+          initialValue: null,
+        });
+
+        document.body.appendChild(hookElement);
+
+        await expect(() =>
+          EditorHook.mounted.call({ el: hookElement }),
+        ).rejects.toThrow(/No "main" editable found for editor with ID/);
+      });
+
       it('if the initial value is specified on the editable, it should ignore initial value set on the editor', async () => {
         const hookElement = createEditorHtmlElement({
           preset: createEditorPreset('decoupled'),
@@ -104,9 +146,11 @@ describe('editor hook', () => {
         });
 
         document.body.appendChild(hookElement);
-        document.body.appendChild(createEditableHtmlElement({
-          initialValue: '<p>Editable value</p>',
-        }));
+        document.body.appendChild(
+          createEditableHtmlElement({
+            initialValue: '<p>Editable value</p>',
+          }),
+        );
 
         EditorHook.mounted.call({ el: hookElement });
 
@@ -193,15 +237,19 @@ describe('editor hook', () => {
         });
 
         document.body.appendChild(hookElement);
-        document.body.appendChild(createEditableHtmlElement({
-          name: 'main',
-          initialValue: '<p>Main root</p>',
-        }));
+        document.body.appendChild(
+          createEditableHtmlElement({
+            name: 'main',
+            initialValue: '<p>Main root</p>',
+          }),
+        );
 
-        document.body.appendChild(createEditableHtmlElement({
-          name: 'second',
-          initialValue: '<p>Second root</p>',
-        }));
+        document.body.appendChild(
+          createEditableHtmlElement({
+            name: 'second',
+            initialValue: '<p>Second root</p>',
+          }),
+        );
 
         EditorHook.mounted.call({ el: hookElement });
 
@@ -209,7 +257,9 @@ describe('editor hook', () => {
 
         expect(editor).toBeInstanceOf(MultiRootEditor);
         expect(editor.getData({ rootName: 'main' })).toBe('<p>Main root</p>');
-        expect(editor.getData({ rootName: 'second' })).toBe('<p>Second root</p>');
+        expect(editor.getData({ rootName: 'second' })).toBe(
+          '<p>Second root</p>',
+        );
       });
     });
   });

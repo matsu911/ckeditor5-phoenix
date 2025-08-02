@@ -35,6 +35,14 @@ defmodule CKEditor5.Components.EditableTest do
     refute html =~ ~s(<input)
   end
 
+  test "renders editable with default \"main\" root for decoupled editor when not specified" do
+    html = render_component(&Editable.render/1, editor_id: "editor-1")
+
+    assert html =~ ~s(phx-hook="CKEditable")
+    assert html =~ ~s(data-cke-editable-root-name="main")
+    assert html =~ ~s(data-cke-editor-id="editor-1")
+  end
+
   describe "form support" do
     test "renders editable with form field attributes" do
       form = %HTML.Form{

@@ -2,6 +2,7 @@ defmodule CKEditor5.Components.EditorTest do
   use ExUnit.Case, async: true
 
   import Phoenix.LiveViewTest
+  import Phoenix.Component
 
   alias CKEditor5.Components.Editor
   alias CKEditor5.Errors.Error
@@ -303,6 +304,30 @@ defmodule CKEditor5.Components.EditorTest do
 
       assert html =~ ~s(cke-language="zh-cn")
       assert html =~ ~s(cke-content-language="zh-cn")
+    end
+  end
+
+  describe "inner block rendering" do
+    test "renders inner block content inside editor container" do
+      html =
+        render_component(fn assigns ->
+          ~H"""
+          <Editor.render id="editor_inner" name="content">
+            <div class="custom-toolbar">Custom content</div>
+            <span>Additional element</span>
+          </Editor.render>
+          """
+        end)
+
+      assert html =~ ~s(<div class="custom-toolbar">Custom content</div>)
+      assert html =~ ~s(<span>Additional element</span>)
+    end
+
+    test "renders without inner block when not provided" do
+      html = render_component(&Editor.render/1, id: "editor_no_inner", name: "content")
+
+      assert html =~ ~s(id="editor_no_inner")
+      assert html =~ ~s(<div id="editor_no_inner_editor"></div>)
     end
   end
 end

@@ -314,7 +314,6 @@ Flexible editor where toolbar and editing area are completely separated. Provide
 
     <%!-- Editable area with custom styling --%>
     <.cke_editable
-      root="main"
       value="<p>Initial content here</p>"
       class="border border-gray-300 p-4 rounded"
       editable_height="300px"

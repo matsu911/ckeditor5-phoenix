@@ -128,7 +128,7 @@ defmodule CKEditor5.Presets do
 
   Returns `{:ok, preset}` on success, or `{:error, reason}` on failure.
   """
-  def get(preset_name) do
+  defmemo get(preset_name) do
     all_presets = all_with_default()
 
     with {:ok, preset_config} <- Map.fetch(all_presets, preset_name),

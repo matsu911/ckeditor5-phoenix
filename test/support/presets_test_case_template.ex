@@ -1,4 +1,4 @@
-defmodule CKEditor5.Test.PresetAssertionsCaseTemplate do
+defmodule CKEditor5.Test.PresetsTestCaseTemplate do
   @moduledoc """
   A test case for asserting CKEditor5 presets.
   This module provides a setup for testing CKEditor5 presets with a focus on cloud license keys
@@ -20,6 +20,11 @@ defmodule CKEditor5.Test.PresetAssertionsCaseTemplate do
 
   using do
     quote do
+      setup do
+        Memoize.invalidate()
+        :ok
+      end
+
       def default_preset(key, opts \\ []) do
         Map.merge(
           %{

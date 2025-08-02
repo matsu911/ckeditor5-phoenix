@@ -40,6 +40,12 @@ config :ckeditor5_phoenix, Playground.Endpoint,
 config :ckeditor5_phoenix,
   presets: %{
     custom: %{
+      custom_translations: %{
+        en: %{
+          Bold: "Custom Bold",
+          Italic: "Custom Italic"
+        }
+      },
       config: %{
         toolbar: [
           :undo,

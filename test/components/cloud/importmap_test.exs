@@ -2,7 +2,7 @@ defmodule CKEditor5.Components.Cloud.ImportmapTest do
   alias CKEditor5.Components.Cloud.Importmap
   alias CKEditor5.Test.PresetsHelper
 
-  use CKEditor5.Test.PresetAssertionsCaseTemplate, async: true
+  use CKEditor5.Test.PresetsTestCaseTemplate, async: true
 
   import Phoenix.LiveViewTest
 

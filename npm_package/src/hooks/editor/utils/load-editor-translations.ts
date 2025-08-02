@@ -1,4 +1,30 @@
 /**
+ * Loads all required translations for the editor based on the language configuration.
+ *
+ * @param language - The language configuration object containing UI and content language codes.
+ * @param language.ui - The UI language code.
+ * @param language.content - The content language code.
+ * @param hasPremium - Whether premium features are enabled and premium translations should be loaded.
+ * @returns A promise that resolves to an array of loaded translation objects.
+ */
+export async function loadAllEditorTranslations(
+  language: { ui: string; content: string; },
+  hasPremium: boolean,
+) {
+  const translations = [language.ui, language.content];
+  const loadedTranslations = await Promise.all(
+    [
+      loadEditorPkgTranslations('ckeditor5', translations),
+      /* v8 ignore next */
+      hasPremium && loadEditorPkgTranslations('ckeditor5-premium-features', translations),
+    ].filter(pkg => !!pkg),
+  )
+    .then(translations => translations.flat());
+
+  return loadedTranslations;
+}
+
+/**
  * Loads the editor translations for the given languages.
  *
  * Make sure this function is properly compiled and bundled in self hosted environments!
@@ -7,7 +33,7 @@
  * @param translations - The list of language codes to load translations for.
  * @returns A promise that resolves to an array of loaded translation packs.
  */
-export async function loadEditorTranslations(
+async function loadEditorPkgTranslations(
   pkg: EditorPkgName,
   translations: string[],
 ) {

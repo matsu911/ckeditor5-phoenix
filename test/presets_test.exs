@@ -1,5 +1,5 @@
 defmodule CKEditor5.PresetsTest do
-  use ExUnit.Case, async: true
+  use CKEditor5.Test.PresetsTestCaseTemplate, async: true
 
   alias CKEditor5.{Errors, Preset, Presets}
   alias CKEditor5.Test.{LicenseGenerator, PresetsHelper}

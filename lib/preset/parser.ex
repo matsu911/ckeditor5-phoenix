@@ -7,7 +7,7 @@ defmodule CKEditor5.Preset.Parser do
   import Norm
 
   alias CKEditor5.{Cloud, Errors, License, Preset}
-  alias CKEditor5.Preset.{CloudCompatibilityChecker, EditorType}
+  alias CKEditor5.Preset.{CloudCompatibilityChecker, CustomTranslations, EditorType}
 
   @doc """
   Defines the schema for a preset configuration map.
@@ -18,7 +18,8 @@ defmodule CKEditor5.Preset.Parser do
         type: EditorType.s(),
         cloud: spec(is_map() or is_nil()),
         license_key: spec(is_binary()),
-        config: spec(is_map())
+        config: spec(is_map()),
+        custom_translations: spec(is_map() or is_nil())
       })
 
     selection(schema, [:config])
@@ -31,6 +32,7 @@ defmodule CKEditor5.Preset.Parser do
   def parse(preset_map) when is_map(preset_map) do
     with {:ok, _} <- conform(preset_map, s()),
          {:ok, parsed_map} <- parse_cloud(preset_map),
+         {:ok, parsed_map} <- parse_custom_translations(parsed_map),
          {:ok, parsed_map} <- parse_license_key(parsed_map),
          {:ok, preset} <- build_and_validate(parsed_map) do
       {:ok, preset}
@@ -80,6 +82,17 @@ defmodule CKEditor5.Preset.Parser do
     end
   end
 
+  # Parses the custom translations from a map into a CustomTranslations struct.
+  defp parse_custom_translations(preset_map) do
+    case CustomTranslations.parse(preset_map[:custom_translations]) do
+      {:ok, custom_translations} ->
+        {:ok, Map.put(preset_map, :custom_translations, custom_translations)}
+
+      {:error, error} ->
+        {:error, error}
+    end
+  end
+
   # Builds a Preset struct from a parsed map and validates it with license constraints.
   defp build_and_validate(parsed_map) do
     parsed_map
@@ -94,7 +107,8 @@ defmodule CKEditor5.Preset.Parser do
       type: parsed_map[:type] || :classic,
       config: parsed_map[:config] || %{},
       license: parsed_map[:license],
-      cloud: parsed_map[:cloud]
+      cloud: parsed_map[:cloud],
+      custom_translations: parsed_map[:custom_translations]
     }
   end
 end

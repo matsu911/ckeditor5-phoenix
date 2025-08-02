@@ -11,7 +11,19 @@ defmodule CKEditor5.Components.EditorTest do
 
   setup do
     original =
-      PresetsHelper.put_presets_env(%{"mock" => %{type: :inline, config: %{toolbar: ["bold"]}}})
+      PresetsHelper.put_presets_env(%{
+        "mock" => %{
+          type: :inline,
+          custom_translations: %{
+            en: %{
+              bold: "Custom translation"
+            }
+          },
+          config: %{
+            toolbar: ["bold"]
+          }
+        }
+      })
 
     on_exit(fn -> PresetsHelper.restore_presets_env(original) end)
     :ok
@@ -52,6 +64,7 @@ defmodule CKEditor5.Components.EditorTest do
         )
 
       assert html =~ ~s(type&quot;:&quot;inline&quot;)
+      assert html =~ ~s(Custom translation)
     end
 
     test "overrides editor type to classic when type is set to :classic" do

@@ -88,6 +88,11 @@ defmodule CKEditor5.Preset.ParserTest do
                cloud: %Cloud{}
              } = preset
     end
+
+    test "returns an error if custom translations are invalid" do
+      preset_map = %{custom_translations: %{en: nil}, config: %{}}
+      assert {:error, [_ | _]} = Parser.parse(preset_map)
+    end
   end
 
   describe "parse!/1" do

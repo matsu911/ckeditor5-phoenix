@@ -4,6 +4,7 @@ import type { EditorId, EditorType } from './typings';
 
 import {
   debounce,
+  isEmptyObject,
   mapObjectValues,
   parseIntIfNotNull,
 } from '../../shared';
@@ -11,9 +12,10 @@ import { ClassHook, makeHook } from '../../shared/hook';
 import { EditorsRegistry } from './editors-registry';
 import {
   isSingleEditingLikeEditor,
+  loadAllEditorTranslations,
   loadEditorConstructor,
   loadEditorPlugins,
-  loadEditorTranslations,
+  normalizeCustomTranslations,
   queryAllEditorEditables,
   readPresetOrThrow,
   setEditorEditableHeight,
@@ -88,23 +90,20 @@ class EditorHookImpl extends ClassHook {
    */
   private async createEditor() {
     const { preset, editorId, editableHeight, changeEvent, saveDebounceMs, language } = this.attrs;
-    const { type, license, config: { plugins, ...config } } = preset;
+    const { customTranslations, type, license, config: { plugins, ...config } } = preset;
 
     const Constructor = await loadEditorConstructor(type);
     const rootEditables = getInitialRootsContentElements(editorId, type);
 
     const { loadedPlugins, hasPremium } = await loadEditorPlugins(plugins);
 
-    // Load the translations for the editor.
-    const translations = [language.ui, language.content];
-    const loadedTranslations = await Promise.all(
-      [
-        loadEditorTranslations('ckeditor5', translations),
-        /* v8 ignore next */
-        hasPremium && loadEditorTranslations('ckeditor5-premium-features', translations),
-      ].filter(pkg => !!pkg),
-    )
-      .then(translations => translations.flat());
+    // Mix custom translations with loaded translations.
+    const loadedTranslations = await loadAllEditorTranslations(language, hasPremium);
+    const mixedTranslations = [
+      ...loadedTranslations,
+      normalizeCustomTranslations(customTranslations?.dictionary || {}),
+    ]
+      .filter(translations => !isEmptyObject(translations));
 
     const editor = await Constructor.create(
       rootEditables as any,
@@ -114,8 +113,8 @@ class EditorHookImpl extends ClassHook {
         licenseKey: license.key,
         plugins: loadedPlugins,
         language,
-        ...loadedTranslations.length && {
-          translations: loadedTranslations,
+        ...mixedTranslations.length && {
+          translations: mixedTranslations,
         },
       },
     );

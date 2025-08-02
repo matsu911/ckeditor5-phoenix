@@ -43,6 +43,7 @@ CKEditor 5 integration library for Phoenix (Elixir) applications. Provides web c
   - [Localization 🌍](#localization-)
     - [CDN Translation Loading 🌐](#cdn-translation-loading-)
     - [Global Translation Config 🛠️](#global-translation-config-️)
+    - [Custom translations 🌐](#custom-translations-)
   - [Custom plugins 🧩](#custom-plugins-)
   - [Watch registered editors 👀](#watch-registered-editors-)
     - [Wait for particular editor to be registered ⏳](#wait-for-particular-editor-to-be-registered-)
@@ -491,6 +492,29 @@ config :ckeditor5_phoenix,
 ```
 
 **Note:** For self-hosted setups, translations are handled by your bundler automatically.
+
+### Custom translations 🌐
+
+You can also provide custom translations for the editor. This is useful if you want to override existing translations or add new ones. Custom translations can be provided in the preset configuration.
+
+```elixir
+# config/config.exs
+config :ckeditor5_phoenix,
+  presets: %{
+    default: %{
+      custom_translations: %{
+        en: %{
+          Bold: "Custom Bold",
+          Italic: "Custom Italic"
+        },
+        pl: %{
+          Bold: "Pogrubiony",
+          Italic: "Kursywa"
+        }
+      }
+    }
+  }
+```
 
 ## Custom plugins 🧩
 

@@ -69,4 +69,21 @@ export type EditorPreset = {
    * This can be used to set a specific height for the editor instance.
    */
   editableHeight?: number;
+
+  /**
+   * Optional custom translations for the editor.
+   * This allows for localization of the editor interface.
+   */
+  customTranslations?: {
+    dictionary: EditorCustomTranslationsDictionary;
+  };
+};
+
+/**
+ * Represents custom translations for the editor.
+ */
+export type EditorCustomTranslationsDictionary = {
+  [language: string]: {
+    [key: string]: string | ReadonlyArray<string>;
+  };
 };

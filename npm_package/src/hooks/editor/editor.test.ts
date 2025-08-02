@@ -262,6 +262,28 @@ describe('editor hook', () => {
         );
       });
     });
+
+    describe('custom translations', () => {
+      it('should pass custom translations to the editor', async () => {
+        const hookElement = createEditorHtmlElement({
+          preset: createEditorPreset('classic', {}, {
+            pl: { Bold: 'Custom Pogrubienie' },
+          }),
+          language: {
+            ui: 'pl',
+            content: 'pl',
+          },
+        });
+
+        document.body.appendChild(hookElement);
+        EditorHook.mounted.call({ el: hookElement });
+
+        const editor = await waitForTestEditor();
+        const translation = editor.locale.t('Bold');
+
+        expect(translation).toBe('Custom Pogrubienie');
+      });
+    });
   });
 
   describe('destroy', () => {

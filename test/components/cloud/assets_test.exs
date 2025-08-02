@@ -1,8 +1,8 @@
 defmodule CKEditor5.Components.Cloud.AssetsTest do
   alias CKEditor5.Components.Cloud.Assets
-  alias CKEditor5.Test.{PresetAssertionsCaseTemplate, PresetsHelper}
+  alias CKEditor5.Test.{PresetsHelper, PresetsTestCaseTemplate}
 
-  use PresetAssertionsCaseTemplate, async: true
+  use PresetsTestCaseTemplate, async: true
 
   import Phoenix.LiveViewTest
 

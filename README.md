@@ -68,7 +68,7 @@ Bundle CKEditor 5 with your application for full control over assets, custom bui
    ```elixir
    def deps do
      [
-       {:ckeditor5_phoenix, "~> 1.5.0"}
+       {:ckeditor5_phoenix, "~> 1.6.0"}
      ]
    end
    ```
@@ -112,7 +112,7 @@ Load CKEditor 5 directly from CKSource's CDN - no build configuration required. 
    ```elixir
    def deps do
      [
-       {:ckeditor5_phoenix, "~> 1.5.0"}
+       {:ckeditor5_phoenix, "~> 1.6.0"}
      ]
    end
    ```

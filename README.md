@@ -173,11 +173,13 @@ Create a basic editor with default toolbar and features. Perfect for simple cont
 Enable real-time synchronization between the editor and your LiveView. Content changes are automatically sent to the server with configurable debouncing for performance optimization.
 
 ```heex
-<.ckeditor
+<.live_component
+  id="editor"
+  module={CKEditor5.Components.Editor}
   value={@content}
+  debounce_ms={500}  # Optional debounce for performance
   change_event
-  debounce_ms={500}
-/>
+>
 ```
 
 Handle content changes in your LiveView:

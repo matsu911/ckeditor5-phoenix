@@ -276,6 +276,28 @@ defmodule CKEditor5.Components.EditorTest do
 
       refute html =~ ~s(cke-change-event)
     end
+
+    test "pushes blur event when blur_event is true" do
+      html =
+        render_component(&Editor.render/1,
+          id: "editor_blur",
+          name: "content_blur",
+          blur_event: true
+        )
+
+      assert html =~ ~s(cke-blur-event)
+    end
+
+    test "pushes focus event when focus_event is true" do
+      html =
+        render_component(&Editor.render/1,
+          id: "editor_focus",
+          name: "content_focus",
+          focus_event: true
+        )
+
+      assert html =~ ~s(cke-focus-event)
+    end
   end
 
   describe "save_debounce_ms attribute" do

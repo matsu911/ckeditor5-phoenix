@@ -14,20 +14,12 @@ export function createEditorHtmlElement(
     editableHeight = null,
     withInput = false,
     changeEvent = false,
+    focusEvent = false,
+    blurEvent = false,
     saveDebounceMs = undefined,
     language,
     hookAttrs,
-  }: {
-    id?: string;
-    preset?: EditorPreset;
-    initialValue?: string | null;
-    editableHeight?: number | null;
-    withInput?: boolean;
-    changeEvent?: boolean;
-    saveDebounceMs?: number;
-    hookAttrs?: Record<string, string>;
-    language?: { ui?: string; content?: string; };
-  } = {},
+  }: EditorCreatorAttrs = {},
 ) {
   return html.div(
     {
@@ -35,9 +27,15 @@ export function createEditorHtmlElement(
       'phx-hook': 'CKEditor5',
       'phx-update': 'ignore',
       'cke-preset': JSON.stringify(preset),
-      ...(changeEvent && {
+      ...focusEvent && {
+        'cke-focus-event': '',
+      },
+      ...blurEvent && {
+        'cke-blur-event': '',
+      },
+      ...changeEvent && {
         'cke-change-event': '',
-      }),
+      },
       ...initialValue && {
         'cke-initial-value': initialValue,
       },
@@ -63,3 +61,20 @@ export function createEditorHtmlElement(
     }),
   );
 }
+
+/**
+ * Attributes for creating an editor HTML element.
+ */
+type EditorCreatorAttrs = {
+  id?: string;
+  preset?: EditorPreset;
+  initialValue?: string | null;
+  editableHeight?: number | null;
+  withInput?: boolean;
+  focusEvent?: boolean;
+  blurEvent?: boolean;
+  changeEvent?: boolean;
+  saveDebounceMs?: number;
+  hookAttrs?: Record<string, string>;
+  language?: { ui?: string; content?: string; };
+};

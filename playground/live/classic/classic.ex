@@ -12,7 +12,8 @@ defmodule Playground.Live.Classic do
   end
 
   @impl true
-  def handle_event("ckeditor5:change", %{"data" => data}, socket) do
+  def handle_event(event, %{"data" => data}, socket)
+      when event in ["ckeditor5:change", "ckeditor5:focus", "ckeditor5:blur"] do
     {:noreply, assign(socket, editor_value: data["main"])}
   end
 end

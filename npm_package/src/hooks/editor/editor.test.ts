@@ -540,6 +540,91 @@ describe('editor hook', () => {
 
       expect(editor.getData()).toBe(dataFromServer);
     });
+
+    it('should push focus event to the server when editor gains focus', async () => {
+      const hookElement = createEditorHtmlElement({
+        focusEvent: true,
+      });
+
+      const pushSpy = vi.fn();
+
+      document.body.appendChild(hookElement);
+      EditorHook.mounted.call({
+        el: hookElement,
+        pushEvent: pushSpy,
+      });
+
+      const editor = await waitForTestEditor();
+      const { focusTracker } = editor.ui;
+
+      // Manually trigger focus
+      focusTracker.isFocused = true;
+
+      expect(pushSpy).toHaveBeenCalledTimes(1);
+      expect(pushSpy).toHaveBeenCalledWith(
+        'ckeditor5:focus',
+        {
+          editorId: hookElement.id,
+          data: {
+            main: '<p>Test content</p>',
+          },
+        },
+        undefined,
+      );
+    });
+
+    it('should push blur event to the server when editor loses focus', async () => {
+      const hookElement = createEditorHtmlElement({
+        blurEvent: true,
+      });
+
+      const pushSpy = vi.fn();
+
+      document.body.appendChild(hookElement);
+      EditorHook.mounted.call({
+        el: hookElement,
+        pushEvent: pushSpy,
+      });
+
+      const editor = await waitForTestEditor();
+      const { focusTracker } = editor.ui;
+
+      focusTracker.isFocused = true;
+      focusTracker.isFocused = false;
+
+      expect(pushSpy).toHaveBeenCalledTimes(1);
+      expect(pushSpy).toHaveBeenCalledWith(
+        'ckeditor5:blur',
+        {
+          editorId: hookElement.id,
+          data: {
+            main: '<p>Test content</p>',
+          },
+        },
+        undefined,
+      );
+    });
+
+    it('should not push focus or blur event when not enabled', async () => {
+      const hookElement = createEditorHtmlElement();
+
+      const pushSpy = vi.fn();
+
+      document.body.appendChild(hookElement);
+      EditorHook.mounted.call({
+        el: hookElement,
+        pushEvent: pushSpy,
+      });
+
+      const editor = await waitForTestEditor();
+      const { focusTracker } = editor.ui;
+
+      // Manually trigger focus
+      focusTracker.isFocused = true;
+      focusTracker.isFocused = false;
+
+      expect(pushSpy).not.toHaveBeenCalled();
+    });
   });
 
   describe('`cke-editable-height` attribute', () => {

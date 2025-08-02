@@ -28,6 +28,7 @@ CKEditor 5 integration library for Phoenix (Elixir) applications. Provides web c
   - [Basic Usage 🏁](#basic-usage-)
     - [Simple Editor ✏️](#simple-editor-️)
     - [With LiveView Sync 🔄](#with-liveview-sync-)
+      - [Focus and blur events 👁️‍🗨️](#focus-and-blur-events-️️)
   - [Editor Types 🖊️](#editor-types-️)
     - [Classic editor 📝](#classic-editor-)
     - [Multiroot editor 🌳](#multiroot-editor-)
@@ -199,6 +200,30 @@ end
 - Events are sent automatically when content changes
 - `debounce_ms` controls the delay between changes and events (default: 300ms)
 - Higher debounce values improve performance for large content or frequent changes
+
+#### Focus and blur events 👁️‍🗨️
+
+To handle focus and blur events, you can use the `focus_event` and `blur_event` attributes in the component. This allows you to capture when the editor gains or loses focus, which can be useful for tracking user interactions or saving content.
+
+```heex
+<.live_component
+  id="editor"
+  module={CKEditor5.Components.Editor}
+  value={@content}
+  focus_event
+  blur_event
+>
+```
+
+```elixir
+def handle_event("ckeditor5:focus", %{"data" => data}, socket) do
+  {:noreply, assign(socket, content: data["main"])}
+end
+
+def handle_event("ckeditor5:blur", %{"data" => data}, socket) do
+  {:noreply, assign(socket, content: data["main"])}
+end
+```
 
 ## Editor Types 🖊️
 

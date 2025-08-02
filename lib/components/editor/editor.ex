@@ -35,6 +35,16 @@ defmodule CKEditor5.Components.Editor do
     doc:
       "Whether the editor should push events to the LiveView. If true, the editor will send `ckeditor5:change` event every time the content changes."
 
+  attr :focus_event, :boolean,
+    default: false,
+    doc:
+      "Whether the editor should push events to the LiveView when it gains focus. If true, the editor will send `ckeditor5:focus` event when it gains focus."
+
+  attr :blur_event, :boolean,
+    default: false,
+    doc:
+      "Whether the editor should push events to the LiveView when it loses focus. If true, the editor will send `ckeditor5:blur` event when it loses focus."
+
   attr :editable_height, :string,
     default: nil,
     required: false,
@@ -84,6 +94,8 @@ defmodule CKEditor5.Components.Editor do
       cke-editable-height={@editable_height}
       cke-initial-value={@value || ""}
       cke-change-event={@change_event}
+      cke-blur-event={@blur_event}
+      cke-focus-event={@focus_event}
       cke-save-debounce-ms={@save_debounce_ms}
       cke-language={@language}
       cke-content-language={@content_language}

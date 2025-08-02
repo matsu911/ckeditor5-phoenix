@@ -41,7 +41,11 @@ class EditorHookImpl extends ClassHook {
       editorId: this.el.getAttribute('id')!,
       preset: readPresetOrThrow(this.el),
       editableHeight: parseIntIfNotNull(this.el.getAttribute('cke-editable-height')),
-      changeEvent: this.el.getAttribute('cke-change-event') !== null,
+      events: {
+        change: this.el.getAttribute('cke-change-event') !== null,
+        blur: this.el.getAttribute('cke-blur-event') !== null,
+        focus: this.el.getAttribute('cke-focus-event') !== null,
+      },
       saveDebounceMs: parseIntIfNotNull(this.el.getAttribute('cke-save-debounce-ms')) ?? 400,
       language: {
         ui: this.el.getAttribute('cke-language') || 'en',
@@ -89,7 +93,7 @@ class EditorHookImpl extends ClassHook {
    * Creates the CKEditor instance.
    */
   private async createEditor() {
-    const { preset, editorId, editableHeight, changeEvent, saveDebounceMs, language } = this.attrs;
+    const { preset, editorId, editableHeight, events, saveDebounceMs, language } = this.attrs;
     const { customTranslations, type, license, config: { plugins, ...config } } = preset;
 
     const Constructor = await loadEditorConstructor(type);
@@ -119,8 +123,16 @@ class EditorHookImpl extends ClassHook {
       },
     );
 
-    if (changeEvent) {
-      this.setupContentPush(editorId, editor, saveDebounceMs);
+    if (events.change) {
+      this.setupTypingContentPush(editorId, editor, saveDebounceMs);
+    }
+
+    if (events.blur) {
+      this.setupEventPush(editorId, editor, 'blur');
+    }
+
+    if (events.focus) {
+      this.setupEventPush(editorId, editor, 'focus');
     }
 
     // Handle incoming data from the server.
@@ -146,7 +158,7 @@ class EditorHookImpl extends ClassHook {
   /**
    * Setups the content push event for the editor.
    */
-  private setupContentPush(editorId: EditorId, editor: Editor, saveDebounceMs: number) {
+  private setupTypingContentPush(editorId: EditorId, editor: Editor, saveDebounceMs: number) {
     const pushContentChange = () => {
       this.pushEvent(
         'ckeditor5:change',
@@ -159,6 +171,30 @@ class EditorHookImpl extends ClassHook {
 
     editor.model.document.on('change:data', debounce(saveDebounceMs, pushContentChange));
     pushContentChange();
+  }
+
+  /**
+   * Setups the event push for the editor.
+   */
+  private setupEventPush(editorId: EditorId, editor: Editor, eventType: 'focus' | 'blur') {
+    const pushEvent = () => {
+      const { isFocused } = editor.ui.focusTracker;
+      const currentType = isFocused ? 'focus' : 'blur';
+
+      if (currentType !== eventType) {
+        return;
+      }
+
+      this.pushEvent(
+        `ckeditor5:${eventType}`,
+        {
+          editorId,
+          data: getEditorRootsValues(editor),
+        },
+      );
+    };
+
+    editor.ui.focusTracker.on('change:isFocused', pushEvent);
   }
 }
 

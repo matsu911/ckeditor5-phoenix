@@ -550,7 +550,7 @@ To register a custom plugin, use the `registerCustomEditorPlugin` function. This
 ```javascript
 import { CustomEditorPluginsRegistry as Registry } from 'ckeditor5_phoenix';
 
-const unregister = Registry.the.register( 'MyCustomPlugin', async () => {
+const unregister = Registry.the.register('MyCustomPlugin', async () => {
   // It's recommended to use lazy import to
   // avoid bundling ckeditor code in your application bundle.
   const { Plugin } = await import('ckeditor5');

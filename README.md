@@ -184,7 +184,7 @@ Enable real-time synchronization between the editor and your LiveView. Content c
   value={@content}
   debounce_ms={500}  # Optional debounce for performance
   change_event
->
+/>
 ```
 
 Handle content changes in your LiveView:
@@ -212,7 +212,7 @@ To handle focus and blur events, you can use the `focus_event` and `blur_event` 
   value={@content}
   focus_event
   blur_event
->
+/>
 ```
 
 ```elixir
@@ -224,6 +224,8 @@ def handle_event("ckeditor5:blur", %{"data" => data}, socket) do
   {:noreply, assign(socket, content: data["main"])}
 end
 ```
+
+These events are sent **immediately** when the editor gains or loses focus, allowing you to perform actions like saving content or updating UI elements.
 
 ## Editor Types 🖊️
 

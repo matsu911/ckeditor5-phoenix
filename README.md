@@ -52,21 +52,6 @@ CKEditor 5 integration library for Phoenix (Elixir) applications. Provides web c
 
 Choose between two installation methods based on your needs. Both approaches provide the same functionality but differ in how CKEditor 5 assets are loaded and managed.
 
-**CDN vs Self-hosted comparison:**
-
-| Feature | CDN Distribution | Self-hosted via NPM |
-|---------|------------------|---------------------|
-| **Installation complexity** | Simple - add script tags | Requires NPM and bundler setup |
-| **CKEditor 5 assets** | Loaded from CKSource servers | Bundled with your application |
-| **Build configuration** | No build changes needed | Must configure bundler exclusions |
-| **Internet dependency** | Requires internet connection | Works completely offline |
-| **License requirements** | Always requires CKSource license | GPL license available (free) |
-| **Monthly usage limits** | 1,000 free loads, then paid | No usage limits |
-| **Bundle size impact** | Zero - assets served from CDN | Adds ~500KB to your app bundle |
-| **Editor customization** | Limited to configuration options | Full control over editor builds |
-| **Loading performance** | Fast CDN delivery | Depends on your server performance |
-| **Version updates** | Automatic via CDN | Manual via NPM updates |
-
 ### 📡 CDN Distribution
 
 Load CKEditor 5 directly from CKSource's CDN - no build configuration required. This method is ideal for most users who want quick setup and don't need custom builds.

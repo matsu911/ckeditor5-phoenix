@@ -17,8 +17,10 @@ defmodule CKEditor5.Components.Editor.PresetHandler do
   end
 
   # Loads the preset configuration from the preset name
-  defp load_preset(assigns) do
-    preset = CKEditor5.Presets.get!(assigns.preset)
+  defp load_preset(%{preset: %Preset{}} = assigns), do: assigns
+
+  defp load_preset(%{preset: preset} = assigns) when is_binary(preset) do
+    preset = CKEditor5.Presets.get!(preset)
 
     Map.put(assigns, :preset, preset)
   end

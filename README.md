@@ -39,6 +39,7 @@ CKEditor 5 integration library for Phoenix (Elixir) applications. Provides web c
     - [LiveView Handler ⚡](#liveview-handler-)
   - [Configuration ⚙️](#configuration-️)
     - [Custom Presets 🧩](#custom-presets-)
+    - [Dynamic presets 🎯](#dynamic-presets-)
     - [Use Custom Preset 🧩](#use-custom-preset-)
     - [Providing the License Key 🗝️](#providing-the-license-key-️)
   - [Localization 🌍](#localization-)
@@ -456,6 +457,34 @@ config :ckeditor5_phoenix,
     }
   }
 ```
+
+### Dynamic presets 🎯
+
+You can also create dynamic presets that can be modified at runtime. This is useful if you want to change the editor configuration based on user input or other conditions.
+
+```elixir
+defmodule MyApp.PageLive do
+  use MyAppWeb, :live_view
+  use CKEditor5
+
+  alias CKEditor5.Preset
+
+  def mount(_params, _session, socket) do
+    preset = Preset.Parser.parse!(%{
+      config: %{
+        toolbar: [:bold, :italic, :link],
+        plugins: [:Bold, :Italic, :Link, :Essentials, :Paragraph]
+      }
+    })
+
+    {:ok, assign(socket, preset: preset)}
+  end
+end
+```
+
+```heex
+<.ckeditor preset={@preset} />
+````
 
 ### Use Custom Preset 🧩
 

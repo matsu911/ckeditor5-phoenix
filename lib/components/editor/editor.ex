@@ -28,7 +28,7 @@ defmodule CKEditor5.Components.Editor do
     default: "",
     doc: "Inline styles to apply to the editor container."
 
-  attr :preset, :string, default: "default", doc: "The name of the preset to use."
+  attr :preset, :any, default: "default", doc: "The name of the preset to use."
 
   attr :change_event, :boolean,
     default: false,

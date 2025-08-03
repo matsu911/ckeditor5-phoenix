@@ -67,6 +67,30 @@ defmodule CKEditor5.Components.EditorTest do
       assert html =~ ~s(Custom translation)
     end
 
+    test "uses dynamic defined preset object" do
+      preset = %CKEditor5.Preset{
+        type: :inline,
+        custom_translations: %{
+          en: %{
+            bold: "Dynamic translation"
+          }
+        },
+        config: %{
+          toolbar: ["bold"]
+        }
+      }
+
+      html =
+        render_component(&Editor.render/1,
+          id: "editor_dynamic",
+          name: "content_dynamic",
+          preset: preset
+        )
+
+      assert html =~ ~s(type&quot;:&quot;inline&quot;)
+      assert html =~ ~s(Dynamic translation)
+    end
+
     test "overrides editor type to classic when type is set to :classic" do
       html =
         render_component(&Editor.render/1,

@@ -28,6 +28,7 @@ defmodule Playground.Router do
     live "/classic", Live.Classic
     live "/classic-form", Live.ClassicForm
     live "/classic-custom-preset", Live.ClassicCustomPreset
+    live "/classic-dynamic-preset", Live.ClassicDynamicPreset
     live "/inline", Live.Inline
     live "/balloon", Live.Balloon
     live "/decoupled", Live.Decoupled

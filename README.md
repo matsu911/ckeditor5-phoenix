@@ -96,7 +96,19 @@ Bundle CKEditor 5 with your application for full control over assets, custom bui
    @import "ckeditor5/ckeditor5.css";
    ```
 
-5. **Use in templates** (no CDN assets needed):
+5. **Adjust LiveView**
+
+  ```elixir
+  defmodule MyAppWeb.LiveView do
+    use Phoenix.LiveView
+
+    # Adds CKEditor 5 components. It's not needed if you use `live_component`
+    # or `live_render` with `CKEditor5.Components.Editor`.
+    use CKEditor5
+  end
+  ```
+
+6. **Use in templates** (no CDN assets needed):
 
    ```heex
    <.ckeditor type="classic" value="<p>Hello world!</p>" />
@@ -142,7 +154,19 @@ Load CKEditor 5 directly from CKSource's CDN - no build configuration required. 
 
 4. **Add license key** (see [Providing the License Key 🗝️](#providing-the-license-key-️) section)
 
-5. **Use in templates:**
+5. **Adjust LiveView**
+
+  ```elixir
+  defmodule MyAppWeb.LiveView do
+    use Phoenix.LiveView
+
+    # Adds CKEditor 5 components. It's not needed if you use `live_component`
+    # or `live_render` with `CKEditor5.Components.Editor`.
+    use CKEditor5
+  end
+  ```
+
+6. **Use in templates:**
 
    ```heex
    <%!-- Load CDN assets in <head> (based on `default` preset) --%>

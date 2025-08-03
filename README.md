@@ -98,15 +98,15 @@ Bundle CKEditor 5 with your application for full control over assets, custom bui
 
 5. **Adjust LiveView**
 
-  ```elixir
-  defmodule MyAppWeb.LiveView do
-    use Phoenix.LiveView
+   ```elixir
+   defmodule MyAppWeb.LiveView do
+     use Phoenix.LiveView
 
-    # Adds CKEditor 5 components. It's not needed if you use `live_component`
-    # or `live_render` with `CKEditor5.Components.Editor`.
-    use CKEditor5
-  end
-  ```
+     # Adds CKEditor 5 components. It's not needed if you use `live_component`
+     # or `live_render` with `CKEditor5.Components.Editor`.
+     use CKEditor5
+   end
+   ```
 
 6. **Use in templates** (no CDN assets needed):
 
@@ -156,15 +156,15 @@ Load CKEditor 5 directly from CKSource's CDN - no build configuration required. 
 
 5. **Adjust LiveView**
 
-  ```elixir
-  defmodule MyAppWeb.LiveView do
-    use Phoenix.LiveView
+   ```elixir
+   defmodule MyAppWeb.LiveView do
+     use Phoenix.LiveView
 
-    # Adds CKEditor 5 components. It's not needed if you use `live_component`
-    # or `live_render` with `CKEditor5.Components.Editor`.
-    use CKEditor5
-  end
-  ```
+     # Adds CKEditor 5 components. It's not needed if you use `live_component`
+     # or `live_render` with `CKEditor5.Components.Editor`.
+     use CKEditor5
+   end
+   ```
 
 6. **Use in templates:**
 

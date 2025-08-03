@@ -50,5 +50,16 @@ defmodule CKEditor5.Components.Cloud.UmdScriptsTest do
       html = render_component(&UmdScripts.render/1, preset: "without_ckbox")
       refute html =~ "/ckbox/"
     end
+
+    test "renders ckbox script if ckbox attribute is present and non-ckbox preset", %{
+      cloud_license_key: key
+    } do
+      preset = default_preset(key, cloud: %{version: "40.0.0", premium: false})
+      PresetsHelper.put_presets_env(%{"free" => preset})
+
+      html = render_component(&UmdScripts.render/1, preset: "free", ckbox: %{version: "1.0.0"})
+
+      assert html =~ "/ckbox/1.0.0/ckbox.js"
+    end
   end
 end

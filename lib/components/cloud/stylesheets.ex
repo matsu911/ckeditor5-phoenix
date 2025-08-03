@@ -1,29 +1,26 @@
 defmodule CKEditor5.Components.Cloud.Stylesheets do
   @moduledoc """
-  A component for rendering stylesheet link tags in Phoenix.
-  This component generates link tags for CSS stylesheets.
-  It can be used to load CKEditor 5 styles in a Phoenix application.
+  A component for rendering stylesheet link tags of CKEditor 5 in Phoenix.
 
   ## ⚠️ Warning
 
-  This component can only be used if the preset has the Cloud option enabled, which is not available
+  Import maps can only be used if the preset has the Cloud option enabled, which is not available
   under the GPL license key. You must specify your own Cloud or use a commercial license to utilize
   this feature.
   """
 
   use Phoenix.Component
 
+  import CKEditor5.Components.Cloud.Assigns
+
   alias CKEditor5.Cloud.AssetPackageBuilder
-  alias CKEditor5.Preset.CloudCompatibilityChecker
-  alias CKEditor5.Presets
 
   @doc """
-  Renders the stylesheet link tags.
-  This component can be customized with a `:preset` assign
-  to specify which preset's stylesheets to use.
+  Renders the stylesheet link tags..
   """
-  attr :preset, :string, default: "default", doc: "The name of the preset to use."
   attr :nonce, :string, default: nil, doc: "The CSP nonce to use for the link tags."
+
+  cloud_build_attrs()
 
   def render(assigns) do
     assigns = assign_stylesheets(assigns)
@@ -35,13 +32,10 @@ defmodule CKEditor5.Components.Cloud.Stylesheets do
     """
   end
 
-  defp assign_stylesheets(%{preset: preset} = assigns) do
-    preset = Presets.get!(preset)
-
-    CloudCompatibilityChecker.ensure_cloud_configured!(preset)
-
+  defp assign_stylesheets(assigns) do
     stylesheets =
-      AssetPackageBuilder.build(preset.cloud)
+      build_cloud!(assigns)
+      |> AssetPackageBuilder.build()
       |> Map.get(:css)
 
     Map.put(assigns, :stylesheets, stylesheets)

@@ -153,28 +153,8 @@ defmodule CKEditor5.CloudTest do
 
       assert merged_cloud.version == "36.0.1"
       assert merged_cloud.premium == true
-      assert List.flatten(merged_cloud.translations) == ["de", "pl"]
+      assert List.flatten(merged_cloud.translations) == ["de"]
       assert merged_cloud.ckbox == nil
-    end
-  end
-
-  describe "override_translations/2" do
-    test "overrides translations with a new list" do
-      cloud = Cloud.build_struct(%{translations: ["pl", "en"]})
-      updated = Cloud.override_translations(cloud, ["de", "en"])
-      assert updated.translations == ["de", "en"]
-    end
-
-    test "removes duplicates when overriding translations" do
-      cloud = Cloud.build_struct(%{translations: ["pl", "en"]})
-      updated = Cloud.override_translations(cloud, ["en", "en", "pl", "fr"])
-      assert Enum.sort(updated.translations) == ["en", "fr", "pl"]
-    end
-
-    test "returns the original cloud if translations is nil" do
-      cloud = Cloud.build_struct(%{translations: ["pl", "en"]})
-      updated = Cloud.override_translations(cloud, nil)
-      assert updated == cloud
     end
   end
 end

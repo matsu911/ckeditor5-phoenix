@@ -98,27 +98,14 @@ defmodule CKEditor5.Cloud do
   def merge(%__MODULE__{}, nil), do: nil
 
   def merge(%__MODULE__{} = cloud, overrides) when is_map(overrides) do
-    merged_ckbox = CKBox.merge(cloud.ckbox, Map.get(overrides, :ckbox))
+    merged_ckbox = CKBox.merge(cloud.ckbox, Map.get(overrides, :ckbox, %{}))
 
     %__MODULE__{
       version: Map.get(overrides, :version, cloud.version),
       premium: Map.get(overrides, :premium, cloud.premium),
-      translations: [Map.get(overrides, :translations, []) | cloud.translations],
+      translations: Map.get(overrides, :translations, cloud.translations),
       ckbox: merged_ckbox
     }
-  end
-
-  @doc """
-  Overrides the translations in the Cloud configuration.
-  Accepts a list of language codes and merges them into the existing translations.
-  If translations is nil, it does nothing.
-  """
-  def override_translations(%__MODULE__{} = cloud, translations) when is_list(translations) do
-    %__MODULE__{cloud | translations: Enum.uniq(translations)}
-  end
-
-  def override_translations(cloud, translations) when is_nil(translations) do
-    cloud
   end
 
   # Parses the CKBox configuration from a map.

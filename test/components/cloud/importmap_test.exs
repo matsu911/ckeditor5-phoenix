@@ -51,6 +51,40 @@ defmodule CKEditor5.Components.Cloud.ImportmapTest do
       assert importmap["imports"] == expected_imports
     end
 
+    test "not renders importmap script for premium features when not defined in preset", %{
+      cloud_license_key: key
+    } do
+      preset = default_preset(key, cloud: %{version: "40.0.0", premium: false})
+      PresetsHelper.put_presets_env(%{"default" => preset})
+
+      html = render_component(&Importmap.render/1, preset: "default")
+
+      refute html =~ "ckeditor5-premium-features"
+    end
+
+    test "renders importmap for premium features defined as assign flag and non-premium preset",
+         %{
+           cloud_license_key: key
+         } do
+      free_preset =
+        default_preset(key, cloud: %{version: "40.0.0", premium: false})
+
+      PresetsHelper.put_presets_env(%{"free" => free_preset})
+
+      html = render_component(&Importmap.render/1, preset: "free", premium: true)
+
+      [_, importmap_json] = Regex.run(~r/<script type="importmap"[^>]*>(.+)<\/script>/s, html)
+      importmap = Jason.decode!(importmap_json)
+
+      expected_imports = %{
+        "ckeditor5" => "https://cdn.ckeditor.com/ckeditor5/40.0.0/ckeditor5.js",
+        "ckeditor5-premium-features" =>
+          "https://cdn.ckeditor.com/ckeditor5-premium-features/40.0.0/ckeditor5-premium-features.js"
+      }
+
+      assert importmap["imports"] == expected_imports
+    end
+
     test "renders importmap script with multiple translations", %{cloud_license_key: key} do
       preset =
         default_preset(key,

@@ -1,29 +1,26 @@
 defmodule CKEditor5.Components.Cloud.UmdScripts do
   @moduledoc """
-  A component for rendering UMD script tags in Phoenix.
-  This component generates script tags for UMD modules.
-  It can be used to load CKEditor 5 builds in a Phoenix application.
+  A component for rendering UMD script tags of CKEditor 5 in Phoenix.
 
   ## ⚠️ Warning
 
-  This component can only be used if the preset has the Cloud option enabled, which is not available
+  Import maps can only be used if the preset has the Cloud option enabled, which is not available
   under the GPL license key. You must specify your own Cloud or use a commercial license to utilize
   this feature.
   """
 
   use Phoenix.Component
 
+  import CKEditor5.Components.Cloud.Assigns
+
   alias CKEditor5.Cloud.AssetPackageBuilder
-  alias CKEditor5.Preset.CloudCompatibilityChecker
-  alias CKEditor5.Presets
 
   @doc """
   Renders the UMD script tags.
-  This component can be customized with a `:preset` assign
-  to specify which preset's scripts to use.
   """
-  attr :preset, :string, default: "default", doc: "The name of the preset to use."
   attr :nonce, :string, default: nil, doc: "The CSP nonce to use for the script tags."
+
+  cloud_build_attrs()
 
   def render(assigns) do
     assigns = assign_scripts(assigns)
@@ -35,13 +32,10 @@ defmodule CKEditor5.Components.Cloud.UmdScripts do
     """
   end
 
-  defp assign_scripts(%{preset: preset} = assigns) do
-    preset = Presets.get!(preset)
-
-    CloudCompatibilityChecker.ensure_cloud_configured!(preset)
-
+  defp assign_scripts(assigns) do
     scripts =
-      AssetPackageBuilder.build(preset.cloud)
+      build_cloud!(assigns)
+      |> AssetPackageBuilder.build()
       |> Map.get(:js)
       |> Enum.filter(&(&1.type == :umd))
       |> Enum.map(& &1.url)

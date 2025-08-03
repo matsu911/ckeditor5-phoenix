@@ -145,8 +145,12 @@ Load CKEditor 5 directly from CKSource's CDN - no build configuration required. 
 5. **Use in templates:**
 
    ```heex
-   <%!-- Load CDN assets in <head> --%>
-   <.cke_cloud_assets />
+  <%!-- Load CDN assets in <head> with optional features --%>
+  <.cke_cloud_assets
+    preset="default" # Optional preset
+    translations={["pl", "de", "fr"]} # Optional translations
+    premium # Optional premium features
+  />
 
    <%!-- Use editor anywhere in <body> --%>
    <.ckeditor type="classic" value="<p>Hello world!</p>" />

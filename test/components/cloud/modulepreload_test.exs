@@ -84,5 +84,27 @@ defmodule CKEditor5.Components.Cloud.ModulePreloadTest do
       refute html =~
                "rel=\"modulepreload\" href=\"https://cdn.ckeditor.com/ckeditor5/40.0.0/translations/pl.js\""
     end
+
+    test "should not render modulepreload links for premium features when premium is false", %{
+      cloud_license_key: key
+    } do
+      preset = default_preset(key, cloud: %{version: "40.0.0", premium: false})
+
+      PresetsHelper.put_presets_env(%{"default" => preset})
+      html = render_component(&ModulePreload.render/1, preset: "default")
+
+      refute html =~ "ckeditor5-premium-features.js"
+    end
+
+    test "render modulepreload premium links if premium attribute is present and non-premium preset",
+         %{cloud_license_key: key} do
+      preset = default_preset(key, cloud: %{version: "40.0.0", premium: false})
+      PresetsHelper.put_presets_env(%{"free" => preset})
+
+      html = render_component(&ModulePreload.render/1, preset: "free", premium: true)
+
+      assert html =~
+               "rel=\"modulepreload\" href=\"https://cdn.ckeditor.com/ckeditor5-premium-features/40.0.0/ckeditor5-premium-features.js\""
+    end
   end
 end

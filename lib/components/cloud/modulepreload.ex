@@ -1,32 +1,26 @@
 defmodule CKEditor5.Components.Cloud.ModulePreload do
   @moduledoc """
-  A component for rendering module preload link tags in Phoenix.
-  This component generates link tags with rel="modulepreload" for all modules in the import map.
-  It helps browsers preload ES modules, improving performance by downloading dependencies
-  before they are actually needed.
+  A component for rendering module preload link tags of CKEditor 5 in Phoenix.
+
+  ## ⚠️ Warning
+
+  Import maps can only be used if the preset has the Cloud option enabled, which is not available
+  under the GPL license key. You must specify your own Cloud or use a commercial license to utilize
+  this feature.
   """
 
   use Phoenix.Component
 
-  alias CKEditor5.Cloud
+  import CKEditor5.Components.Cloud.Assigns
+
   alias CKEditor5.Cloud.AssetPackageBuilder
-  alias CKEditor5.Preset.CloudCompatibilityChecker
-  alias CKEditor5.Presets
 
   @doc """
   Renders module preload link tags for all modules in the import map.
-  This helps browsers preload ES modules, improving performance by downloading
-  dependencies before they are actually needed.
   """
-  attr :preset, :string, default: "default", doc: "The name of the preset to use."
-
-  attr :translations, :any,
-    default: nil,
-    doc:
-      "The languages codes for the editor (e.g., 'en', 'pl', 'de', etc.)." <>
-        "If not provided, then the `cloud.translations` will be used to load language files."
-
   attr :nonce, :string, default: nil, doc: "The CSP nonce to use for the script tag."
+
+  cloud_build_attrs()
 
   def render(assigns) do
     assigns = assign_modules_for_preload(assigns)
@@ -42,14 +36,9 @@ defmodule CKEditor5.Components.Cloud.ModulePreload do
     """
   end
 
-  defp assign_modules_for_preload(%{preset: preset, translations: translations} = assigns) do
-    preset = Presets.get!(preset)
-
-    CloudCompatibilityChecker.ensure_cloud_configured!(preset)
-
+  defp assign_modules_for_preload(assigns) do
     module_urls =
-      preset.cloud
-      |> Cloud.override_translations(translations)
+      build_cloud!(assigns)
       |> AssetPackageBuilder.build()
       |> Map.get(:js)
       |> Enum.filter(&(&1.type == :esm))

@@ -102,8 +102,7 @@ Bundle CKEditor 5 with your application for full control over assets, custom bui
    defmodule MyAppWeb.LiveView do
      use Phoenix.LiveView
 
-     # Adds CKEditor 5 components. It's not needed if you use `live_component`
-     # or `live_render` with `CKEditor5.Components.Editor`.
+     # Adds CKEditor 5 components. It's not needed if you use `live_component`.
      use CKEditor5
    end
    ```

@@ -794,7 +794,7 @@ describe('editor hook', () => {
 
     it('should not create watchdog instance if disabled', async () => {
       const hookElement = createEditorHtmlElement({
-        watchdog: true,
+        watchdog: false,
       });
 
       document.body.appendChild(hookElement);

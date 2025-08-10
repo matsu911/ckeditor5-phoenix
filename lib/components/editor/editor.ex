@@ -74,6 +74,11 @@ defmodule CKEditor5.Components.Editor do
       "The content language code for the editor (e.g. 'en', 'pl', 'de', etc.). This is used to set the `lang` attribute on the editable area. " <>
         "If not provided, it will default to the same value as `language`."
 
+  attr :watchdog, :boolean,
+    default: true,
+    doc:
+      "Whether to enable the watchdog for the editor. If true, the component will automatically restart the editor if it crashes."
+
   slot :inner_block,
     required: false,
     doc: "Optional content to render inside the editor container."
@@ -99,6 +104,7 @@ defmodule CKEditor5.Components.Editor do
       cke-save-debounce-ms={@save_debounce_ms}
       cke-language={@language}
       cke-content-language={@content_language}
+      cke-watchdog={@watchdog}
     >
       <div id={"#{@id}_editor"}></div>
       <%= if @name do %>

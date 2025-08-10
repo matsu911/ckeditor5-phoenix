@@ -13,7 +13,7 @@ import { CustomEditorPluginsRegistry } from '../custom-editor-plugins';
  * @throws Error if a plugin is not found in either package
  */
 export async function loadEditorPlugins(plugins: EditorPlugin[]): Promise<LoadedPlugins> {
-  const basePackage: Record<string, any> = await import('ckeditor5');
+  const basePackage = await import('ckeditor5');
   let premiumPackage: Record<string, any> | null = null;
 
   const loaders = plugins.map(async (plugin) => {
@@ -29,7 +29,7 @@ export async function loadEditorPlugins(plugins: EditorPlugin[]): Promise<Loaded
     }
 
     // If not found, try to load from the base package.
-    const { [plugin]: basePkgImport } = basePackage;
+    const { [plugin]: basePkgImport } = basePackage as Record<string, unknown>;
 
     if (basePkgImport) {
       return basePkgImport as PluginConstructor;

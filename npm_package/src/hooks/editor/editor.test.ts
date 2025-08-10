@@ -3,6 +3,7 @@ import {
   DecoupledEditor,
   InlineEditor,
   MultiRootEditor,
+  Plugin,
 } from 'ckeditor5';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -15,8 +16,10 @@ import {
   waitForTestEditor,
 } from '~/test-utils';
 
+import { CustomEditorPluginsRegistry } from '../../hooks/editor/custom-editor-plugins';
 import { EditorHook } from './editor';
 import { EditorsRegistry } from './editors-registry';
+import { unwrapEditorWatchdog } from './utils';
 
 describe('editor hook', () => {
   beforeEach(() => {
@@ -39,6 +42,47 @@ describe('editor hook', () => {
       expect(
         await EditorsRegistry.the.waitForEditor('magic-editor'),
       ).toBeInstanceOf(ClassicEditor);
+    });
+
+    it('should pass custom translations to the editor', async () => {
+      const hookElement = createEditorHtmlElement({
+        preset: createEditorPreset('classic', {}, {
+          pl: { Bold: 'Custom Pogrubienie' },
+        }),
+        language: {
+          ui: 'pl',
+          content: 'pl',
+        },
+      });
+
+      document.body.appendChild(hookElement);
+      EditorHook.mounted.call({ el: hookElement });
+
+      const editor = await waitForTestEditor();
+      const translation = editor.locale.t('Bold');
+
+      expect(translation).toBe('Custom Pogrubienie');
+    });
+
+    it('should pass custom plugins to the editor', async () => {
+      class MyCustomPlugin extends Plugin {}
+
+      CustomEditorPluginsRegistry.the.register('MyCustomPlugin', () => MyCustomPlugin);
+
+      const hookElement = createEditorHtmlElement({
+        preset: createEditorPreset('classic', {
+          plugins: ['MyCustomPlugin'],
+          toolbar: [],
+        }),
+      });
+
+      document.body.appendChild(hookElement);
+      EditorHook.mounted.call({ el: hookElement });
+
+      const editor = await waitForTestEditor();
+      const plugin = editor.plugins.get(MyCustomPlugin);
+
+      expect(plugin).toBeInstanceOf(MyCustomPlugin);
     });
 
     describe('classic', () => {
@@ -260,28 +304,6 @@ describe('editor hook', () => {
         expect(editor.getData({ rootName: 'second' })).toBe(
           '<p>Second root</p>',
         );
-      });
-    });
-
-    describe('custom translations', () => {
-      it('should pass custom translations to the editor', async () => {
-        const hookElement = createEditorHtmlElement({
-          preset: createEditorPreset('classic', {}, {
-            pl: { Bold: 'Custom Pogrubienie' },
-          }),
-          language: {
-            ui: 'pl',
-            content: 'pl',
-          },
-        });
-
-        document.body.appendChild(hookElement);
-        EditorHook.mounted.call({ el: hookElement });
-
-        const editor = await waitForTestEditor();
-        const translation = editor.locale.t('Bold');
-
-        expect(translation).toBe('Custom Pogrubienie');
       });
     });
   });
@@ -747,6 +769,41 @@ describe('editor hook', () => {
       expect(configLanguage).toBeDefined();
       expect(configLanguage?.ui).toBe('en');
       expect(configLanguage?.content).toBe('en');
+    });
+  });
+
+  describe('`cke-watchdog` option', () => {
+    it('should resurrect editor after crashing and broadcast new editor', async () => {
+      const hookElement = createEditorHtmlElement({
+        watchdog: true,
+      });
+
+      document.body.appendChild(hookElement);
+      EditorHook.mounted.call({ el: hookElement });
+
+      const originalEditor = await waitForTestEditor();
+      const watchdog = unwrapEditorWatchdog(originalEditor)!;
+      (watchdog as any)._restart();
+
+      await vi.waitFor(async () => {
+        const newEditor = await waitForTestEditor();
+
+        expect(newEditor).not.equals(originalEditor);
+      });
+    });
+
+    it('should not create watchdog instance if disabled', async () => {
+      const hookElement = createEditorHtmlElement({
+        watchdog: true,
+      });
+
+      document.body.appendChild(hookElement);
+      EditorHook.mounted.call({ el: hookElement });
+
+      const editor = await waitForTestEditor();
+      const watchdog = unwrapEditorWatchdog(editor);
+
+      expect(watchdog).to.equal(null);
     });
   });
 });

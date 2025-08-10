@@ -1,6 +1,7 @@
 import type { Editor } from 'ckeditor5';
 
 import type { EditorId, EditorType } from './typings';
+import type { EditorCreator } from './utils';
 
 import {
   debounce,
@@ -19,6 +20,7 @@ import {
   queryAllEditorEditables,
   readPresetOrThrow,
   setEditorEditableHeight,
+  wrapWithWatchdog,
 } from './utils';
 
 /**
@@ -37,19 +39,24 @@ class EditorHookImpl extends ClassHook {
    * Attributes for the editor instance.
    */
   private get attrs() {
+    const { el } = this;
+    const get = el.getAttribute.bind(el);
+    const has = el.hasAttribute.bind(el);
+
     const value = {
-      editorId: this.el.getAttribute('id')!,
-      preset: readPresetOrThrow(this.el),
-      editableHeight: parseIntIfNotNull(this.el.getAttribute('cke-editable-height')),
+      editorId: get('id')!,
+      preset: readPresetOrThrow(el),
+      editableHeight: parseIntIfNotNull(get('cke-editable-height')),
+      watchdog: has('cke-watchdog'),
       events: {
-        change: this.el.getAttribute('cke-change-event') !== null,
-        blur: this.el.getAttribute('cke-blur-event') !== null,
-        focus: this.el.getAttribute('cke-focus-event') !== null,
+        change: has('cke-change-event'),
+        blur: has('cke-blur-event'),
+        focus: has('cke-focus-event'),
       },
-      saveDebounceMs: parseIntIfNotNull(this.el.getAttribute('cke-save-debounce-ms')) ?? 400,
+      saveDebounceMs: parseIntIfNotNull(get('cke-save-debounce-ms')) ?? 400,
       language: {
-        ui: this.el.getAttribute('cke-language') || 'en',
-        content: this.el.getAttribute('cke-content-language') || 'en',
+        ui: get('cke-language') || 'en',
+        content: get('cke-content-language') || 'en',
       },
     };
 
@@ -93,11 +100,24 @@ class EditorHookImpl extends ClassHook {
    * Creates the CKEditor instance.
    */
   private async createEditor() {
-    const { preset, editorId, editableHeight, events, saveDebounceMs, language } = this.attrs;
+    const { preset, editorId, editableHeight, events, saveDebounceMs, language, watchdog } = this.attrs;
     const { customTranslations, type, license, config: { plugins, ...config } } = preset;
 
-    const Constructor = await loadEditorConstructor(type);
-    const rootEditables = getInitialRootsContentElements(editorId, type);
+    // Wrap editor creator with watchdog if needed.
+    let Constructor: EditorCreator = await loadEditorConstructor(type);
+
+    if (watchdog) {
+      const wrapped = wrapWithWatchdog(Constructor);
+
+      ({ Constructor } = wrapped);
+      wrapped.watchdog.on('restart', () => {
+        const newInstance = wrapped.watchdog.editor!;
+        this.editorPromise = Promise.resolve(newInstance);
+
+        EditorsRegistry.the.unregister(editorId);
+        EditorsRegistry.the.register(editorId, newInstance);
+      });
+    }
 
     const { loadedPlugins, hasPremium } = await loadEditorPlugins(plugins);
 
@@ -109,6 +129,8 @@ class EditorHookImpl extends ClassHook {
     ]
       .filter(translations => !isEmptyObject(translations));
 
+    // Initialize the editor.
+    const rootEditables = getInitialRootsContentElements(editorId, type);
     const editor = await Constructor.create(
       rootEditables as any,
       {

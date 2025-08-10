@@ -215,7 +215,7 @@ Enable real-time synchronization between the editor and your LiveView. Content c
   id="editor"
   module={CKEditor5.Components.Editor}
   value={@content}
-  debounce_ms={500}  # Optional debounce for performance
+  save_debounce_ms={500}  # Optional debounce for performance
   change_event
 />
 ```
@@ -231,7 +231,7 @@ end
 **Event details:**
 
 - Events are sent automatically when content changes
-- `debounce_ms` controls the delay between changes and events (default: 300ms)
+- `save_debounce_ms` controls the delay between changes and events (default: 300ms)
 - Higher debounce values improve performance for large content or frequent changes
 
 #### Focus and blur events 👁️‍🗨️

@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 
 import type { EditorPlugin } from '../typings';
 
@@ -11,15 +11,18 @@ class CustomPlugin {
   }
 }
 
-vi.mock('ckeditor5', () => ({
-  Plugin1: vi.fn(),
-  Plugin2: vi.fn(),
-  BasePlugin: vi.fn(),
-}));
-
 describe('loadEditorPlugins', () => {
   it('should load plugins from base package', async () => {
-    const plugins: EditorPlugin[] = ['Plugin1', 'Plugin2'];
+    const plugins: EditorPlugin[] = ['Bold', 'Italic'];
+    const { loadedPlugins } = await loadEditorPlugins(plugins);
+
+    expect(loadedPlugins).toHaveLength(2);
+    expect(loadedPlugins[0]).toBeDefined();
+    expect(loadedPlugins[1]).toBeDefined();
+  });
+
+  it('should load plugins from premium package', async () => {
+    const plugins: EditorPlugin[] = ['ExportInlineStyles', 'Comments'];
     const { loadedPlugins } = await loadEditorPlugins(plugins);
 
     expect(loadedPlugins).toHaveLength(2);
@@ -35,7 +38,7 @@ describe('loadEditorPlugins', () => {
   });
 
   it('should prioritize base package over premium package', async () => {
-    const plugins: EditorPlugin[] = ['Plugin1'];
+    const plugins: EditorPlugin[] = ['Bold'];
     const { loadedPlugins } = await loadEditorPlugins(plugins);
 
     expect(loadedPlugins).toHaveLength(1);
@@ -43,11 +46,16 @@ describe('loadEditorPlugins', () => {
   });
 
   it('should return plugin constructors', async () => {
-    const plugins: EditorPlugin[] = ['Plugin1'];
+    const plugins: EditorPlugin[] = ['Bold'];
     const { loadedPlugins } = await loadEditorPlugins(plugins);
 
     expect(loadedPlugins).toHaveLength(1);
     expect(typeof loadedPlugins[0]).toBe('function');
+  });
+
+  it('should throw an error for unknown plugins', async () => {
+    const plugins: EditorPlugin[] = ['UnknownPlugin'];
+    await expect(loadEditorPlugins(plugins)).rejects.toThrowError(/not found/);
   });
 
   describe('custom plugins', () => {
@@ -66,9 +74,9 @@ describe('loadEditorPlugins', () => {
     });
 
     it('should prefer loading custom plugins over base package', async () => {
-      CustomEditorPluginsRegistry.the.register('Plugin1', () => CustomPlugin);
+      CustomEditorPluginsRegistry.the.register('Bold', () => CustomPlugin);
 
-      const plugins: EditorPlugin[] = ['Plugin1'];
+      const plugins: EditorPlugin[] = ['Bold'];
       const { loadedPlugins } = await loadEditorPlugins(plugins);
 
       expect(loadedPlugins).toHaveLength(1);

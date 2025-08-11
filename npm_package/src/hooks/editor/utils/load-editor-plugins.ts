@@ -20,7 +20,6 @@ export async function loadEditorPlugins(plugins: EditorPlugin[]): Promise<Loaded
     // Let's first try to load the plugin from the base package.
     // Coverage is disabled due to Vitest issues with mocking dynamic imports.
 
-    /* v8 ignore start */
     // If the plugin is not found in the base package, try custom plugins.
     const customPlugin = await CustomEditorPluginsRegistry.the.get(plugin);
 
@@ -39,12 +38,14 @@ export async function loadEditorPlugins(plugins: EditorPlugin[]): Promise<Loaded
     if (!premiumPackage) {
       try {
         premiumPackage = await import('ckeditor5-premium-features');
+        /* v8 ignore next 6 */
       }
       catch (error) {
         console.error(`Failed to load premium package: ${error}`);
       }
     }
 
+    /* v8 ignore next */
     const { [plugin]: premiumPkgImport } = premiumPackage || {};
 
     if (premiumPkgImport) {
@@ -53,7 +54,6 @@ export async function loadEditorPlugins(plugins: EditorPlugin[]): Promise<Loaded
 
     // Plugin not found in either package, throw an error.
     throw new Error(`Plugin "${plugin}" not found in base or premium packages.`);
-    /* v8 ignore end */
   });
 
   return {

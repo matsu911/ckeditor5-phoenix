@@ -27,6 +27,9 @@ CKEditor 5 integration library for Phoenix (Elixir) applications. Provides web c
     - [📡 CDN Distribution](#-cdn-distribution)
   - [Basic Usage 🏁](#basic-usage-)
     - [Simple Editor ✏️](#simple-editor-️)
+    - [Watchdog prop 🐶](#watchdog-prop-)
+      - [How it works ⚙️](#how-it-works-️)
+      - [Disabling the watchdog 🚫](#disabling-the-watchdog-)
     - [With LiveView Sync 🔄](#with-liveview-sync-)
       - [Focus and blur events 👁️‍🗨️](#focus-and-blur-events-️️)
   - [Editor Types 🖊️](#editor-types-️)
@@ -201,6 +204,30 @@ Create a basic editor with default toolbar and features. Perfect for simple cont
   type="classic"
   value="<p>Initial content</p>"
   editable_height="300px"
+/>
+```
+
+### Watchdog prop 🐶
+
+By default, the `<.ckeditor>` component uses a built-in watchdog mechanism to automatically restart the editor if it crashes (e.g., due to a JavaScript error). The watchdog periodically saves the editor's content and restores it after a crash, minimizing the risk of data loss for users.
+
+#### How it works ⚙️
+
+- If the editor crashes, it is automatically restarted without requiring a page reload.
+- The editor's content is periodically saved in the browser's memory.
+- After a restart, the last saved content is automatically restored.
+
+This feature is especially useful in applications where reliability and data safety are important.
+
+#### Disabling the watchdog 🚫
+
+The watchdog is enabled by default. To disable it, set the `watchdog` prop to `false`:
+
+```heex
+<.ckeditor
+  type="classic"
+  value="<p>Initial content</p>"
+  watchdog={false}
 />
 ```
 

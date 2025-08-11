@@ -5,5 +5,6 @@ export * from './load-editor-translations';
 export * from './normalize-custom-translations';
 export * from './query-all-editor-editables';
 export * from './read-preset-or-throw';
+export * from './resolve-editor-config-elements-references';
 export * from './set-editor-editable-height';
 export * from './wrap-with-watchdog';

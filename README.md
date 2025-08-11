@@ -45,6 +45,9 @@ CKEditor 5 integration library for Phoenix (Elixir) applications. Provides web c
     - [Dynamic presets 🎯](#dynamic-presets-)
     - [Use Custom Preset 🧩](#use-custom-preset-)
     - [Providing the License Key 🗝️](#providing-the-license-key-️)
+    - [Referencing DOM Elements in Config 🏷️](#referencing-dom-elements-in-config-️)
+      - [How to use 🛠️](#how-to-use-️)
+      - [Example 📄](#example-)
   - [Localization 🌍](#localization-)
     - [CDN Translation Loading 🌐](#cdn-translation-loading-)
     - [Global Translation Config 🛠️](#global-translation-config-️)
@@ -570,6 +573,38 @@ CKEditor 5 requires a license key when using the official CDN or premium feature
 If you use CKEditor 5 under the GPL license, you do not need to provide a license key. However, if you choose to set one, it must be set to `GPL`.
 
 If both are set, the preset config takes priority. For more details, see the [CKEditor 5 licensing guide](https://ckeditor.com/docs/ckeditor5/latest/getting-started/licensing/license-and-legal.html).
+
+### Referencing DOM Elements in Config 🏷️
+
+You can reference DOM elements directly in your editor configuration using the special `{ $element: "selector" }` format. This is useful when you want to attach the editor's UI parts (like toolbars or editable areas) to specific elements in your HTML.
+
+#### How to use 🛠️
+
+- In your config object, use `{ $element: "CSS_SELECTOR" }` wherever a DOM element is expected.
+- The selector will be resolved to the actual DOM element before initializing the editor.
+
+#### Example 📄
+
+```elixir
+# config/config.exs
+config :ckeditor5_phoenix,
+  presets: %{
+    # ... other presets
+    minimal: %{
+      config: %{
+        # ... other config
+        yourPlugin: %{
+          toolbar: %{ $element: "#my-toolbar" },
+          editable: %{ $element: "#my-editable" }
+        },
+      }
+    }
+  }
+```
+
+This will find the elements with IDs `my-toolbar` and `my-editable` in the DOM and use them for the editor's UI.
+
+⚠️ If the element is not found, a warning will be shown in the console.
 
 ## Localization 🌍
 

@@ -19,6 +19,7 @@ import {
   normalizeCustomTranslations,
   queryAllEditorEditables,
   readPresetOrThrow,
+  resolveEditorConfigElementReferences,
   setEditorEditableHeight,
   wrapWithWatchdog,
 } from './utils';
@@ -134,7 +135,7 @@ class EditorHookImpl extends ClassHook {
     const editor = await Constructor.create(
       rootEditables as any,
       {
-        ...config,
+        ...resolveEditorConfigElementReferences(config),
         initialData: getInitialRootsValues(editorId, type),
         licenseKey: license.key,
         plugins: loadedPlugins,

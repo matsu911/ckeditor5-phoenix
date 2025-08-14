@@ -1,31 +1,28 @@
 defmodule CKEditor5.Components.EditorTest do
-  use ExUnit.Case, async: true
+  use CKEditor5.Test.PresetsTestCaseTemplate, async: true
 
   import Phoenix.LiveViewTest
   import Phoenix.Component
 
   alias CKEditor5.Components.Editor
   alias CKEditor5.Errors.Error
-  alias CKEditor5.Test.PresetsHelper
   alias Phoenix.HTML
 
   setup do
-    original =
-      PresetsHelper.put_presets_env(%{
-        "mock" => %{
-          type: :inline,
-          custom_translations: %{
-            en: %{
-              bold: "Custom translation"
-            }
-          },
-          config: %{
-            toolbar: ["bold"]
+    put_presets_env(%{
+      "mock" => %{
+        type: :inline,
+        custom_translations: %{
+          en: %{
+            bold: "Custom translation"
           }
+        },
+        config: %{
+          toolbar: ["bold"]
         }
-      })
+      }
+    })
 
-    on_exit(fn -> PresetsHelper.restore_presets_env(original) end)
     :ok
   end
 

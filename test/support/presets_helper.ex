@@ -21,4 +21,22 @@ defmodule CKEditor5.Test.PresetsHelper do
   def restore_presets_env(original_presets) do
     Application.put_env(@app, @key, original_presets)
   end
+
+  @doc """
+  Creates a default preset configuration.
+  """
+  def default_preset(key, opts \\ []) do
+    Map.merge(
+      %{
+        license_key: key,
+        config: %{},
+        cloud: %{
+          version: "40.0.0",
+          premium: false,
+          translations: ["pl"]
+        }
+      },
+      Enum.into(opts, %{})
+    )
+  end
 end

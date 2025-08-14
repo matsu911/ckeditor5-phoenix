@@ -10,6 +10,8 @@ defmodule CKEditor5.Test.PresetsTestCaseTemplate do
   alias CKEditor5.Test.{LicenseGenerator, PresetsHelper}
 
   setup do
+    Memoize.invalidate()
+
     cloud_license_key = LicenseGenerator.generate_key("cloud")
     original_config = PresetsHelper.put_presets_env(%{})
 
@@ -20,25 +22,7 @@ defmodule CKEditor5.Test.PresetsTestCaseTemplate do
 
   using do
     quote do
-      setup do
-        Memoize.invalidate()
-        :ok
-      end
-
-      def default_preset(key, opts \\ []) do
-        Map.merge(
-          %{
-            license_key: key,
-            config: %{},
-            cloud: %{
-              version: "40.0.0",
-              premium: false,
-              translations: ["pl"]
-            }
-          },
-          Enum.into(opts, %{})
-        )
-      end
+      import PresetsHelper
     end
   end
 end

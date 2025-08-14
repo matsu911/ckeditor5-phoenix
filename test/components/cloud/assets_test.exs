@@ -1,15 +1,14 @@
 defmodule CKEditor5.Components.Cloud.AssetsTest do
-  alias CKEditor5.Components.Cloud.Assets
-  alias CKEditor5.Test.{PresetsHelper, PresetsTestCaseTemplate}
+  use CKEditor5.Test.PresetsTestCaseTemplate, async: true
 
-  use PresetsTestCaseTemplate, async: true
+  alias CKEditor5.Components.Cloud.Assets
 
   import Phoenix.LiveViewTest
 
   describe "render/1" do
     test "renders all cloud asset components for default preset", %{cloud_license_key: key} do
       preset = default_preset(key)
-      PresetsHelper.put_presets_env(%{"default" => preset})
+      put_presets_env(%{"default" => preset})
 
       html = render_component(&Assets.render/1, preset: "default")
 
@@ -20,7 +19,7 @@ defmodule CKEditor5.Components.Cloud.AssetsTest do
 
     test "renders with nonce attribute for all asset tags", %{cloud_license_key: key} do
       preset = default_preset(key)
-      PresetsHelper.put_presets_env(%{"default" => preset})
+      put_presets_env(%{"default" => preset})
 
       nonce = "test-nonce"
       html = render_component(&Assets.render/1, preset: "default", nonce: nonce)
@@ -36,7 +35,7 @@ defmodule CKEditor5.Components.Cloud.AssetsTest do
           cloud: %{version: "40.0.0", premium: true, translations: ["pl"], ckbox: ckbox}
         )
 
-      PresetsHelper.put_presets_env(%{"premium" => preset})
+      put_presets_env(%{"premium" => preset})
       html = render_component(&Assets.render/1, preset: "premium")
 
       assert html =~ "ckeditor5-premium-features"
@@ -46,7 +45,7 @@ defmodule CKEditor5.Components.Cloud.AssetsTest do
 
     test "renders with custom translations does not crash", %{cloud_license_key: key} do
       preset = default_preset(key)
-      PresetsHelper.put_presets_env(%{"default" => preset})
+      put_presets_env(%{"default" => preset})
 
       html = render_component(&Assets.render/1, preset: "default", translations: ["pl", "de"])
 

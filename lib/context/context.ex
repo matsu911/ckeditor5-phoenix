@@ -35,6 +35,8 @@ defmodule CKEditor5.Context do
   """
   def parse(nil), do: {:ok, nil}
 
+  def parse(%__MODULE__{} = context), do: {:ok, context}
+
   def parse(map) when is_map(map) do
     case conform(map, s()) do
       {:ok, _} -> {:ok, struct(__MODULE__, map)}
@@ -53,25 +55,5 @@ defmodule CKEditor5.Context do
       {:ok, context} -> context
       {:error, reason} -> raise Errors.InvalidContext, reason: reason
     end
-  end
-
-  @doc """
-  Merges the current Context configuration with the provided overrides.
-  """
-  def merge(nil, nil), do: nil
-
-  def merge(nil, overrides) when is_map(overrides) do
-    case parse(overrides) do
-      {:ok, context} -> context
-      {:error, _} -> nil
-    end
-  end
-
-  def merge(%__MODULE__{}, nil), do: nil
-
-  def merge(%__MODULE__{} = context, overrides) when is_map(overrides) do
-    %__MODULE__{
-      config: Map.get(overrides, :config, context.config)
-    }
   end
 end

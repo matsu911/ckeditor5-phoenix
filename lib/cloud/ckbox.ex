@@ -40,7 +40,7 @@ defmodule CKEditor5.Cloud.CKBox do
 
   def parse(map) when is_map(map) do
     case conform(map, s()) do
-      {:ok, _} -> {:ok, build_struct(map)}
+      {:ok, _} -> {:ok, struct(__MODULE__, map)}
       {:error, errors} -> {:error, errors}
     end
   end
@@ -59,16 +59,6 @@ defmodule CKEditor5.Cloud.CKBox do
   end
 
   @doc """
-  Builds a CKBox struct with the provided overrides.
-  """
-  def build_struct(overrides \\ %{}) do
-    %__MODULE__{
-      version: Map.get(overrides, :version),
-      theme: Map.get(overrides, :theme)
-    }
-  end
-
-  @doc """
   Merges the current CKBox configuration with the provided overrides.
   """
   def merge(nil, nil), do: nil
@@ -80,7 +70,10 @@ defmodule CKEditor5.Cloud.CKBox do
     end
   end
 
-  def merge(%__MODULE__{}, nil), do: nil
+  def merge(_, nil), do: nil
+
+  def merge(ckbox, %__MODULE__{} = override_struct),
+    do: merge(ckbox, Map.from_struct(override_struct))
 
   def merge(%__MODULE__{} = ckbox, overrides) when is_map(overrides) do
     %__MODULE__{

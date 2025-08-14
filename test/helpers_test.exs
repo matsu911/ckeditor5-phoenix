@@ -29,4 +29,18 @@ defmodule CKEditor5.HelpersTest do
       assert Helpers.serialize_styles_map(%{}) == ""
     end
   end
+
+  describe "map_keys_to_strings/1" do
+    test "maps atom keys to strings" do
+      input = %{foo: "bar", baz: "qux"}
+      expected = %{"foo" => "bar", "baz" => "qux"}
+      assert Helpers.map_keys_to_strings(input) == expected
+    end
+
+    test "maps string keys to strings" do
+      input = %{"foo" => "bar", "baz" => "qux"}
+      expected = %{"foo" => "bar", "baz" => "qux"}
+      assert Helpers.map_keys_to_strings(input) == expected
+    end
+  end
 end

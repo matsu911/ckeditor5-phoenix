@@ -5,8 +5,7 @@ defmodule CKEditor5.Presets do
 
   use Memoize
 
-  alias CKEditor5.Config
-  alias CKEditor5.Errors
+  alias CKEditor5.{Config, Errors, Helpers}
   alias CKEditor5.Preset.Parser
 
   @default_presets %{
@@ -129,7 +128,7 @@ defmodule CKEditor5.Presets do
   Returns `{:ok, preset}` on success, or `{:error, reason}` on failure.
   """
   defmemo get(preset_name) do
-    all_presets = all_with_default()
+    all_presets = presets_with_default()
 
     with {:ok, preset_config} <- Map.fetch(all_presets, preset_name),
          {:ok, preset} <- Parser.parse(preset_config) do
@@ -162,17 +161,14 @@ defmodule CKEditor5.Presets do
   """
   def presets do
     Config.raw_presets()
-    |> Enum.map(fn
-      {k, v} when is_atom(k) -> {Atom.to_string(k), v}
-      {k, v} -> {to_string(k), v}
-    end)
+    |> Helpers.map_keys_to_strings()
     |> Map.new()
   end
 
   @doc """
   Returns all available presets, merging environment-specific presets with defaults.
   """
-  def all_with_default do
+  def presets_with_default do
     Map.merge(@default_presets, presets())
   end
 end

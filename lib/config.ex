@@ -9,10 +9,15 @@ defmodule CKEditor5.Config do
   @doc """
   Returns the raw presets configuration from the application environment.
   It's unprocessed raw configuration, not merged with defaults.
-  In order to use processed presets, use `CKEditor5.Presets.presets/0` or `CKEditor5.Presets.all_with_default/0`.
+  In order to use processed presets, use `CKEditor5.Presets.presets/0` or `CKEditor5.Presets.presets_with_default/0`.
   """
   @spec raw_presets() :: map()
   def raw_presets do
     Application.get_env(@app, :presets, %{})
+  end
+
+  @spec raw_contexts() :: map()
+  def raw_contexts do
+    Application.get_env(@app, :contexts, %{})
   end
 end

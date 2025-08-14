@@ -88,23 +88,6 @@ defmodule CKEditor5.Cloud.CKBoxTest do
     end
   end
 
-  describe "build_struct/1" do
-    test "builds a struct with no overrides" do
-      ckbox = CKBox.build_struct()
-
-      assert ckbox.version == nil
-      assert ckbox.theme == nil
-    end
-
-    test "builds a struct with given overrides" do
-      overrides = %{version: "35.0.0", theme: "custom"}
-      ckbox = CKBox.build_struct(overrides)
-
-      assert ckbox.version == "35.0.0"
-      assert ckbox.theme == "custom"
-    end
-  end
-
   describe "merge/2" do
     test "merges nil with nil returns nil" do
       assert CKBox.merge(nil, nil) == nil
@@ -175,6 +158,17 @@ defmodule CKEditor5.Cloud.CKBoxTest do
       assert %CKBox{
                version: "35.0.0",
                theme: "light"
+             } = result
+    end
+
+    test "merges struct with struct" do
+      ckbox = %CKBox{version: "35.0.0", theme: "light"}
+      override_struct = %CKBox{version: "36.0.0", theme: "dark"}
+      result = CKBox.merge(ckbox, override_struct)
+
+      assert %CKBox{
+               version: "36.0.0",
+               theme: "dark"
              } = result
     end
   end

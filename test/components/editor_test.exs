@@ -40,6 +40,20 @@ defmodule CKEditor5.Components.EditorTest do
     refute html =~ ~s(<input)
   end
 
+  test "it is possible to pass CSS class to component" do
+    html =
+      render_component(&Editor.render/1, id: "editor1", name: "content", class: "custom-class")
+
+    assert html =~ ~s(class="custom-class")
+  end
+
+  test "it is possible to pass CSS styles to component" do
+    html =
+      render_component(&Editor.render/1, id: "editor1", name: "content", style: "color: red;")
+
+    assert html =~ ~s(style="color: red;")
+  end
+
   describe "preset type handling" do
     test "uses classic type when no type and preset are specified" do
       html = render_component(&Editor.render/1, id: "editor1", name: "content")

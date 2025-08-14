@@ -20,4 +20,26 @@ defmodule CKEditor5.Components.UIPartTest do
     assert html =~ ~s(id="menubar")
     assert html =~ ~s(data-cke-ui-part-name="menubar")
   end
+
+  test "it is possible to pass CSS class to component" do
+    html =
+      render_component(&UIPart.render/1,
+        name: "toolbar",
+        editor_id: "editor-1",
+        class: "custom-class"
+      )
+
+    assert html =~ ~s(class="custom-class")
+  end
+
+  test "it is possible to pass CSS styles to component" do
+    html =
+      render_component(&UIPart.render/1,
+        name: "toolbar",
+        editor_id: "editor-1",
+        style: "color: red;"
+      )
+
+    assert html =~ ~s(style="color: red;")
+  end
 end

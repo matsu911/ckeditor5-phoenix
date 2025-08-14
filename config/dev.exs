@@ -38,6 +38,11 @@ config :ckeditor5_phoenix, Playground.Endpoint,
   ]
 
 config :ckeditor5_phoenix,
+  contexts: %{
+    default: %{
+      config: %{}
+    }
+  },
   presets: %{
     custom: %{
       custom_translations: %{

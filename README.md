@@ -107,8 +107,6 @@ Bundle CKEditor 5 with your application for full control over assets, custom bui
    ```elixir
    defmodule MyAppWeb.LiveView do
      use Phoenix.LiveView
-
-     # Adds CKEditor 5 components. It's not needed if you use `live_component`.
      use CKEditor5
    end
    ```
@@ -164,9 +162,6 @@ Load CKEditor 5 directly from CKSource's CDN - no build configuration required. 
    ```elixir
    defmodule MyAppWeb.LiveView do
      use Phoenix.LiveView
-
-     # Adds CKEditor 5 components. It's not needed if you use `live_component`
-     # or `live_render` with `CKEditor5.Components.Editor`.
      use CKEditor5
    end
    ```
@@ -241,9 +236,8 @@ Enable real-time synchronization between the editor and your LiveView. Content c
 ![CKEditor 5 Live Sync example](docs/live-sync.gif)
 
 ```heex
-<.live_component
+<.ckeditor
   id="editor"
-  module={CKEditor5.Components.Editor}
   value={@content}
   save_debounce_ms={500}  # Optional debounce for performance
   change_event
@@ -269,9 +263,8 @@ end
 To handle focus and blur events, you can use the `focus_event` and `blur_event` attributes in the component. This allows you to capture when the editor gains or loses focus, which can be useful for tracking user interactions or saving content.
 
 ```heex
-<.live_component
+<.ckeditor
   id="editor"
-  module={CKEditor5.Components.Editor}
   value={@content}
   focus_event
   blur_event
@@ -434,11 +427,7 @@ The editor automatically creates hidden input fields for form integration. Conte
 
 ```heex
 <.form for={@form} phx-submit="save">
-  <.live_component
-    id="content-editor"
-    module={CKEditor5.Components.Editor}
-    field={@form[:content]}
-  />
+  <.ckeditor id="content-editor" field={@form[:content]} />
 
   <button type="submit">Save</button>
 </.form>

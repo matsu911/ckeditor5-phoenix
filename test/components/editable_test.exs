@@ -27,6 +27,28 @@ defmodule CKEditor5.Components.EditableTest do
     assert html =~ ~s(required)
   end
 
+  test "it is possible to pass CSS class to component" do
+    html =
+      render_component(&Editable.render/1,
+        root: "main",
+        editor_id: "editor-1",
+        class: "custom-class"
+      )
+
+    assert html =~ ~s(class="custom-class")
+  end
+
+  test "it is possible to pass CSS styles to component" do
+    html =
+      render_component(&Editable.render/1,
+        root: "main",
+        editor_id: "editor-1",
+        style: "color: red;"
+      )
+
+    assert html =~ ~s(style="color: red;")
+  end
+
   test "renders editable without name (no hidden input)" do
     html = render_component(&Editable.render/1, root: "main", editor_id: "editor-1")
 

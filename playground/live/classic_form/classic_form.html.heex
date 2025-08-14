@@ -3,11 +3,7 @@
 <.form for={@form} phx-change="validate" phx-submit="save" class="space-y-4">
   <div>
     <label class="block mb-1 font-bold">Content</label>
-    <.live_component
-      id="editor"
-      module={CKEditor5.Components.Editor}
-      field={@form[:content]}
-    />
+    <.ckeditor id="form" field={@form[:content]} />
   </div>
 
   <%= if @error do %>

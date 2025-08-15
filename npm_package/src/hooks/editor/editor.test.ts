@@ -27,7 +27,7 @@ describe('editor hook', () => {
   });
 
   afterEach(async () => {
-    await EditorsRegistry.the.destroyAllEditors();
+    await EditorsRegistry.the.destroyAll();
   });
 
   describe('mount', () => {
@@ -40,7 +40,7 @@ describe('editor hook', () => {
       EditorHook.mounted.call({ el: hookElement });
 
       expect(
-        await EditorsRegistry.the.waitForEditor('magic-editor'),
+        await EditorsRegistry.the.waitFor('magic-editor'),
       ).toBeInstanceOf(ClassicEditor);
     });
 
@@ -319,14 +319,14 @@ describe('editor hook', () => {
 
       EditorHook.destroyed.call({ el: hookElement });
 
-      expect(EditorsRegistry.the.getEditors()).toContain(editor);
+      expect(EditorsRegistry.the.getItems()).toContain(editor);
 
       await new Promise((resolve) => {
         editor.once('destroy', resolve);
         editor.destroy();
       });
 
-      expect(EditorsRegistry.the.getEditors()).not.toContain(editor);
+      expect(EditorsRegistry.the.getItems()).not.toContain(editor);
     });
 
     it('should mark the element as hidden during destruction', async () => {

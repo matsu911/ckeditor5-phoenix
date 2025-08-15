@@ -1,4 +1,4 @@
-import { ContextHook } from './context/context';
+import { ContextHook } from './context';
 import { EditableHook } from './editable';
 import { EditorHook } from './editor';
 import { UIPartHook } from './ui-part';

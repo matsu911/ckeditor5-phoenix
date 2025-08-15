@@ -18,6 +18,11 @@ defmodule CKEditor5.Components.Editor do
   """
   attr :id, :string, required: false, doc: "The ID for the editor instance."
 
+  attr :context_id, :string,
+    required: false,
+    default: nil,
+    doc: "The context ID for the editor, used for multi-root editors."
+
   attr :class, :string,
     required: false,
     default: "",
@@ -105,6 +110,7 @@ defmodule CKEditor5.Components.Editor do
       cke-language={@language}
       cke-content-language={@content_language}
       cke-watchdog={@watchdog}
+      cke-context-id={@context_id}
     >
       <div id={"#{@id}_editor"}></div>
       <%= if @name do %>

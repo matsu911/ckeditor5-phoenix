@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
 import { AsyncRegistry } from '../../shared/async-registry';
-import { EditorsRegistry } from './editors-registry';
+import { ContextsRegistry } from './contexts-registry';
 
-describe('editors registry', () => {
+describe('contexts registry', () => {
   it('should be singleton of async registry', () => {
-    expect(EditorsRegistry.the).toBeInstanceOf(AsyncRegistry);
+    expect(ContextsRegistry.the).toBeInstanceOf(AsyncRegistry);
   });
 });

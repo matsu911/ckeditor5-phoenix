@@ -435,4 +435,22 @@ defmodule CKEditor5.Components.EditorTest do
       assert html =~ ~s(cke-watchdog)
     end
   end
+
+  describe "context" do
+    test "sets context ID for multi-root editors" do
+      html =
+        render_component(&Editor.render/1,
+          id: "editor_context",
+          name: "content",
+          context_id: "context_123"
+        )
+
+      assert html =~ ~s(cke-context-id="context_123")
+    end
+
+    test "does not set context ID for single-root editors" do
+      html = render_component(&Editor.render/1, id: "editor_no_context", name: "content")
+      refute html =~ ~s(cke-context-id)
+    end
+  end
 end

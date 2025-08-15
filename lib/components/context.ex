@@ -10,7 +10,9 @@ defmodule CKEditor5.Components.Context do
   attr :id, :string,
     required: false,
     doc:
-      "The ID of the context to be used. The ID should be used to determine which context should be used by the editor."
+      "The ID of the context to be used. " <>
+        "Use it later in editor components to specify which context to use." <>
+        "If not specified, then a random ID will be generated."
 
   attr :context, :any,
     required: true,
@@ -34,7 +36,8 @@ defmodule CKEditor5.Components.Context do
       id={@id}
       phx-hook="CKContext"
       phx-update="ignore"
-      cke-context={Jason.encode!(@context)}
+      cke-context-config={Jason.encode!(@context.config)}
+      cke-watchdog-config={Jason.encode!(@context.watchdog)}
       {@rest}
     >
       <%= render_slot(@inner_block) %>

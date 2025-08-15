@@ -10,7 +10,7 @@ defmodule CKEditor5.Components.ContextTest do
     html = render_component(&Context.render/1, context: "default", id: "ctx-1")
     assert html =~ ~s(id="ctx-1")
     assert html =~ ~s(phx-hook="CKContext")
-    assert html =~ ~s(cke-context=)
+    assert html =~ ~s(cke-context-config=)
     assert html =~ "foo"
     assert html =~ "bar"
   end
@@ -20,7 +20,7 @@ defmodule CKEditor5.Components.ContextTest do
     html = render_component(&Context.render/1, context: context, id: "ctx-2")
     assert html =~ ~s(id="ctx-2")
     assert html =~ ~s(phx-hook="CKContext")
-    assert html =~ ~s(cke-context=)
+    assert html =~ ~s(cke-context-config=)
     assert html =~ "baz"
     assert html =~ "qux"
   end
@@ -43,6 +43,37 @@ defmodule CKEditor5.Components.ContextTest do
       render_component(&Context.render/1, context: "default", id: "ctx-4", style: "color: red;")
 
     assert html =~ ~s(style="color: red;")
+  end
+
+  describe "watchdog config" do
+    test "passes watchdog config if present" do
+      put_contexts_env(%{
+        "with-watchdog" => %{
+          config: %{},
+          watchdog: %{foo: "bar"}
+        }
+      })
+
+      html = render_component(&Context.render/1, context: "with-watchdog", id: "ctx-5")
+      assert html =~ ~s(id="ctx-5")
+      assert html =~ ~s(phx-hook="CKContext")
+      assert html =~ ~s(cke-watchdog-config=)
+      assert html =~ "foo"
+      assert html =~ "bar"
+    end
+
+    test "does pass watchdog config even if not present" do
+      put_contexts_env(%{
+        "without-watchdog" => %{
+          config: %{}
+        }
+      })
+
+      html = render_component(&Context.render/1, context: "without-watchdog", id: "ctx-6")
+      assert html =~ ~s(id="ctx-6")
+      assert html =~ ~s(phx-hook="CKContext")
+      assert html =~ ~s(cke-watchdog-config=)
+    end
   end
 
   describe "inner block rendering" do

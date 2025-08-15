@@ -40,7 +40,10 @@ config :ckeditor5_phoenix, Playground.Endpoint,
 config :ckeditor5_phoenix,
   contexts: %{
     default: %{
-      config: %{}
+      config: %{},
+      watchdog: %{
+        crash_number_limit: 20
+      }
     }
   },
   presets: %{

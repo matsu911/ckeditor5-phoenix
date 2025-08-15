@@ -114,7 +114,7 @@ Bundle CKEditor 5 with your application for full control over assets, custom bui
 6. **Use in templates** (no CDN assets needed):
 
    ```heex
-   <.ckeditor type="classic" value="<p>Hello world!</p>" />
+   <.ckeditor id="editor" type="classic" value="<p>Hello world!</p>" />
    ```
 
 ### 📡 CDN Distribution
@@ -180,7 +180,7 @@ Load CKEditor 5 directly from CKSource's CDN - no build configuration required. 
    />
 
    <%!-- Use editor anywhere in <body> --%>
-   <.ckeditor type="classic" value="<p>Hello world!</p>" />
+   <.ckeditor id="editor" type="classic" value="<p>Hello world!</p>" />
    ```
 
 That's it! 🎉
@@ -199,6 +199,7 @@ Create a basic editor with default toolbar and features. Perfect for simple cont
 
 <%!-- Render editor with initial content --%>
 <.ckeditor
+  id="editor"
   type="classic"
   value="<p>Initial content</p>"
   editable_height="300px"
@@ -396,7 +397,7 @@ Flexible editor where toolbar and editing area are completely separated. Provide
 <.cke_cloud_assets />
 
 <%!-- Decoupled editor container --%>
-<.ckeditor type="decoupled">
+<.ckeditor id="your-editor" type="decoupled">
   <div class="flex flex-col gap-4">
     <%!-- Toolbar can be placed anywhere --%>
     <.cke_ui_part name="toolbar" />
@@ -733,7 +734,7 @@ This method can be called before the editor is initialized, and it will resolve 
 ```javascript
 import { EditorsRegistry } from 'ckeditor5_phoenix';
 
-EditorsRegistry.the.waitForEditor('editor1').then((editor) => {
+EditorsRegistry.the.waitFor('editor1').then((editor) => {
   console.log('Editor "editor1" is registered:', editor);
 });
 

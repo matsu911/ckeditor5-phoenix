@@ -1,5 +1,6 @@
 import type { EditorPreset } from '../typings';
 
+import { deepCamelCaseKeys } from '../../../shared/deep-camel-case-keys';
 import { EDITOR_TYPES } from '../typings';
 
 /**
@@ -27,7 +28,7 @@ export function readPresetOrThrow(element: HTMLElement): EditorPreset {
 
   return {
     type,
-    config,
+    config: deepCamelCaseKeys(config),
     license,
     customTranslations,
   };

@@ -8,14 +8,15 @@ defmodule CKEditor5.Context do
   alias CKEditor5.Errors
 
   @derive Jason.Encoder
-  @enforce_keys [:config]
   @type t :: %__MODULE__{
-          config: map()
+          config: map(),
+          watchdog: map()
         }
 
   defstruct config: %{
               plugins: []
-            }
+            },
+            watchdog: %{}
 
   @doc """
   Defines the schema for a raw Context configuration map.

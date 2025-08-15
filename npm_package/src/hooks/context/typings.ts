@@ -32,7 +32,7 @@ export type ContextCreatorConfig = {
   /**
    * Array of plugin identifiers to be loaded by the editor.
    */
-  plugins: EditorPlugin[];
+  plugins?: EditorPlugin[];
 
   /**
    * Other configuration options are flexible and can be any key-value pairs.

@@ -44,26 +44,6 @@ describe('editor hook', () => {
       ).toBeInstanceOf(ClassicEditor);
     });
 
-    it('should pass custom translations to the editor', async () => {
-      const hookElement = createEditorHtmlElement({
-        preset: createEditorPreset('classic', {}, {
-          pl: { Bold: 'Custom Pogrubienie' },
-        }),
-        language: {
-          ui: 'pl',
-          content: 'pl',
-        },
-      });
-
-      document.body.appendChild(hookElement);
-      EditorHook.mounted.call({ el: hookElement });
-
-      const editor = await waitForTestEditor();
-      const translation = editor.locale.t('Bold');
-
-      expect(translation).toBe('Custom Pogrubienie');
-    });
-
     it('should pass custom plugins to the editor', async () => {
       class MyCustomPlugin extends Plugin {}
 
@@ -766,6 +746,26 @@ describe('editor hook', () => {
       expect(configLanguage).toBeDefined();
       expect(configLanguage?.ui).toBe('en');
       expect(configLanguage?.content).toBe('en');
+    });
+
+    it('should pass custom translations to the editor', async () => {
+      const hookElement = createEditorHtmlElement({
+        preset: createEditorPreset('classic', {}, {
+          pl: { Bold: 'Custom Pogrubienie' },
+        }),
+        language: {
+          ui: 'pl',
+          content: 'pl',
+        },
+      });
+
+      document.body.appendChild(hookElement);
+      EditorHook.mounted.call({ el: hookElement });
+
+      const editor = await waitForTestEditor();
+      const translation = editor.t('Bold');
+
+      expect(translation).toBe('Custom Pogrubienie');
     });
   });
 

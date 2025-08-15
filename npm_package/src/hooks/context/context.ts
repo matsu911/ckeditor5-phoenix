@@ -1,14 +1,13 @@
 import { Context, ContextWatchdog } from 'ckeditor5';
 
-import type { ContextConfig } from './typings';
-
-import { ClassHook, deepCamelCaseKeys, isEmptyObject, makeHook } from '../../shared';
+import { ClassHook, isEmptyObject, makeHook } from '../../shared';
 import {
   loadAllEditorTranslations,
   loadEditorPlugins,
   normalizeCustomTranslations,
 } from '../editor/utils';
 import { ContextsRegistry } from './contexts-registry';
+import { readContextConfigOrThrow } from './utils';
 
 /**
  * Context hook for Phoenix LiveView. It allows you to create contexts for collaboration editors.
@@ -24,13 +23,9 @@ class ContextHookImpl extends ClassHook {
    */
   private get attrs() {
     const get = (attr: string) => this.el.getAttribute(attr) || null;
-    const getConfig = <T>(attr: string): T | null => deepCamelCaseKeys(
-      JSON.parse(get(attr)!),
-    );
-
     const value = {
       id: this.el.id,
-      config: getConfig<ContextConfig>('cke-context')!,
+      config: readContextConfigOrThrow(this.el),
       language: {
         ui: get('cke-language') || 'en',
         content: get('cke-content-language') || 'en',
@@ -72,6 +67,7 @@ class ContextHookImpl extends ClassHook {
 
       await instance.create({
         ...config,
+        language,
         plugins: loadedPlugins,
         ...mixedTranslations.length && {
           translations: mixedTranslations,

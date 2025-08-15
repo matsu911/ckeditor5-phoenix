@@ -84,7 +84,13 @@ describe('readPresetOrThrow', () => {
   });
 
   it('should handle all valid editor types', () => {
-    const validTypes = ['inline', 'classic', 'balloon', 'decoupled', 'multiroot'];
+    const validTypes = [
+      'inline',
+      'classic',
+      'balloon',
+      'decoupled',
+      'multiroot',
+    ];
 
     validTypes.forEach((type) => {
       const element = document.createElement('div');
@@ -133,12 +139,64 @@ describe('readPresetOrThrow', () => {
     const result = readPresetOrThrow(element);
 
     expect(result).toEqual(preset);
-    expect(result.config['toolbar']['items']).toEqual(['bold', 'italic', 'link']);
+    expect(result.config['toolbar']['items']).toEqual([
+      'bold',
+      'italic',
+      'link',
+    ]);
+
     expect(result.config['customProperty']).toBe('custom-value');
+  });
+
+  it('should support camelCase keys in config and customTranslations', () => {
+    const element = document.createElement('div');
+    const preset = {
+      type: 'classic',
+      config: {
+        customProperty: 'value1',
+        nestedObject: {
+          innerProperty: 'innerValue1',
+        },
+      },
+      license: { key: 'test-key' },
+      customTranslations: { foo: 'bar' },
+    };
+
+    element.setAttribute('cke-preset', JSON.stringify(preset));
+
+    const result = readPresetOrThrow(element);
+
+    expect(result.config['customProperty']).toBe('value1');
+    expect(result.config['nestedObject']['innerProperty']).toBe('innerValue1');
+    expect(result.customTranslations).toEqual({ foo: 'bar' });
+  });
+
+  it('should support snake_case keys in config and custom_translations', () => {
+    const element = document.createElement('div');
+    const preset = {
+      type: 'classic',
+      config: {
+        custom_property: 'value2',
+        nested_object: {
+          inner_property: 'innerValue2',
+        },
+      },
+      license: { key: 'test-key' },
+      custom_translations: { bar: 'baz' },
+    };
+
+    element.setAttribute('cke-preset', JSON.stringify(preset));
+
+    const result = readPresetOrThrow(element);
+
+    expect(result.config['customProperty']).toBe('value2');
+    expect(result.config['nestedObject']['innerProperty']).toBe('innerValue2');
+    expect(result.customTranslations).toEqual({ bar: 'baz' });
   });
 
   it('should handle empty attribute gracefully', () => {
     const element = document.createElement('div');
+
     element.setAttribute('cke-preset', '');
 
     expect(() => readPresetOrThrow(element)).toThrow(
@@ -153,6 +211,7 @@ describe('readPresetOrThrow', () => {
       config: null,
       license: { key: 'test-key' },
     };
+
     element.setAttribute('cke-preset', JSON.stringify(preset));
 
     expect(() => readPresetOrThrow(element)).toThrow(

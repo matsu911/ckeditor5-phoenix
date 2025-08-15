@@ -138,7 +138,7 @@ export class AsyncRegistry<T extends Destructible> {
   async destroyAll() {
     const promises = (
       Array
-        .from(this.items.values())
+        .from(new Set(this.items.values()))
         .map(item => item.destroy())
     );
 

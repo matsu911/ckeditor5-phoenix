@@ -33,7 +33,7 @@ export async function createEditorInContext({ element, context, creator, config 
 
   const editor = context.getItem(editorContextId) as Editor;
   const contextDescriptor: EditorContextDescriptor = {
-    state: 'mounted',
+    state: 'available',
     editorContextId,
     context,
   };
@@ -46,7 +46,7 @@ export async function createEditorInContext({ element, context, creator, config 
   // destroyed.
   const originalDestroy = context.destroy.bind(context);
   context.destroy = async () => {
-    contextDescriptor.state = 'unmounted';
+    contextDescriptor.state = 'unavailable';
     return originalDestroy();
   };
 
@@ -84,7 +84,7 @@ type Attrs = {
  * Descriptor for an editor context.
  */
 type EditorContextDescriptor = {
-  state: 'mounted' | 'unmounted';
+  state: 'available' | 'unavailable';
   editorContextId: string;
   context: ContextWatchdog<Context>;
 };

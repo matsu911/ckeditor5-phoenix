@@ -82,7 +82,13 @@ class EditorHookImpl extends ClassHook {
   override async mounted() {
     this.editorPromise = this.createEditor();
 
-    EditorsRegistry.the.register(this.attrs.editorId, await this.editorPromise);
+    const result = await this.editorPromise;
+
+    // Do not even try to broadcast about the registration of the editor
+    // if hook was immediately destroyed.
+    if (!this.isBeingDestroyed()) {
+      EditorsRegistry.the.register(this.attrs.editorId, result);
+    }
 
     return this;
   }
@@ -92,27 +98,40 @@ class EditorHookImpl extends ClassHook {
    * This is important to prevent memory leaks and ensure that the editor is properly cleaned up.
    */
   override async destroyed() {
+    const { editorId } = this.attrs;
+
     // Let's hide the element during destruction to prevent flickering.
     this.el.style.display = 'none';
 
     // Let's wait for the mounted promise to resolve before proceeding with destruction.
-    const editor = (await this.editorPromise)!;
-    const editorContext = unwrapEditorContext(editor);
+    try {
+      const editor = (await this.editorPromise)!;
+      const editorContext = unwrapEditorContext(editor);
+      const watchdog = unwrapEditorWatchdog(editor);
 
-    if (editorContext) {
-      // If context is present, make sure it's not in unmounting phase, as it'll kill the editors.
-      // If it's being destroyed, don't do anything, as the context will take care of it.
-      if (editorContext.state !== 'unmounted') {
-        await editorContext.context.remove(editorContext.editorContextId);
+      if (editorContext) {
+        // If context is present, make sure it's not in unmounting phase, as it'll kill the editors.
+        // If it's being destroyed, don't do anything, as the context will take care of it.
+        if (editorContext.state !== 'unavailable') {
+          await editorContext.context.remove(editorContext.editorContextId);
+        }
+      }
+      else if (watchdog) {
+        await watchdog.destroy();
+      }
+      else {
+        await editor.destroy();
       }
     }
-    else {
-      await unwrapEditorWatchdog(editor)?.destroy();
-      await editor.destroy();
-    }
+    finally {
+      this.editorPromise = null;
 
-    this.editorPromise = null;
-    EditorsRegistry.the.unregister(this.attrs.editorId);
+      // Sometimes, when hook is immediately destroyed,
+      // the editor is not registered in the registry.
+      if (EditorsRegistry.the.hasItem(editorId)) {
+        EditorsRegistry.the.unregister(editorId);
+      }
+    }
   }
 
   /**

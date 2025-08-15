@@ -59,22 +59,35 @@ class ContextHookImpl extends ClassHook {
       return instance;
     })();
 
-    ContextsRegistry.the.register(id, await this.contextPromise);
+    const context = await this.contextPromise;
+
+    if (!this.isBeingDestroyed()) {
+      ContextsRegistry.the.register(id, context);
+    }
   }
 
   /**
    * Destroys the context component. Unmounts root from the editor.
    */
   override async destroyed() {
+    const { id } = this.attrs;
+
     // Let's hide the element during destruction to prevent flickering.
     this.el.style.display = 'none';
 
     // Let's wait for the mounted promise to resolve before proceeding with destruction.
-    const context = await this.contextPromise;
-    await context?.destroy();
-    this.contextPromise = null;
+    try {
+      const context = await this.contextPromise;
 
-    ContextsRegistry.the.unregister(this.attrs.id);
+      await context?.destroy();
+    }
+    finally {
+      this.contextPromise = null;
+
+      if (ContextsRegistry.the.hasItem(id)) {
+        ContextsRegistry.the.unregister(id);
+      }
+    }
   }
 }
 

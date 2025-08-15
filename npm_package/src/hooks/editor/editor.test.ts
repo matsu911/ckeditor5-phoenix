@@ -317,16 +317,13 @@ describe('editor hook', () => {
 
       const editor = await waitForTestEditor();
 
-      EditorHook.destroyed.call({ el: hookElement });
-
       expect(EditorsRegistry.the.getItems()).toContain(editor);
 
-      await new Promise((resolve) => {
-        editor.once('destroy', resolve);
-        editor.destroy();
-      });
+      EditorHook.destroyed.call({ el: hookElement });
 
-      expect(EditorsRegistry.the.getItems()).not.toContain(editor);
+      await vi.waitFor(() => {
+        expect(EditorsRegistry.the.getItems()).not.toContain(editor);
+      });
     });
 
     it('should mark the element as hidden during destruction', async () => {

@@ -1,4 +1,4 @@
-defmodule CKEditor5.Preset.CustomTranslations do
+defmodule CKEditor5.CustomTranslations do
   @moduledoc """
   Represents custom translations configuration for CKEditor5.
   """

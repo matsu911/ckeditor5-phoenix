@@ -38,5 +38,10 @@ defmodule CKEditor5.ContextTest do
         Context.parse!(%{invalid: true})
       end
     end
+
+    test "returns an error if custom translations are invalid" do
+      map = %{custom_translations: %{en: nil}, config: %{}}
+      assert {:error, [_ | _]} = Context.parse(map)
+    end
   end
 end

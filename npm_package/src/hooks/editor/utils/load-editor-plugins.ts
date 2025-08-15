@@ -66,6 +66,6 @@ export async function loadEditorPlugins(plugins: EditorPlugin[]): Promise<Loaded
  * Type representing the loaded plugins and whether premium features are available.
  */
 type LoadedPlugins = {
-  loadedPlugins: PluginConstructor[];
+  loadedPlugins: PluginConstructor<any>[];
   hasPremium: boolean;
 };

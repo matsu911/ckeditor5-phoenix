@@ -6,8 +6,8 @@ defmodule CKEditor5.Preset.Parser do
 
   import Norm
 
-  alias CKEditor5.{Cloud, Errors, License, Preset}
-  alias CKEditor5.Preset.{CloudCompatibilityChecker, CustomTranslations, EditorType}
+  alias CKEditor5.{Cloud, CustomTranslations, Errors, License, Preset}
+  alias CKEditor5.Preset.{CloudCompatibilityChecker, EditorType}
 
   @doc """
   Defines the schema for a preset configuration map.

@@ -10,7 +10,7 @@ defmodule CKEditor5.Components.ContextTest do
     html = render_component(&Context.render/1, context: "default", id: "ctx-1")
     assert html =~ ~s(id="ctx-1")
     assert html =~ ~s(phx-hook="CKContext")
-    assert html =~ ~s(cke-context-config=)
+    assert html =~ ~s(cke-context=)
     assert html =~ "foo"
     assert html =~ "bar"
   end
@@ -20,7 +20,7 @@ defmodule CKEditor5.Components.ContextTest do
     html = render_component(&Context.render/1, context: context, id: "ctx-2")
     assert html =~ ~s(id="ctx-2")
     assert html =~ ~s(phx-hook="CKContext")
-    assert html =~ ~s(cke-context-config=)
+    assert html =~ ~s(cke-context=)
     assert html =~ "baz"
     assert html =~ "qux"
   end
@@ -38,42 +38,26 @@ defmodule CKEditor5.Components.ContextTest do
     assert html =~ ~s(class="custom-class")
   end
 
+  test "passes watchdog config if present" do
+    put_contexts_env(%{
+      "with-watchdog" => %{
+        config: %{},
+        watchdog: %{foo: "bar"}
+      }
+    })
+
+    html = render_component(&Context.render/1, context: "with-watchdog", id: "ctx-5")
+    assert html =~ ~s(id="ctx-5")
+    assert html =~ ~s(phx-hook="CKContext")
+    assert html =~ "foo"
+    assert html =~ "bar"
+  end
+
   test "it is possible to pass CSS styles to component" do
     html =
       render_component(&Context.render/1, context: "default", id: "ctx-4", style: "color: red;")
 
     assert html =~ ~s(style="color: red;")
-  end
-
-  describe "watchdog config" do
-    test "passes watchdog config if present" do
-      put_contexts_env(%{
-        "with-watchdog" => %{
-          config: %{},
-          watchdog: %{foo: "bar"}
-        }
-      })
-
-      html = render_component(&Context.render/1, context: "with-watchdog", id: "ctx-5")
-      assert html =~ ~s(id="ctx-5")
-      assert html =~ ~s(phx-hook="CKContext")
-      assert html =~ ~s(cke-watchdog-config=)
-      assert html =~ "foo"
-      assert html =~ "bar"
-    end
-
-    test "does pass watchdog config even if not present" do
-      put_contexts_env(%{
-        "without-watchdog" => %{
-          config: %{}
-        }
-      })
-
-      html = render_component(&Context.render/1, context: "without-watchdog", id: "ctx-6")
-      assert html =~ ~s(id="ctx-6")
-      assert html =~ ~s(phx-hook="CKContext")
-      assert html =~ ~s(cke-watchdog-config=)
-    end
   end
 
   describe "inner block rendering" do
@@ -97,6 +81,38 @@ defmodule CKEditor5.Components.ContextTest do
 
       assert html =~ ~s(id="context_no_inner")
       assert html =~ ~s(>\n  \n</div>)
+    end
+  end
+
+  describe "language attribute handling" do
+    test "uses provided language for editor UI" do
+      html =
+        render_component(&Context.render/1,
+          language: :en,
+          context: "default",
+          id: "ctx-lang-en",
+          language: "en"
+        )
+
+      assert html =~ ~s(cke-language="en")
+    end
+
+    test "uses provided content language for editable area" do
+      html =
+        render_component(&Context.render/1,
+          content_language: :pl,
+          context: "default",
+          id: "ctx-lang-pl",
+          content_language: "pl"
+        )
+
+      assert html =~ ~s(cke-content-language="pl")
+    end
+
+    test "doesn't use any language if not specified" do
+      html = render_component(&Context.render/1, context: "default", id: "ctx-lang-default")
+      refute html =~ ~s(cke-content-language)
+      refute html =~ ~s(cke-language)
     end
   end
 end

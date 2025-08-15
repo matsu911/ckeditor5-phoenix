@@ -3,8 +3,7 @@ defmodule CKEditor5.Preset do
   Represents a CKEditor 5 preset configuration.
   """
 
-  alias CKEditor5.{Cloud, License}
-  alias CKEditor5.Preset.CustomTranslations
+  alias CKEditor5.{Cloud, CustomTranslations, License}
 
   @derive {Jason.Encoder, only: [:type, :config, :license, :custom_translations]}
   @type t :: %__MODULE__{

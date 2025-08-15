@@ -1,8 +1,8 @@
-defmodule CKEditor5.Preset.CustomTranslationsTest do
+defmodule CKEditor5.CustomTranslationsTest do
   use ExUnit.Case, async: true
 
+  alias CKEditor5.CustomTranslations
   alias CKEditor5.Errors.InvalidCustomTranslations
-  alias CKEditor5.Preset.CustomTranslations
 
   describe "parse/1" do
     test "with valid translations returns ok" do

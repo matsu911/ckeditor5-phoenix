@@ -1,8 +1,13 @@
-import type { ContextConfig, WatchdogConfig } from 'ckeditor5';
-
 import { Context, ContextWatchdog } from 'ckeditor5';
 
-import { ClassHook, deepCamelCaseKeys, makeHook } from '../../shared';
+import type { ContextConfig } from './typings';
+
+import { ClassHook, deepCamelCaseKeys, isEmptyObject, makeHook } from '../../shared';
+import {
+  loadAllEditorTranslations,
+  loadEditorPlugins,
+  normalizeCustomTranslations,
+} from '../editor/utils';
 import { ContextsRegistry } from './contexts-registry';
 
 /**
@@ -25,8 +30,11 @@ class ContextHookImpl extends ClassHook {
 
     const value = {
       id: this.el.id,
-      watchdogConfig: getConfig<WatchdogConfig>('cke-watchdog-config')!,
-      config: getConfig<ContextConfig>('cke-context-config')!,
+      config: getConfig<ContextConfig>('cke-context')!,
+      language: {
+        ui: get('cke-language') || 'en',
+        content: get('cke-content-language') || 'en',
+      },
     };
 
     Object.defineProperty(this, 'attrs', {
@@ -43,15 +51,33 @@ class ContextHookImpl extends ClassHook {
    * Mounts the context component.
    */
   override async mounted() {
-    const { id, config, watchdogConfig } = this.attrs;
+    const { id, language } = this.attrs;
+    const { customTranslations, watchdogConfig, config: { plugins, ...config } } = this.attrs.config;
+    const { loadedPlugins, hasPremium } = await loadEditorPlugins(plugins ?? []);
 
+    // Mix custom translations with loaded translations.
+    const loadedTranslations = await loadAllEditorTranslations(language, hasPremium);
+    const mixedTranslations = [
+      ...loadedTranslations,
+      normalizeCustomTranslations(customTranslations?.dictionary || {}),
+    ]
+      .filter(translations => !isEmptyObject(translations));
+
+    // Initialize context.
     this.contextPromise = (async () => {
       const instance = new ContextWatchdog(Context, {
         crashNumberLimit: 10,
         ...watchdogConfig,
       });
 
-      instance.create(config);
+      await instance.create({
+        ...config,
+        plugins: loadedPlugins,
+        ...mixedTranslations.length && {
+          translations: mixedTranslations,
+        },
+      });
+
       instance.on('itemError', (...args) => {
         console.error('Context item error:', ...args);
       });

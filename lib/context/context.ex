@@ -5,18 +5,20 @@ defmodule CKEditor5.Context do
 
   import Norm
 
-  alias CKEditor5.Errors
+  alias CKEditor5.{CustomTranslations, Errors}
 
   @derive Jason.Encoder
   @type t :: %__MODULE__{
           config: map(),
-          watchdog: map()
+          watchdog: map(),
+          custom_translations: CustomTranslations.t() | nil
         }
 
   defstruct config: %{
               plugins: []
             },
-            watchdog: %{}
+            watchdog: nil,
+            custom_translations: nil
 
   @doc """
   Defines the schema for a raw Context configuration map.
@@ -24,7 +26,9 @@ defmodule CKEditor5.Context do
   def s do
     schema =
       schema(%{
-        config: spec(is_map())
+        config: spec(is_map()),
+        watchdog: spec(is_map() or is_nil()),
+        custom_translations: spec(is_map() or is_nil())
       })
 
     selection(schema, [:config])
@@ -39,13 +43,26 @@ defmodule CKEditor5.Context do
   def parse(%__MODULE__{} = context), do: {:ok, context}
 
   def parse(map) when is_map(map) do
-    case conform(map, s()) do
-      {:ok, _} -> {:ok, struct(__MODULE__, map)}
+    with {:ok, _} <- conform(map, s()),
+         {:ok, parsed_map} <- parse_custom_translations(map) do
+      {:ok, struct(__MODULE__, parsed_map)}
+    else
       {:error, errors} -> {:error, errors}
     end
   end
 
   def parse(_), do: {:error, "Context configuration must be a map or nil"}
+
+  # Parses the custom translations from a map into a CustomTranslations struct.
+  defp parse_custom_translations(context_map) do
+    case CustomTranslations.parse(context_map[:custom_translations]) do
+      {:ok, custom_translations} ->
+        {:ok, Map.put(context_map, :custom_translations, custom_translations)}
+
+      {:error, error} ->
+        {:error, error}
+    end
+  end
 
   @doc """
   Parses a map into a Context struct.

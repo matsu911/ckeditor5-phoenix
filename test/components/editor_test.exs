@@ -47,6 +47,12 @@ defmodule CKEditor5.Components.EditorTest do
     assert html =~ ~s(class="custom-class")
   end
 
+  test "it should assign random ID if missing" do
+    html = render_component(&Editor.render/1, name: "content")
+    assert html =~ ~s(id="cke-)
+    assert html =~ ~s(phx-hook="CKEditor5")
+  end
+
   test "it is possible to pass CSS styles to component" do
     html =
       render_component(&Editor.render/1, id: "editor1", name: "content", style: "color: red;")

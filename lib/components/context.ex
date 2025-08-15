@@ -5,11 +5,10 @@ defmodule CKEditor5.Components.Context do
 
   use Phoenix.Component
 
-  alias CKEditor5.{Context, Contexts}
+  alias CKEditor5.{Context, Contexts, Helpers}
 
   attr :id, :string,
     required: false,
-    default: nil,
     doc:
       "The ID of the context to be used. The ID should be used to determine which context should be used by the editor."
 
@@ -25,7 +24,10 @@ defmodule CKEditor5.Components.Context do
   attr :rest, :global
 
   def render(assigns) do
-    assigns = load_context(assigns)
+    assigns =
+      assigns
+      |> Helpers.assign_id_if_missing("cke-context")
+      |> load_context()
 
     ~H"""
     <div

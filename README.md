@@ -719,6 +719,8 @@ The **context** feature is designed to group multiple editor instances together,
 
 For more information about the context feature, see the [CKEditor 5 Context documentation](https://ckeditor.com/docs/ckeditor5/latest/features/collaboration/context-and-collaboration-features.html).
 
+![CKEditor 5 Context in Elixir Phoenix application](docs/context.png)
+
 ### Basic usage 🔧
 
 Define your context in configuration:

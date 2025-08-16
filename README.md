@@ -747,7 +747,7 @@ config :ckeditor5_phoenix,
 And use it in your LiveView:
 
 ```heex
-<.cke_context context="custom">
+<.cke_context context="your-context">
   <.ckeditor class="mb-6" value="Child A" />
   <.ckeditor value="Child B" />
 </.cke_context>

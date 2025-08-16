@@ -1,6 +1,4 @@
-import type { Editor } from 'ckeditor5';
-
-import { EditorWatchdog } from 'ckeditor5';
+import type { Editor, EditorWatchdog } from 'ckeditor5';
 
 const EDITOR_WATCHDOG_SYMBOL = Symbol.for('elixir-editor-watchdog');
 
@@ -10,7 +8,8 @@ const EDITOR_WATCHDOG_SYMBOL = Symbol.for('elixir-editor-watchdog');
  * @param Editor - The Editor creator to wrap.
  * @returns The Editor creator wrapped with a watchdog.
  */
-export function wrapWithWatchdog(Editor: EditorCreator) {
+export async function wrapWithWatchdog(Editor: EditorCreator) {
+  const { EditorWatchdog } = await import('ckeditor5');
   const watchdog = new EditorWatchdog(Editor);
 
   watchdog.setCreator(async (...args: Parameters<typeof Editor['create']>) => {

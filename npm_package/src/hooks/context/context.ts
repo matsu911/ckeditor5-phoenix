@@ -1,4 +1,4 @@
-import { Context, ContextWatchdog } from 'ckeditor5';
+import type { Context, ContextWatchdog } from 'ckeditor5';
 
 import { ClassHook, isEmptyObject, makeHook } from '../../shared';
 import {
@@ -60,6 +60,7 @@ class ContextHookImpl extends ClassHook {
 
     // Initialize context.
     this.contextPromise = (async () => {
+      const { ContextWatchdog, Context } = await import('ckeditor5');
       const instance = new ContextWatchdog(Context, {
         crashNumberLimit: 10,
         ...watchdogConfig,

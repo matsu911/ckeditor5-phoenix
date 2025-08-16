@@ -16,7 +16,7 @@ describe('wrap with watchdog', () => {
   });
 
   it('returns editor instance after calling Constructor.create', async () => {
-    const { Constructor } = wrapWithWatchdog(ClassicEditor);
+    const { Constructor } = await wrapWithWatchdog(ClassicEditor);
     const editor = await Constructor.create(element, {
       licenseKey: 'GPL',
     });
@@ -27,13 +27,13 @@ describe('wrap with watchdog', () => {
   });
 
   it('returns instance of watchdog', async () => {
-    const { watchdog } = wrapWithWatchdog(ClassicEditor);
+    const { watchdog } = await wrapWithWatchdog(ClassicEditor);
 
     expect(watchdog).toBeInstanceOf(EditorWatchdog);
   });
 
   it('should be possible to unwrap watchdog from editor instance', async () => {
-    const { Constructor } = wrapWithWatchdog(ClassicEditor);
+    const { Constructor } = await wrapWithWatchdog(ClassicEditor);
     const editor = await Constructor.create(element, {
       licenseKey: 'GPL',
     });

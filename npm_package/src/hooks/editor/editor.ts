@@ -150,7 +150,7 @@ class EditorHookImpl extends ClassHook {
 
     // Do not use editor specific watchdog if context is attached, as the context is by default protected.
     if (watchdog && !context) {
-      const wrapped = wrapWithWatchdog(Constructor);
+      const wrapped = await wrapWithWatchdog(Constructor);
 
       ({ Constructor } = wrapped);
       wrapped.watchdog.on('restart', () => {

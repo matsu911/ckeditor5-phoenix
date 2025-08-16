@@ -39,7 +39,7 @@ config :ckeditor5_phoenix, Playground.Endpoint,
 
 config :ckeditor5_phoenix,
   contexts: %{
-    default: %{
+    "custom" => %{
       config: %{
         plugins: [
           :CustomContextPlugin
@@ -51,7 +51,7 @@ config :ckeditor5_phoenix,
     }
   },
   presets: %{
-    custom: %{
+    "custom" => %{
       custom_translations: %{
         en: %{
           Bold: "Custom Bold",

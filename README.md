@@ -53,6 +53,9 @@ CKEditor 5 integration library for Phoenix (Elixir) applications. Provides web c
     - [Global Translation Config 🛠️](#global-translation-config-️)
     - [Custom translations 🌐](#custom-translations-)
   - [Custom plugins 🧩](#custom-plugins-)
+  - [Context 🤝](#context-)
+    - [Basic usage 🔧](#basic-usage--1)
+    - [Custom context translations 🌐](#custom-context-translations-)
   - [Watch registered editors 👀](#watch-registered-editors-)
     - [Wait for particular editor to be registered ⏳](#wait-for-particular-editor-to-be-registered-)
   - [Package development 🛠️](#package-development-️)
@@ -709,6 +712,74 @@ import { CustomEditorPluginsRegistry } from 'ckeditor5_phoenix';
 
 CustomEditorPluginsRegistry.the.unregisterAll();
 ```
+
+## Context 🤝
+
+The **context** feature is designed to group multiple editor instances together, allowing them to share a common context. This is particularly useful in collaborative editing scenarios, where users can work together in real time. By sharing a context, editors can synchronize features such as comments, track changes, and presence indicators across different editor instances. This enables seamless collaboration and advanced workflows in your Phoenix application.
+
+For more information about the context feature, see the [CKEditor 5 Context documentation](https://ckeditor.com/docs/ckeditor5/latest/features/collaboration/context-and-collaboration-features.html).
+
+### Basic usage 🔧
+
+Define your context in configuration:
+
+```elixir
+config :ckeditor5_phoenix,
+  contexts: %{
+    "your-context" => %{
+      config: %{
+        plugins: [
+          :CustomContextPlugin
+        ]
+      },
+      watchdog: %{
+        crash_number_limit: 20
+      }
+    }
+  },
+  presets: %{
+    # ...
+  }
+```
+
+And use it in your LiveView:
+
+```heex
+<.cke_context context="custom">
+  <.ckeditor class="mb-6" value="Child A" />
+  <.ckeditor value="Child B" />
+</.cke_context>
+```
+
+Voila!
+
+> [!NOTE]
+> The `context` attribute accepts also `CKEditor5.Context` structure, so it can be used in LiveView assigns or other dynamic contexts.
+
+### Custom context translations 🌐
+
+Define your custom translations in the configuration:
+
+```elixir
+config :ckeditor5_phoenix,
+  contexts: %{
+    "custom" => %{
+      # ...
+      custom_translations: %{
+        en: %{
+          Bold: "Custom Bold",
+          Italic: "Custom Italic"
+        },
+        pl: %{
+          Bold: "Pogrubiony",
+          Italic: "Kursywa"
+        }
+      }
+    }
+  }
+```
+
+These translations will be used in the context's editors, overriding the default translations. They are available through `locale.t` plugin in every context plugin.
 
 ## Watch registered editors 👀
 

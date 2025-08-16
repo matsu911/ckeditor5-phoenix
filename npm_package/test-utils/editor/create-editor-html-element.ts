@@ -11,6 +11,7 @@ export function createEditorHtmlElement(
     id = 'test-editor',
     preset = createEditorPreset(),
     initialValue = '<p>Test content</p>',
+    contextId,
     editableHeight = null,
     withInput = false,
     changeEvent = false,
@@ -55,6 +56,9 @@ export function createEditorHtmlElement(
       ...watchdog && {
         'cke-watchdog': '',
       },
+      ...contextId && {
+        'cke-context-id': contextId,
+      },
       ...hookAttrs,
     },
     html.div({ id: `${id}_editor` }),
@@ -72,6 +76,7 @@ export function createEditorHtmlElement(
 type EditorCreatorAttrs = {
   id?: string;
   preset?: EditorPreset;
+  contextId?: string;
   initialValue?: string | null;
   editableHeight?: number | null;
   withInput?: boolean;

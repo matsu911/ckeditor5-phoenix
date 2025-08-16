@@ -80,14 +80,21 @@ class EditorHookImpl extends ClassHook {
    * Mounts the editor component.
    */
   override async mounted() {
+    const { editorId } = this.attrs;
     this.editorPromise = this.createEditor();
 
-    const result = await this.editorPromise;
+    const editor = await this.editorPromise;
 
     // Do not even try to broadcast about the registration of the editor
     // if hook was immediately destroyed.
     if (!this.isBeingDestroyed()) {
-      EditorsRegistry.the.register(this.attrs.editorId, result);
+      EditorsRegistry.the.register(editorId, editor);
+
+      editor.once('destroy', () => {
+        if (EditorsRegistry.the.hasItem(editorId)) {
+          EditorsRegistry.the.unregister(editorId);
+        }
+      });
     }
 
     return this;
@@ -98,8 +105,6 @@ class EditorHookImpl extends ClassHook {
    * This is important to prevent memory leaks and ensure that the editor is properly cleaned up.
    */
   override async destroyed() {
-    const { editorId } = this.attrs;
-
     // Let's hide the element during destruction to prevent flickering.
     this.el.style.display = 'none';
 
@@ -125,12 +130,6 @@ class EditorHookImpl extends ClassHook {
     }
     finally {
       this.editorPromise = null;
-
-      // Sometimes, when hook is immediately destroyed,
-      // the editor is not registered in the registry.
-      if (EditorsRegistry.the.hasItem(editorId)) {
-        EditorsRegistry.the.unregister(editorId);
-      }
     }
   }
 
@@ -156,9 +155,9 @@ class EditorHookImpl extends ClassHook {
       ({ Constructor } = wrapped);
       wrapped.watchdog.on('restart', () => {
         const newInstance = wrapped.watchdog.editor!;
+
         this.editorPromise = Promise.resolve(newInstance);
 
-        EditorsRegistry.the.unregister(editorId);
         EditorsRegistry.the.register(editorId, newInstance);
       });
     }

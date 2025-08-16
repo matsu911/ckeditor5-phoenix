@@ -117,7 +117,7 @@ class ContextHookImpl extends ClassHook {
  * Type guard to check if an element is a context hook HTMLElement.
  */
 function isContextHookHTMLElement(el: HTMLElement): el is HTMLElement & { instance: ContextHookImpl; } {
-  return el.hasAttribute('cke-context-config');
+  return el.hasAttribute('cke-context');
 }
 
 /**

@@ -16,7 +16,7 @@ import {
   waitForTestEditor,
 } from '~/test-utils';
 
-import { CustomEditorPluginsRegistry } from '../../hooks/editor/custom-editor-plugins';
+import { CustomEditorPluginsRegistry } from './custom-editor-plugins';
 import { EditorHook } from './editor';
 import { EditorsRegistry } from './editors-registry';
 import { unwrapEditorWatchdog } from './utils';
@@ -28,6 +28,7 @@ describe('editor hook', () => {
 
   afterEach(async () => {
     await EditorsRegistry.the.destroyAll();
+    CustomEditorPluginsRegistry.the.unregisterAll();
   });
 
   describe('mount', () => {
@@ -45,7 +46,9 @@ describe('editor hook', () => {
     });
 
     it('should pass custom plugins to the editor', async () => {
-      class MyCustomPlugin extends Plugin {}
+      class MyCustomPlugin extends Plugin {
+        static pluginName = 'MyCustomPlugin';
+      }
 
       CustomEditorPluginsRegistry.the.register('MyCustomPlugin', () => MyCustomPlugin);
 
@@ -60,7 +63,7 @@ describe('editor hook', () => {
       EditorHook.mounted.call({ el: hookElement });
 
       const editor = await waitForTestEditor();
-      const plugin = editor.plugins.get(MyCustomPlugin);
+      const plugin = editor.plugins.get('MyCustomPlugin');
 
       expect(plugin).toBeInstanceOf(MyCustomPlugin);
     });
@@ -801,6 +804,27 @@ describe('editor hook', () => {
       const watchdog = unwrapEditorWatchdog(editor);
 
       expect(watchdog).to.equal(null);
+    });
+
+    it('destroying of hook destroys watchdog', async () => {
+      const hookElement = createEditorHtmlElement({
+        watchdog: true,
+      });
+
+      document.body.appendChild(hookElement);
+      EditorHook.mounted.call({ el: hookElement });
+
+      const editor = await waitForTestEditor();
+      const watchdog = unwrapEditorWatchdog(editor)!;
+
+      expect(watchdog).to.be.an('object');
+
+      EditorHook.destroyed.call({ el: hookElement });
+
+      await vi.waitFor(async () => {
+        expect(watchdog.state).toEqual('destroyed');
+        expect(editor.state).toEqual('destroyed');
+      });
     });
   });
 });

@@ -6,6 +6,10 @@ defmodule CKEditor5.Components.UIPart do
 
   use Phoenix.Component
 
+  alias CKEditor5.Helpers
+
+  attr :id, :string, required: false, doc: "The ID of the element."
+
   attr :name, :string,
     required: true,
     doc: """
@@ -23,9 +27,11 @@ defmodule CKEditor5.Components.UIPart do
   attr :rest, :global
 
   def render(assigns) do
+    assigns = assigns |> Helpers.assign_id_if_missing("cke-ui-part")
+
     ~H"""
     <div
-      id={@name}
+      id={@id}
       phx-hook="CKUIPart"
       phx-update="ignore"
       data-cke-editor-id={@editor_id}

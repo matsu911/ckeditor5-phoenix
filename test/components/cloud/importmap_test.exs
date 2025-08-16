@@ -1,8 +1,7 @@
 defmodule CKEditor5.Components.Cloud.ImportmapTest do
-  alias CKEditor5.Components.Cloud.Importmap
-  alias CKEditor5.Test.PresetsHelper
-
   use CKEditor5.Test.PresetsTestCaseTemplate, async: true
+
+  alias CKEditor5.Components.Cloud.Importmap
 
   import Phoenix.LiveViewTest
 
@@ -11,7 +10,7 @@ defmodule CKEditor5.Components.Cloud.ImportmapTest do
       cloud_license_key: key
     } do
       preset = default_preset(key)
-      PresetsHelper.put_presets_env(%{"default" => preset})
+      put_presets_env(%{"default" => preset})
       html = render_component(&Importmap.render/1, preset: "default")
 
       [_, importmap_json] = Regex.run(~r/<script type="importmap"[^>]*>(.+)<\/script>/s, html)
@@ -32,7 +31,7 @@ defmodule CKEditor5.Components.Cloud.ImportmapTest do
       preset =
         default_preset(key, cloud: %{version: "40.0.0", premium: true, translations: ["pl"]})
 
-      PresetsHelper.put_presets_env(%{"premium" => preset})
+      put_presets_env(%{"premium" => preset})
       html = render_component(&Importmap.render/1, preset: "premium")
 
       [_, importmap_json] = Regex.run(~r/<script type="importmap"[^>]*>(.+)<\/script>/s, html)
@@ -55,7 +54,7 @@ defmodule CKEditor5.Components.Cloud.ImportmapTest do
       cloud_license_key: key
     } do
       preset = default_preset(key, cloud: %{version: "40.0.0", premium: false})
-      PresetsHelper.put_presets_env(%{"default" => preset})
+      put_presets_env(%{"default" => preset})
 
       html = render_component(&Importmap.render/1, preset: "default")
 
@@ -69,7 +68,7 @@ defmodule CKEditor5.Components.Cloud.ImportmapTest do
       free_preset =
         default_preset(key, cloud: %{version: "40.0.0", premium: false})
 
-      PresetsHelper.put_presets_env(%{"free" => free_preset})
+      put_presets_env(%{"free" => free_preset})
 
       html = render_component(&Importmap.render/1, preset: "free", premium: true)
 
@@ -91,7 +90,7 @@ defmodule CKEditor5.Components.Cloud.ImportmapTest do
           cloud: %{version: "40.0.0", premium: false, translations: ["pl", "de"]}
         )
 
-      PresetsHelper.put_presets_env(%{"default" => preset})
+      put_presets_env(%{"default" => preset})
       html = render_component(&Importmap.render/1, preset: "default", translations: ["pl", "de"])
 
       [_, importmap_json] = Regex.run(~r/<script type="importmap"[^>]*>(.+)<\/script>/s, html)
@@ -112,7 +111,7 @@ defmodule CKEditor5.Components.Cloud.ImportmapTest do
       cloud_license_key: key
     } do
       preset = default_preset(key)
-      PresetsHelper.put_presets_env(%{"default" => preset})
+      put_presets_env(%{"default" => preset})
       html = render_component(&Importmap.render/1, preset: "default", translations: nil)
 
       [_, importmap_json] = Regex.run(~r/<script type="importmap"[^>]*>(.+)<\/script>/s, html)
@@ -131,7 +130,7 @@ defmodule CKEditor5.Components.Cloud.ImportmapTest do
       cloud_license_key: key
     } do
       preset = default_preset(key)
-      PresetsHelper.put_presets_env(%{"default" => preset})
+      put_presets_env(%{"default" => preset})
       html = render_component(&Importmap.render/1, preset: "default", translations: [])
 
       [_, importmap_json] = Regex.run(~r/<script type="importmap"[^>]*>(.+)<\/script>/s, html)

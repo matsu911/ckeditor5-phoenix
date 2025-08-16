@@ -7,6 +7,7 @@ defmodule CKEditor5Test do
     assert function_exported?(CKEditor5, :editable, 1)
     assert function_exported?(CKEditor5, :cloud_assets, 1)
     assert function_exported?(CKEditor5, :ui_part, 1)
+    assert function_exported?(CKEditor5, :context, 1)
   end
 
   test "CKEditor5.version returns a version string" do
@@ -20,7 +21,7 @@ defmodule CKEditor5Test do
     # so we use try/rescue to only check that the delegation is wired up
     assigns = %{}
 
-    for fun <- [:editor, :editable, :cloud_assets, :ui_part] do
+    for fun <- [:editor, :editable, :cloud_assets, :ui_part, :context] do
       try do
         apply(CKEditor5, fun, [assigns])
       rescue
@@ -38,5 +39,6 @@ defmodule CKEditor5Test do
     assert function_exported?(Dummy, :cke_editable, 1)
     assert function_exported?(Dummy, :cke_cloud_assets, 1)
     assert function_exported?(Dummy, :cke_ui_part, 1)
+    assert function_exported?(Dummy, :cke_context, 1)
   end
 end

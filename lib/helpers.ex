@@ -30,4 +30,14 @@ defmodule CKEditor5.Helpers do
     styles_map
     |> Enum.map_join("; ", fn {key, value} -> "#{key}: #{value}" end)
   end
+
+  @doc """
+  Maps all keys in a map to strings.
+  """
+  def map_keys_to_strings(map) when is_map(map) do
+    Enum.map(map, fn {key, value} ->
+      {to_string(key), value}
+    end)
+    |> Map.new()
+  end
 end

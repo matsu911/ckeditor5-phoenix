@@ -10,8 +10,10 @@ import {
   parseIntIfNotNull,
 } from '../../shared';
 import { ClassHook, makeHook } from '../../shared/hook';
+import { ContextsRegistry, getNearestContextParentPromise } from '../context';
 import { EditorsRegistry } from './editors-registry';
 import {
+  createEditorInContext,
   isSingleEditingLikeEditor,
   loadAllEditorTranslations,
   loadEditorConstructor,
@@ -21,6 +23,8 @@ import {
   readPresetOrThrow,
   resolveEditorConfigElementReferences,
   setEditorEditableHeight,
+  unwrapEditorContext,
+  unwrapEditorWatchdog,
   wrapWithWatchdog,
 } from './utils';
 
@@ -32,7 +36,7 @@ import {
  */
 class EditorHookImpl extends ClassHook {
   /**
-   * The name of the hook.
+   * The promise that resolves to the editor instance.
    */
   private editorPromise: Promise<Editor> | null = null;
 
@@ -46,6 +50,7 @@ class EditorHookImpl extends ClassHook {
 
     const value = {
       editorId: get('id')!,
+      contextId: get('cke-context-id'),
       preset: readPresetOrThrow(el),
       editableHeight: parseIntIfNotNull(get('cke-editable-height')),
       watchdog: has('cke-watchdog'),
@@ -75,9 +80,22 @@ class EditorHookImpl extends ClassHook {
    * Mounts the editor component.
    */
   override async mounted() {
+    const { editorId } = this.attrs;
     this.editorPromise = this.createEditor();
 
-    EditorsRegistry.the.register(this.attrs.editorId, await this.editorPromise);
+    const editor = await this.editorPromise;
+
+    // Do not even try to broadcast about the registration of the editor
+    // if hook was immediately destroyed.
+    if (!this.isBeingDestroyed()) {
+      EditorsRegistry.the.register(editorId, editor);
+
+      editor.once('destroy', () => {
+        if (EditorsRegistry.the.hasItem(editorId)) {
+          EditorsRegistry.the.unregister(editorId);
+        }
+      });
+    }
 
     return this;
   }
@@ -91,31 +109,55 @@ class EditorHookImpl extends ClassHook {
     this.el.style.display = 'none';
 
     // Let's wait for the mounted promise to resolve before proceeding with destruction.
-    (await this.editorPromise)?.destroy();
-    this.editorPromise = null;
+    try {
+      const editor = (await this.editorPromise)!;
+      const editorContext = unwrapEditorContext(editor);
+      const watchdog = unwrapEditorWatchdog(editor);
 
-    EditorsRegistry.the.unregister(this.attrs.editorId);
+      if (editorContext) {
+        // If context is present, make sure it's not in unmounting phase, as it'll kill the editors.
+        // If it's being destroyed, don't do anything, as the context will take care of it.
+        if (editorContext.state !== 'unavailable') {
+          await editorContext.context.remove(editorContext.editorContextId);
+        }
+      }
+      else if (watchdog) {
+        await watchdog.destroy();
+      }
+      else {
+        await editor.destroy();
+      }
+    }
+    finally {
+      this.editorPromise = null;
+    }
   }
 
   /**
    * Creates the CKEditor instance.
    */
   private async createEditor() {
-    const { preset, editorId, editableHeight, events, saveDebounceMs, language, watchdog } = this.attrs;
+    const { preset, editorId, contextId, editableHeight, events, saveDebounceMs, language, watchdog } = this.attrs;
     const { customTranslations, type, license, config: { plugins, ...config } } = preset;
 
     // Wrap editor creator with watchdog if needed.
     let Constructor: EditorCreator = await loadEditorConstructor(type);
+    const context = await (
+      contextId
+        ? ContextsRegistry.the.waitFor(contextId)
+        : getNearestContextParentPromise(this.el)
+    );
 
-    if (watchdog) {
+    // Do not use editor specific watchdog if context is attached, as the context is by default protected.
+    if (watchdog && !context) {
       const wrapped = wrapWithWatchdog(Constructor);
 
       ({ Constructor } = wrapped);
       wrapped.watchdog.on('restart', () => {
         const newInstance = wrapped.watchdog.editor!;
+
         this.editorPromise = Promise.resolve(newInstance);
 
-        EditorsRegistry.the.unregister(editorId);
         EditorsRegistry.the.register(editorId, newInstance);
       });
     }
@@ -130,21 +172,34 @@ class EditorHookImpl extends ClassHook {
     ]
       .filter(translations => !isEmptyObject(translations));
 
-    // Initialize the editor.
-    const rootEditables = getInitialRootsContentElements(editorId, type);
-    const editor = await Constructor.create(
-      rootEditables as any,
-      {
-        ...resolveEditorConfigElementReferences(config),
-        initialData: getInitialRootsValues(editorId, type),
-        licenseKey: license.key,
-        plugins: loadedPlugins,
-        language,
-        ...mixedTranslations.length && {
-          translations: mixedTranslations,
-        },
+    // Let's query all elements, and create basic configuration.
+    const sourceElementOrData = getInitialRootsContentElements(editorId, type);
+    const parsedConfig = {
+      ...resolveEditorConfigElementReferences(config),
+      initialData: getInitialRootsValues(editorId, type),
+      licenseKey: license.key,
+      plugins: loadedPlugins,
+      language,
+      ...mixedTranslations.length && {
+        translations: mixedTranslations,
       },
-    );
+    };
+
+    // Depending of the editor type, and parent lookup for nearest context or initialize it without it.
+    const editor = await (async () => {
+      if (!context || !(sourceElementOrData instanceof HTMLElement)) {
+        return Constructor.create(sourceElementOrData as any, parsedConfig);
+      }
+
+      const result = await createEditorInContext({
+        context,
+        element: sourceElementOrData,
+        creator: Constructor,
+        config: parsedConfig,
+      });
+
+      return result.editor;
+    })();
 
     if (events.change) {
       this.setupTypingContentPush(editorId, editor, saveDebounceMs);

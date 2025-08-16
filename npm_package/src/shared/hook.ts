@@ -10,6 +10,11 @@ import type { RequiredBy } from '../types';
  */
 export abstract class ClassHook {
   /**
+   * The current state of the hook.
+   */
+  state: ClassHookState = 'mounting';
+
+  /**
    * The DOM element the hook is attached to.
    * It includes an `instance` property to hold the hook instance.
    */
@@ -60,13 +65,13 @@ export abstract class ClassHook {
    * Called when the hook has been mounted to the DOM.
    * This is the ideal place for initialization code.
    */
-  abstract mounted(): void;
+  abstract mounted(): any;
 
   /**
    * Called when the element has been removed from the DOM.
    * Perfect for cleanup tasks.
    */
-  abstract destroyed(): void;
+  abstract destroyed(): any;
 
   /**
    * Called before the element is updated by a LiveView patch.
@@ -82,7 +87,19 @@ export abstract class ClassHook {
    * Called when the client has reconnected to the server.
    */
   reconnected?(): void;
+
+  /**
+   * Checks if the hook is in the process of being destroyed.
+   */
+  isBeingDestroyed(): boolean {
+    return this.state === 'destroyed' || this.state === 'destroying';
+  }
 }
+
+/**
+ * A type that represents the state of a class-based hook.
+ */
+export type ClassHookState = 'mounting' | 'mounted' | 'destroying' | 'destroyed';
 
 /**
  * A factory function that adapts a class-based hook to the object-based API expected by Phoenix LiveView.
@@ -95,7 +112,7 @@ export function makeHook(constructor: new () => ClassHook): RequiredBy<Hook<any>
      * The mounted lifecycle callback for the LiveView hook object.
      * It creates an instance of the user-defined hook class and sets up the necessary properties and methods.
      */
-    mounted(this: any) {
+    async mounted(this: any) {
       const instance = new constructor();
 
       this.el.instance = instance;
@@ -107,7 +124,11 @@ export function makeHook(constructor: new () => ClassHook): RequiredBy<Hook<any>
       instance.pushEventTo = (selector, event, payload, callback) => this.pushEventTo?.(selector, event, payload, callback);
       instance.handleEvent = (event, callback) => this.handleEvent?.(event, callback);
 
-      return instance.mounted?.();
+      instance.state = 'mounting';
+      const result = await instance.mounted?.();
+      instance.state = 'mounted';
+
+      return result;
     },
 
     /**
@@ -120,8 +141,12 @@ export function makeHook(constructor: new () => ClassHook): RequiredBy<Hook<any>
     /**
      * The destroyed lifecycle callback that delegates to the hook instance.
      */
-    destroyed(this: any) {
-      this.el.instance.destroyed?.();
+    async destroyed(this: any) {
+      const { instance } = this.el;
+
+      instance.state = 'destroying';
+      await instance.destroyed?.();
+      instance.state = 'destroyed';
     },
 
     /**

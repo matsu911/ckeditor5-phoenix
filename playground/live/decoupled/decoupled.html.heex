@@ -1,11 +1,6 @@
 <.back_to_home />
 
-<.live_component
-  id="editor"
-  module={CKEditor5.Components.Editor}
-  type="decoupled"
-  change_event
->
+<.ckeditor id="decoupled" type="decoupled" change_event>
   <div class="flex flex-col gap-4">
     <%!-- Toolbar can be placed anywhere --%>
     <.cke_ui_part name="toolbar" />
@@ -17,7 +12,7 @@
       editable_height="300px"
     />
   </div>
-</.live_component>
+</.ckeditor>
 
 <div class="bg-gray-50 mt-8 p-4 border border-gray-300">
   <h2 class="mb-2 font-bold">Current editor value:</h2>

@@ -35,18 +35,6 @@ defmodule CKEditor5.Cloud do
   end
 
   @doc """
-  Returns default values for Cloud configuration.
-  """
-  def defaults do
-    %{
-      version: @default_editor_version,
-      premium: false,
-      translations: [],
-      ckbox: nil
-    }
-  end
-
-  @doc """
   Parses a map into a Cloud struct.
   Returns {:ok, %Cloud{}} if valid, {:error, reason} if invalid.
   """
@@ -55,9 +43,9 @@ defmodule CKEditor5.Cloud do
   def parse(map) when is_map(map) do
     with {:ok, _} <- conform(map, s()),
          {:ok, parsed_map} <- parse_ckbox(map) do
-      {:ok, build_struct(parsed_map)}
+      {:ok, struct(__MODULE__, parsed_map)}
     else
-      {:error, errors} -> {:error, errors}
+      {:error, error} -> {:error, error}
     end
   end
 
@@ -75,27 +63,14 @@ defmodule CKEditor5.Cloud do
   end
 
   @doc """
-  Builds a Cloud struct with default values, allowing for overrides.
-  """
-  def build_struct(overrides \\ %{}) do
-    defaults = defaults()
-
-    %__MODULE__{
-      version: Map.get(overrides, :version, defaults.version),
-      premium: Map.get(overrides, :premium, defaults.premium),
-      translations: Map.get(overrides, :translations, defaults.translations),
-      ckbox: Map.get(overrides, :ckbox, defaults.ckbox)
-    }
-  end
-
-  @doc """
   Merges the current Cloud configuration with the provided overrides.
   """
-  def merge(nil, overrides) when is_map(overrides) do
-    build_struct(overrides)
-  end
+  def merge(_, nil), do: nil
 
-  def merge(%__MODULE__{}, nil), do: nil
+  def merge(cloud, %__MODULE__{} = override_struct),
+    do: merge(cloud, Map.from_struct(override_struct))
+
+  def merge(nil, overrides) when is_map(overrides), do: struct(__MODULE__, overrides)
 
   def merge(%__MODULE__{} = cloud, overrides) when is_map(overrides) do
     merged_ckbox = CKBox.merge(cloud.ckbox, Map.get(overrides, :ckbox, %{}))

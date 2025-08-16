@@ -38,8 +38,20 @@ config :ckeditor5_phoenix, Playground.Endpoint,
   ]
 
 config :ckeditor5_phoenix,
+  contexts: %{
+    "custom" => %{
+      config: %{
+        plugins: [
+          :CustomContextPlugin
+        ]
+      },
+      watchdog: %{
+        crash_number_limit: 20
+      }
+    }
+  },
   presets: %{
-    custom: %{
+    "custom" => %{
       custom_translations: %{
         en: %{
           Bold: "Custom Bold",

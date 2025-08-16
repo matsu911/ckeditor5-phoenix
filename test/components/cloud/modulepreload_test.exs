@@ -1,6 +1,5 @@
 defmodule CKEditor5.Components.Cloud.ModulePreloadTest do
   alias CKEditor5.Components.Cloud.ModulePreload
-  alias CKEditor5.Test.PresetsHelper
 
   use CKEditor5.Test.PresetsTestCaseTemplate, async: true
 
@@ -10,7 +9,7 @@ defmodule CKEditor5.Components.Cloud.ModulePreloadTest do
     test "renders CKEditor5 modulepreload link and translation", %{cloud_license_key: key} do
       preset = default_preset(key)
 
-      PresetsHelper.put_presets_env(%{"default" => preset})
+      put_presets_env(%{"default" => preset})
       html = render_component(&ModulePreload.render/1, preset: "default")
 
       assert html =~
@@ -24,7 +23,7 @@ defmodule CKEditor5.Components.Cloud.ModulePreloadTest do
       preset =
         default_preset(key, cloud: %{version: "40.0.0", premium: true, translations: ["pl"]})
 
-      PresetsHelper.put_presets_env(%{"premium" => preset})
+      put_presets_env(%{"premium" => preset})
       html = render_component(&ModulePreload.render/1, preset: "premium")
 
       assert html =~
@@ -40,7 +39,7 @@ defmodule CKEditor5.Components.Cloud.ModulePreloadTest do
           cloud: %{version: "40.0.0", premium: false, translations: ["pl", "de"]}
         )
 
-      PresetsHelper.put_presets_env(%{"default" => preset})
+      put_presets_env(%{"default" => preset})
 
       html =
         render_component(&ModulePreload.render/1, preset: "default", translations: ["pl", "de"])
@@ -60,7 +59,7 @@ defmodule CKEditor5.Components.Cloud.ModulePreloadTest do
     } do
       preset = default_preset(key)
 
-      PresetsHelper.put_presets_env(%{"default" => preset})
+      put_presets_env(%{"default" => preset})
       html = render_component(&ModulePreload.render/1, preset: "default", translations: nil)
 
       assert html =~
@@ -75,7 +74,7 @@ defmodule CKEditor5.Components.Cloud.ModulePreloadTest do
     } do
       preset = default_preset(key)
 
-      PresetsHelper.put_presets_env(%{"default" => preset})
+      put_presets_env(%{"default" => preset})
       html = render_component(&ModulePreload.render/1, preset: "default", translations: [])
 
       assert html =~
@@ -90,7 +89,7 @@ defmodule CKEditor5.Components.Cloud.ModulePreloadTest do
     } do
       preset = default_preset(key, cloud: %{version: "40.0.0", premium: false})
 
-      PresetsHelper.put_presets_env(%{"default" => preset})
+      put_presets_env(%{"default" => preset})
       html = render_component(&ModulePreload.render/1, preset: "default")
 
       refute html =~ "ckeditor5-premium-features.js"
@@ -99,7 +98,7 @@ defmodule CKEditor5.Components.Cloud.ModulePreloadTest do
     test "render modulepreload premium links if premium attribute is present and non-premium preset",
          %{cloud_license_key: key} do
       preset = default_preset(key, cloud: %{version: "40.0.0", premium: false})
-      PresetsHelper.put_presets_env(%{"free" => preset})
+      put_presets_env(%{"free" => preset})
 
       html = render_component(&ModulePreload.render/1, preset: "free", premium: true)
 

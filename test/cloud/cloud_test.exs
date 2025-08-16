@@ -7,6 +7,17 @@ defmodule CKEditor5.CloudTest do
 
   @default_editor_version Mix.Project.config()[:cke][:default_cloud_editor_version]
 
+  test "returns the default cloud configuration" do
+    defaults = %Cloud{}
+
+    assert defaults == %Cloud{
+             version: @default_editor_version,
+             premium: false,
+             translations: [],
+             ckbox: nil
+           }
+  end
+
   describe "s/0" do
     test "validates a correct cloud configuration map" do
       valid_config = %{
@@ -41,19 +52,6 @@ defmodule CKEditor5.CloudTest do
       invalid_config = %{translations: ["pl", 123]}
       {:error, errors} = Norm.conform(invalid_config, Cloud.s())
       assert Enum.any?(errors, &(&1.path == [:translations, 1]))
-    end
-  end
-
-  describe "defaults/0" do
-    test "returns the default cloud configuration" do
-      defaults = Cloud.defaults()
-
-      assert defaults == %{
-               version: @default_editor_version,
-               premium: false,
-               translations: [],
-               ckbox: nil
-             }
     end
   end
 
@@ -117,37 +115,9 @@ defmodule CKEditor5.CloudTest do
     end
   end
 
-  describe "build_struct/1" do
-    test "builds a struct with default values when no overrides are given" do
-      cloud = Cloud.build_struct()
-
-      assert cloud.version == @default_editor_version
-      assert cloud.premium == false
-      assert cloud.translations == []
-      assert cloud.ckbox == nil
-    end
-
-    test "builds a struct with given overrides" do
-      overrides = %{
-        version: "35.0.0",
-        premium: true,
-        translations: ["de"],
-        ckbox: %{version: "35.0.0", theme: "light"}
-      }
-
-      cloud = Cloud.build_struct(overrides)
-
-      assert cloud.version == "35.0.0"
-      assert cloud.premium == true
-      assert cloud.translations == ["de"]
-      assert cloud.ckbox.version == "35.0.0"
-      assert cloud.ckbox.theme == "light"
-    end
-  end
-
   describe "merge/2" do
     test "merges a cloud struct with overrides" do
-      cloud = Cloud.build_struct(%{version: "35.0.0", translations: ["pl"]})
+      cloud = %Cloud{version: "35.0.0", translations: ["pl"]}
       overrides = %{version: "36.0.1", premium: true, translations: ["de"]}
       merged_cloud = Cloud.merge(cloud, overrides)
 

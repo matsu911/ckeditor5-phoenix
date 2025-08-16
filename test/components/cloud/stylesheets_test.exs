@@ -1,6 +1,5 @@
 defmodule CKEditor5.Components.Cloud.StylesheetsTest do
   alias CKEditor5.Components.Cloud.Stylesheets
-  alias CKEditor5.Test.PresetsHelper
 
   use CKEditor5.Test.PresetsTestCaseTemplate, async: true
 
@@ -11,7 +10,7 @@ defmodule CKEditor5.Components.Cloud.StylesheetsTest do
       preset =
         default_preset(key, cloud: %{version: "40.0.0", premium: false, translations: ["pl"]})
 
-      PresetsHelper.put_presets_env(%{"default" => preset})
+      put_presets_env(%{"default" => preset})
 
       html = render_component(&Stylesheets.render/1, preset: "default")
       refute html =~ "ckeditor5-premium-features.css"
@@ -23,7 +22,7 @@ defmodule CKEditor5.Components.Cloud.StylesheetsTest do
           cloud: %{version: "40.0.0", premium: true, translations: ["pl"], ckbox: nil}
         )
 
-      PresetsHelper.put_presets_env(%{"premium" => preset})
+      put_presets_env(%{"premium" => preset})
       html = render_component(&Stylesheets.render/1, preset: "premium")
 
       assert html =~ "ckeditor5-premium-features.css"
@@ -43,7 +42,7 @@ defmodule CKEditor5.Components.Cloud.StylesheetsTest do
           }
         )
 
-      PresetsHelper.put_presets_env(%{"with_ckbox" => preset})
+      put_presets_env(%{"with_ckbox" => preset})
 
       html = render_component(&Stylesheets.render/1, preset: "with_ckbox")
       assert html =~ "href=\"https://cdn.ckbox.io/ckbox/1.2.3/styles/themes/dark.css\""
@@ -55,7 +54,7 @@ defmodule CKEditor5.Components.Cloud.StylesheetsTest do
       preset =
         default_preset(key, cloud: %{version: "40.0.0", premium: false, translations: ["pl"]})
 
-      PresetsHelper.put_presets_env(%{"without_ckbox" => preset})
+      put_presets_env(%{"without_ckbox" => preset})
       html = render_component(&Stylesheets.render/1, preset: "without_ckbox")
 
       refute html =~ "/themes/dark.css"
@@ -65,7 +64,7 @@ defmodule CKEditor5.Components.Cloud.StylesheetsTest do
       cloud_license_key: key
     } do
       preset = default_preset(key, cloud: %{version: "40.0.0", premium: false})
-      PresetsHelper.put_presets_env(%{"free" => preset})
+      put_presets_env(%{"free" => preset})
 
       html = render_component(&Stylesheets.render/1, preset: "free", premium: true)
 

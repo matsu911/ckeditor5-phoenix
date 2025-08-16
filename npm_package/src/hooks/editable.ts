@@ -1,4 +1,4 @@
-import type { MultiRootEditor } from 'ckeditor5';
+import type { DecoupledEditor, MultiRootEditor } from 'ckeditor5';
 
 import { ClassHook, debounce, makeHook } from '../shared';
 import { EditorsRegistry } from './editor/editors-registry';
@@ -79,10 +79,10 @@ class EditableHookImpl extends ClassHook {
     this.mountedPromise = null;
 
     // Unmount root from the editor.
-    await EditorsRegistry.the.execute(editorId, (editor: MultiRootEditor) => {
+    await EditorsRegistry.the.execute(editorId, (editor: MultiRootEditor | DecoupledEditor) => {
       const root = editor.model.document.getRoot(rootName);
 
-      if (root) {
+      if (root && 'detachEditable' in editor) {
         editor.detachEditable(root);
         editor.detachRoot(rootName, false);
       }

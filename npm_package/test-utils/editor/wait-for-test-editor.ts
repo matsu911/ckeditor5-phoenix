@@ -8,5 +8,5 @@ import { EditorsRegistry } from '../../src/hooks/editor/editors-registry';
  * Waits for the test editor to be registered in the EditorsRegistry.
  */
 export function waitForTestEditor<E extends Editor>(id: EditorId = 'test-editor'): Promise<E> {
-  return EditorsRegistry.the.waitForEditor<E>(id);
+  return EditorsRegistry.the.waitFor<E>(id);
 }

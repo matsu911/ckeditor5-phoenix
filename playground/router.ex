@@ -33,6 +33,7 @@ defmodule Playground.Router do
     live "/balloon", Live.Balloon
     live "/decoupled", Live.Decoupled
     live "/multiroot", Live.Multiroot
+    live "/context", Live.Context
     live "/i18n", Live.I18n
   end
 end

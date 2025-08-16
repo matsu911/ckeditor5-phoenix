@@ -1,31 +1,28 @@
 defmodule CKEditor5.Components.EditorTest do
-  use ExUnit.Case, async: true
+  use CKEditor5.Test.PresetsTestCaseTemplate, async: true
 
   import Phoenix.LiveViewTest
   import Phoenix.Component
 
   alias CKEditor5.Components.Editor
   alias CKEditor5.Errors.Error
-  alias CKEditor5.Test.PresetsHelper
   alias Phoenix.HTML
 
   setup do
-    original =
-      PresetsHelper.put_presets_env(%{
-        "mock" => %{
-          type: :inline,
-          custom_translations: %{
-            en: %{
-              bold: "Custom translation"
-            }
-          },
-          config: %{
-            toolbar: ["bold"]
+    put_presets_env(%{
+      "mock" => %{
+        type: :inline,
+        custom_translations: %{
+          en: %{
+            bold: "Custom translation"
           }
+        },
+        config: %{
+          toolbar: ["bold"]
         }
-      })
+      }
+    })
 
-    on_exit(fn -> PresetsHelper.restore_presets_env(original) end)
     :ok
   end
 
@@ -41,6 +38,26 @@ defmodule CKEditor5.Components.EditorTest do
   test "renders editor without name (no hidden input)" do
     html = render_component(&Editor.render/1, id: "editor3", value: "No input")
     refute html =~ ~s(<input)
+  end
+
+  test "it is possible to pass CSS class to component" do
+    html =
+      render_component(&Editor.render/1, id: "editor1", name: "content", class: "custom-class")
+
+    assert html =~ ~s(class="custom-class")
+  end
+
+  test "it should assign random ID if missing" do
+    html = render_component(&Editor.render/1, name: "content")
+    assert html =~ ~s(id="cke-)
+    assert html =~ ~s(phx-hook="CKEditor5")
+  end
+
+  test "it is possible to pass CSS styles to component" do
+    html =
+      render_component(&Editor.render/1, id: "editor1", name: "content", style: "color: red;")
+
+    assert html =~ ~s(style="color: red;")
   end
 
   describe "preset type handling" do
@@ -416,6 +433,24 @@ defmodule CKEditor5.Components.EditorTest do
         )
 
       assert html =~ ~s(cke-watchdog)
+    end
+  end
+
+  describe "context" do
+    test "sets context ID for multi-root editors" do
+      html =
+        render_component(&Editor.render/1,
+          id: "editor_context",
+          name: "content",
+          context_id: "context_123"
+        )
+
+      assert html =~ ~s(cke-context-id="context_123")
+    end
+
+    test "does not set context ID for single-root editors" do
+      html = render_component(&Editor.render/1, id: "editor_no_context", name: "content")
+      refute html =~ ~s(cke-context-id)
     end
   end
 end

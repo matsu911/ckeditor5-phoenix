@@ -16,7 +16,7 @@ import {
   waitForTestEditor,
 } from '~/test-utils';
 
-import { CustomEditorPluginsRegistry } from '../../hooks/editor/custom-editor-plugins';
+import { CustomEditorPluginsRegistry } from './custom-editor-plugins';
 import { EditorHook } from './editor';
 import { EditorsRegistry } from './editors-registry';
 import { unwrapEditorWatchdog } from './utils';
@@ -27,7 +27,8 @@ describe('editor hook', () => {
   });
 
   afterEach(async () => {
-    await EditorsRegistry.the.destroyAllEditors();
+    await EditorsRegistry.the.destroyAll();
+    CustomEditorPluginsRegistry.the.unregisterAll();
   });
 
   describe('mount', () => {
@@ -40,32 +41,14 @@ describe('editor hook', () => {
       EditorHook.mounted.call({ el: hookElement });
 
       expect(
-        await EditorsRegistry.the.waitForEditor('magic-editor'),
+        await EditorsRegistry.the.waitFor('magic-editor'),
       ).toBeInstanceOf(ClassicEditor);
     });
 
-    it('should pass custom translations to the editor', async () => {
-      const hookElement = createEditorHtmlElement({
-        preset: createEditorPreset('classic', {}, {
-          pl: { Bold: 'Custom Pogrubienie' },
-        }),
-        language: {
-          ui: 'pl',
-          content: 'pl',
-        },
-      });
-
-      document.body.appendChild(hookElement);
-      EditorHook.mounted.call({ el: hookElement });
-
-      const editor = await waitForTestEditor();
-      const translation = editor.locale.t('Bold');
-
-      expect(translation).toBe('Custom Pogrubienie');
-    });
-
     it('should pass custom plugins to the editor', async () => {
-      class MyCustomPlugin extends Plugin {}
+      class MyCustomPlugin extends Plugin {
+        static pluginName = 'MyCustomPlugin';
+      }
 
       CustomEditorPluginsRegistry.the.register('MyCustomPlugin', () => MyCustomPlugin);
 
@@ -80,7 +63,7 @@ describe('editor hook', () => {
       EditorHook.mounted.call({ el: hookElement });
 
       const editor = await waitForTestEditor();
-      const plugin = editor.plugins.get(MyCustomPlugin);
+      const plugin = editor.plugins.get('MyCustomPlugin');
 
       expect(plugin).toBeInstanceOf(MyCustomPlugin);
     });
@@ -317,16 +300,13 @@ describe('editor hook', () => {
 
       const editor = await waitForTestEditor();
 
+      expect(EditorsRegistry.the.getItems()).toContain(editor);
+
       EditorHook.destroyed.call({ el: hookElement });
 
-      expect(EditorsRegistry.the.getEditors()).toContain(editor);
-
-      await new Promise((resolve) => {
-        editor.once('destroy', resolve);
-        editor.destroy();
+      await vi.waitFor(() => {
+        expect(EditorsRegistry.the.getItems()).not.toContain(editor);
       });
-
-      expect(EditorsRegistry.the.getEditors()).not.toContain(editor);
     });
 
     it('should mark the element as hidden during destruction', async () => {
@@ -770,6 +750,26 @@ describe('editor hook', () => {
       expect(configLanguage?.ui).toBe('en');
       expect(configLanguage?.content).toBe('en');
     });
+
+    it('should pass custom translations to the editor', async () => {
+      const hookElement = createEditorHtmlElement({
+        preset: createEditorPreset('classic', {}, {
+          pl: { Bold: 'Custom Pogrubienie' },
+        }),
+        language: {
+          ui: 'pl',
+          content: 'pl',
+        },
+      });
+
+      document.body.appendChild(hookElement);
+      EditorHook.mounted.call({ el: hookElement });
+
+      const editor = await waitForTestEditor();
+      const translation = editor.t('Bold');
+
+      expect(translation).toBe('Custom Pogrubienie');
+    });
   });
 
   describe('`cke-watchdog` option', () => {
@@ -804,6 +804,27 @@ describe('editor hook', () => {
       const watchdog = unwrapEditorWatchdog(editor);
 
       expect(watchdog).to.equal(null);
+    });
+
+    it('destroying of hook destroys watchdog', async () => {
+      const hookElement = createEditorHtmlElement({
+        watchdog: true,
+      });
+
+      document.body.appendChild(hookElement);
+      EditorHook.mounted.call({ el: hookElement });
+
+      const editor = await waitForTestEditor();
+      const watchdog = unwrapEditorWatchdog(editor)!;
+
+      expect(watchdog).to.be.an('object');
+
+      EditorHook.destroyed.call({ el: hookElement });
+
+      await vi.waitFor(async () => {
+        expect(watchdog.state).toEqual('destroyed');
+        expect(editor.state).toEqual('destroyed');
+      });
     });
   });
 });

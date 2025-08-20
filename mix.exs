@@ -48,7 +48,7 @@ defmodule CKEditor5.MixProject do
     is_dev = Mix.env() == :dev
 
     [
-      {:phoenix, "~> 1.7.21"},
+      {:phoenix, "~> 1.8.0"},
       {:phoenix_html, "~> 4.1"},
       {:phoenix_view, "~> 2.0.4", only: [:dev]},
       {:phoenix_live_view, "~> 1.0"},
